@@ -1,7 +1,6 @@
 # Dockson, a Continuous Delivery Measurement Service
 
-**Insipired by
-[Measuring Continuous Delivery: The what, why, and how of measuring Continuous Delivery](https://www.goodreads.com/book/show/35508935-measuring-continuous-delivery)**
+**Insipired by [Measuring Continuous Delivery: The what, why, and how of measuring Continuous Delivery](https://www.goodreads.com/book/show/35508935-measuring-continuous-delivery)**
 
 * notifications
   ```json
@@ -15,8 +14,6 @@
     "tags": [] // branch, team name, service group, etc.
   }
   ```
-* base architecture
-  * ![overview](architecture.png)
 * measurements
   * deployment stability
     * `d = deployments, f = failures, t = time`
@@ -69,8 +66,7 @@
       * axes: `x = time, y = hours`
       * lines: `blt.median, blt.stddev, bi.median, bi.stddev`
   * mainline throughput
-    * `m^n = master commit time, b^n = branch commit time, m = master commits, t
-      = time`
+    * `m^n = master commit time, b^n = branch commit time, m = master commits, t = time`
     * mainline lead time
       * time between commit to branch and merge to master
       * `mlt.median = median( ( m^n - b^n ) for m in t )`
@@ -82,3 +78,13 @@
     * graphs
       * axes: `x = time, y = hours`
       * lines: `mlt.median, mlt.stddev, mi.median, mi.stddev`
+* base architecture
+  * ![overview](architecture.png)
+* eventing architecture
+  * masterCommit projection:
+    * emits `MasterCommitEvent` event when a masterCommit matches with a branchCommit
+    * `[ ...commitNotification... ] => MasterCommit(sourceCommit, masterCommit)`
+  * masterLeadTime projection
+    * populates `MasterLeadTimeView` from `MasterCommitEvent`s
+  * masterInterval projection
+    * populates `MasterIntervalView` with intervals between `MasterCommitEvent`s
