@@ -20,17 +20,21 @@ namespace Dockson.Tests.Projections
 		[Fact]
 		public void When_a_single_branch_commit()
 		{
-			_projection.Project(Commit(0, "feature-1", "commit-sha"));
-			_projection.Commits.ShouldBeEmpty();
+			var commits = new List<object>();
+
+			_projection.Project(Commit(0, "feature-1", "commit-sha"), commits.Add);
+			commits.ShouldBeEmpty();
 		}
 
 		[Fact]
 		public void When_a_commit_makes_it_from_branch_to_master()
 		{
-			_projection.Project(Commit(0, "feature-1", "commit-sha"));
-			_projection.Project(Commit(10, "master", "commit-sha"));
+			var commits = new List<object>();
 
-			_projection.Commits.ShouldHaveSingleItem();
+			_projection.Project(Commit(0, "feature-1", "commit-sha"), commits.Add);
+			_projection.Project(Commit(10, "master", "commit-sha"), commits.Add);
+
+			commits.ShouldHaveSingleItem();
 		}
 
 		private Notification Commit(int offset, string branch, string hash) => new Notification
@@ -50,20 +54,16 @@ namespace Dockson.Tests.Projections
 
 	public class MasterCommitsProjection
 	{
-		public IEnumerable<object> Commits => _commits;
-
-		private readonly List<object> _commits;
 		private readonly Dictionary<string, Notification> _branchCommits;
 
 		public MasterCommitsProjection()
 		{
-			_commits = new List<object>();
 			_branchCommits = new Dictionary<string, Notification>();
 		}
 
 		private static bool IsMaster(string branch) => string.Equals(branch, "Master", StringComparison.OrdinalIgnoreCase);
 
-		public void Project(Notification notification)
+		public void Project(Notification notification, Action<object> dispatch)
 		{
 			notification.Tags.TryGetValue("branch", out var branch);
 			notification.Tags.TryGetValue("commit", out var commit);
@@ -76,7 +76,7 @@ namespace Dockson.Tests.Projections
 				_branchCommits.Remove(commit, out var matchingCommit);
 
 				if (matchingCommit != null)
-					_commits.Add(new CommitToMaster(notification, matchingCommit));
+					dispatch(new CommitToMaster(notification, matchingCommit));
 			}
 			else
 			{
