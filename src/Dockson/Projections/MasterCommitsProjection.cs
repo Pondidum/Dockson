@@ -27,7 +27,7 @@ namespace Dockson.Projections
 				_branchCommits.Remove(commit, out var matchingCommit);
 
 				if (matchingCommit != null)
-					dispatch(new CommitToMaster(notification, matchingCommit));
+					dispatch(new MasterCommit(notification, matchingCommit));
 			}
 			else
 			{
@@ -36,9 +36,9 @@ namespace Dockson.Projections
 		}
 	}
 
-	public class CommitToMaster
+	public class MasterCommit
 	{
-		public CommitToMaster(Notification notification, Notification matchingCommit)
+		public MasterCommit(Notification notification, Notification matchingCommit)
 		{
 		}
 	}
