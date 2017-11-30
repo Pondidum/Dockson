@@ -38,8 +38,13 @@ namespace Dockson.Projections
 
 	public class MasterCommit
 	{
-		public MasterCommit(Notification notification, Notification matchingCommit)
+		public MasterCommit(Notification masterCommit, Notification branchCommit)
 		{
+			TimeStamp = masterCommit.TimeStamp;
+			LeadTime = masterCommit.TimeStamp - branchCommit.TimeStamp;
 		}
+
+		public DateTime TimeStamp { get; }
+		public TimeSpan LeadTime { get; set; }
 	}
 }

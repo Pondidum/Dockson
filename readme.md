@@ -65,13 +65,13 @@
     * graphs
       * axes: `x = time, y = hours`
       * lines: `blt.median, blt.stddev, bi.median, bi.stddev`
-  * mainline throughput
+  * master throughput
     * `m^n = master commit time, b^n = branch commit time, m = master commits, t = time`
-    * mainline lead time
+    * master lead time
       * time between commit to branch and merge to master
       * `mlt.median = median( ( m^n - b^n ) for m in t )`
       * `mlt.stddev = stddev( ( m^n - b^n ) for m in t )`
-    * mainline interval
+    * master interval
       * time between master commits
       * `mi.median = median( ( m^n - m^n-1) for m in t )`
       * `mi.stddev = stddev( ( m^n - m^n-1) for m in t )`
