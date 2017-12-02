@@ -9,64 +9,66 @@ namespace Dockson.Tests.Projections
 {
 	public class MasterIntervalProjectionTests
 	{
+		private static readonly DateTime Yesterday = new DateTime(2017, 11, 29, 11, 47, 00);
+		private static readonly DateTime Today = new DateTime(2017, 11, 30, 11, 47, 00);
+		private static readonly DateTime Tomorrow = new DateTime(2017, 12, 1, 11, 47, 00);
+
 		private readonly MasterIntervalView _view;
 		private readonly MasterIntervalProjection _projection;
-		private readonly DateTime _now;
 
 		public MasterIntervalProjectionTests()
 		{
 			_view = new MasterIntervalView();
 			_projection = new MasterIntervalProjection(_view);
-			_now = new DateTime(2017, 11, 30, 11, 47, 00);
 		}
 
 		[Fact]
 		public void When_projecting_one_commit()
 		{
-			_projection.Project(CreateCommit(TimeSpan.FromHours(0)), message => { });
+			_projection.Project(CreateCommit(Today, 0), message => { });
 
 			_view.ShouldSatisfyAllConditions(
-				() => _view.Medians.ShouldContainKeyAndValue(_now.Date, 0),
-				() => _view.StandardDeviations.ShouldContainKeyAndValue(_now.Date, 0)
+				() => _view.Medians.ShouldContainKeyAndValue(Today.Date, 0),
+				() => _view.StandardDeviations.ShouldContainKeyAndValue(Today.Date, 0)
 			);
 		}
 
 		[Fact]
 		public void When_projecting_two_commits_on_the_same_day()
 		{
-			_projection.Project(CreateCommit(TimeSpan.FromHours(0)), message => { });
-			_projection.Project(CreateCommit(TimeSpan.FromHours(1)), message => { });
+			_projection.Project(CreateCommit(Today, 0), message => { });
+			_projection.Project(CreateCommit(Today, 1), message => { });
 
 			_view.ShouldSatisfyAllConditions(
-				() => _view.Medians.ShouldContainKeyAndValue(_now.Date, TimeSpan.FromHours(1).TotalMinutes),
-				() => _view.StandardDeviations.ShouldContainKeyAndValue(_now.Date, 0)
+				() => _view.Medians.ShouldContainKeyAndValue(Today.Date, 60), //1 hour
+				() => _view.StandardDeviations.ShouldContainKeyAndValue(Today.Date, 0)
 			);
 		}
 
 		[Fact]
 		public void When_projecting_several_commits_on_the_same_day()
 		{
-			_projection.Project(CreateCommit(TimeSpan.FromHours(0)), message => { });
-			_projection.Project(CreateCommit(TimeSpan.FromHours(1)), message => { });
-			_projection.Project(CreateCommit(TimeSpan.FromHours(2)), message => { });
-			_projection.Project(CreateCommit(TimeSpan.FromHours(4)), message => { });
-			_projection.Project(CreateCommit(TimeSpan.FromHours(5)), message => { });
+			_projection.Project(CreateCommit(Today, 0), message => { });
+			_projection.Project(CreateCommit(Today, 1), message => { });
+			_projection.Project(CreateCommit(Today, 2), message => { });
+			_projection.Project(CreateCommit(Today, 4), message => { });
+			_projection.Project(CreateCommit(Today, 5), message => { });
 
 			_view.ShouldSatisfyAllConditions(
-				() => _view.Medians.ShouldContainKeyAndValue(_now.Date, 60),	//1 hour
-				() => _view.StandardDeviations.ShouldContainKeyAndValue(_now.Date, 30) // half hour
+				() => _view.Medians.ShouldContainKeyAndValue(Today.Date, 60), //1 hour
+				() => _view.StandardDeviations.ShouldContainKeyAndValue(Today.Date, 30) // half hour
 			);
 		}
-		
-		private MasterCommit CreateCommit(TimeSpan masterTime) => new MasterCommit(
-			CreateNotification(masterTime, "master"),
-			CreateNotification(masterTime.Add(TimeSpan.FromMinutes(-5)), "feature-whatever")
+
+		private MasterCommit CreateCommit(DateTime day, int hoursOffset) => new MasterCommit(
+			CreateNotification(day.AddHours(hoursOffset), "master"),
+			CreateNotification(day.AddHours(hoursOffset).Add(TimeSpan.FromMinutes(-5)), "feature-whatever")
 		);
 
-		private Notification CreateNotification(TimeSpan offset, string branch) => new Notification
+		private Notification CreateNotification(DateTime timestamp, string branch) => new Notification
 		{
 			Type = Stages.Commit,
-			TimeStamp = _now.Add(offset),
+			TimeStamp = timestamp,
 			Source = "github",
 			Name = "SomeService",
 			Version = "1.0.0",
