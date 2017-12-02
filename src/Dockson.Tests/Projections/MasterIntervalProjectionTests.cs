@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using Dockson.Projections;
+using Dockson.Views;
 using Shouldly;
 using Xunit;
 
@@ -76,7 +76,7 @@ namespace Dockson.Tests.Projections
 			_view.ShouldSatisfyAllConditions(
 				() => _view.Medians[Today.Date].ShouldBe(60), //1 hour
 				() => _view.StandardDeviations[Today.Date].ShouldBe(30), // half hour
-				() => _view.Medians[Tomorrow.Date].ShouldBe(120), //1 hour
+				() => _view.Medians[Tomorrow.Date].ShouldBe(120), //2 hours
 				() => _view.StandardDeviations[Tomorrow.Date].ShouldBe(676.165, tolerance: 0.005)
 			);
 		}
@@ -99,51 +99,5 @@ namespace Dockson.Tests.Projections
 				{ "branch", branch }
 			}
 		};
-	}
-
-	public class MasterIntervalProjection
-	{
-		private readonly MasterIntervalView _view;
-		private readonly List<DateTime> _source;
-
-		public MasterIntervalProjection(MasterIntervalView view)
-		{
-			_view = view;
-			_source = new List<DateTime>();
-		}
-
-		public void Project(MasterCommit message, Action<object> dispatch)
-		{
-			var commitTime = message.TimeStamp;
-			var key = commitTime.Date;
-
-			//improvement: just calculate new delta and append to _source
-			_source.Add(commitTime); //assumes sorted for now!
-
-			var deltas = _source
-				.Skip(1)
-				.Select((timestamp, i) => new { Timestamp = timestamp, Elapsed = timestamp - _source[i] })
-				.Where(d => d.Timestamp.Date == key)
-				.Select(d => d.Elapsed.TotalMinutes)
-				.ToArray();
-
-			_view.Medians[key] = deltas.Any() ? deltas.Median() : 0;
-			_view.StandardDeviations[key] = deltas.Any() ? deltas.StandardDeviation() : 0;
-			_view.Days.Add(key);
-		}
-	}
-
-	public class MasterIntervalView
-	{
-		public HashSet<DateTime> Days { get; set; }
-		public Dictionary<DateTime, double> Medians { get; set; }
-		public Dictionary<DateTime, double> StandardDeviations { get; set; }
-
-		public MasterIntervalView()
-		{
-			Days = new HashSet<DateTime>();
-			Medians = new Dictionary<DateTime, double>();
-			StandardDeviations = new Dictionary<DateTime, double>();
-		}
 	}
 }
