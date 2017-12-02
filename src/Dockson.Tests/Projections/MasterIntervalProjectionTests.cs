@@ -60,6 +60,27 @@ namespace Dockson.Tests.Projections
 			);
 		}
 
+
+		[Fact]
+		public void When_projecting_several_commits_on_several_days()
+		{
+			_projection.Project(CreateCommit(Today, 0), message => { });
+			_projection.Project(CreateCommit(Today, 1), message => { });
+			_projection.Project(CreateCommit(Today, 2), message => { });
+			_projection.Project(CreateCommit(Today, 4), message => { });
+			_projection.Project(CreateCommit(Today, 5), message => { });
+			_projection.Project(CreateCommit(Tomorrow, 2), message => { });
+			_projection.Project(CreateCommit(Tomorrow, 4), message => { });
+			_projection.Project(CreateCommit(Tomorrow, 5), message => { });
+
+			_view.ShouldSatisfyAllConditions(
+				() => _view.Medians[Today.Date].ShouldBe(60), //1 hour
+				() => _view.StandardDeviations[Today.Date].ShouldBe(30), // half hour
+				() => _view.Medians[Tomorrow.Date].ShouldBe(120), //1 hour
+				() => _view.StandardDeviations[Tomorrow.Date].ShouldBe(676.165, tolerance: 0.005)
+			);
+		}
+
 		private MasterCommit CreateCommit(DateTime day, int hoursOffset) => new MasterCommit(
 			CreateNotification(day.AddHours(hoursOffset), "master"),
 			CreateNotification(day.AddHours(hoursOffset).Add(TimeSpan.FromMinutes(-5)), "feature-whatever")
