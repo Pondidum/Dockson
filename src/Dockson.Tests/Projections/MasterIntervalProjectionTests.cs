@@ -23,7 +23,7 @@ namespace Dockson.Tests.Projections
 		[Fact]
 		public void When_projecting_one_commit()
 		{
-			_projection.Project(CreateCommit(TimeSpan.Zero, TimeSpan.FromHours(1)), message => { });
+			_projection.Project(CreateCommit(TimeSpan.FromHours(0)), message => { });
 
 			_view.ShouldSatisfyAllConditions(
 				() => _view.Medians.ShouldContainKeyAndValue(_now.Date, 0),
@@ -31,9 +31,36 @@ namespace Dockson.Tests.Projections
 			);
 		}
 
-		private MasterCommit CreateCommit(TimeSpan featureTime, TimeSpan masterTime) => new MasterCommit(
+		[Fact]
+		public void When_projecting_two_commits_on_the_same_day()
+		{
+			_projection.Project(CreateCommit(TimeSpan.FromHours(0)), message => { });
+			_projection.Project(CreateCommit(TimeSpan.FromHours(1)), message => { });
+
+			_view.ShouldSatisfyAllConditions(
+				() => _view.Medians.ShouldContainKeyAndValue(_now.Date, TimeSpan.FromHours(1).TotalMinutes),
+				() => _view.StandardDeviations.ShouldContainKeyAndValue(_now.Date, 0)
+			);
+		}
+
+		[Fact]
+		public void When_projecting_several_commits_on_the_same_day()
+		{
+			_projection.Project(CreateCommit(TimeSpan.FromHours(0)), message => { });
+			_projection.Project(CreateCommit(TimeSpan.FromHours(1)), message => { });
+			_projection.Project(CreateCommit(TimeSpan.FromHours(2)), message => { });
+			_projection.Project(CreateCommit(TimeSpan.FromHours(4)), message => { });
+			_projection.Project(CreateCommit(TimeSpan.FromHours(5)), message => { });
+
+			_view.ShouldSatisfyAllConditions(
+				() => _view.Medians.ShouldContainKeyAndValue(_now.Date, 60),	//1 hour
+				() => _view.StandardDeviations.ShouldContainKeyAndValue(_now.Date, 30) // half hour
+			);
+		}
+		
+		private MasterCommit CreateCommit(TimeSpan masterTime) => new MasterCommit(
 			CreateNotification(masterTime, "master"),
-			CreateNotification(featureTime, "feature-whatever")
+			CreateNotification(masterTime.Add(TimeSpan.FromMinutes(-5)), "feature-whatever")
 		);
 
 		private Notification CreateNotification(TimeSpan offset, string branch) => new Notification
