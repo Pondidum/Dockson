@@ -12,10 +12,4 @@ namespace Dockson.Domain.Views
 			Daily = new Dictionary<DateTime, Summary>();
 		}
 	}
-
-	public class Summary
-	{
-		public double Median { get; set; }
-		public double Deviation { get; set; }
-	}
 }
