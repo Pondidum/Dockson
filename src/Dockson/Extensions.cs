@@ -6,6 +6,13 @@ namespace Dockson
 {
 	public static class Extensions
 	{
+		public static DateTime PreviousMonday(this DateTime self)
+		{
+			var daysToRemove = ((int) self.DayOfWeek  - (int) DayOfWeek.Monday+ 7) % 7;
+
+			return self.AddDays(-daysToRemove);
+		}
+
 		// shamelessly copied from stackoverflow as I cannot maths.
 		// https://stackoverflow.com/a/897463/1500
 		public static double StandardDeviation(this IEnumerable<double> values)
