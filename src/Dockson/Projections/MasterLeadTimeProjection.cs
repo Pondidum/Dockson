@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Dockson.Events;
 using Dockson.Views;
 
 namespace Dockson.Projections

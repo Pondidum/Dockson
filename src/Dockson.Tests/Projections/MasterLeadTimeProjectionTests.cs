@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Dockson.Events;
 using Dockson.Projections;
 using Dockson.Views;
 using Shouldly;

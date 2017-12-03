@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Dockson.Events;
 
 namespace Dockson.Projections
 {
@@ -34,17 +35,5 @@ namespace Dockson.Projections
 				_branchCommits.Add(commit, notification);
 			}
 		}
-	}
-
-	public class MasterCommit
-	{
-		public MasterCommit(Notification masterCommit, Notification branchCommit)
-		{
-			TimeStamp = masterCommit.TimeStamp;
-			LeadTime = masterCommit.TimeStamp - branchCommit.TimeStamp;
-		}
-
-		public DateTime TimeStamp { get; }
-		public TimeSpan LeadTime { get; set; }
 	}
 }
