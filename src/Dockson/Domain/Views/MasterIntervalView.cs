@@ -5,15 +5,17 @@ namespace Dockson.Domain.Views
 {
 	public class MasterIntervalView
 	{
-		public HashSet<DateTime> Days { get; set; }
-		public Dictionary<DateTime, double> Medians { get; set; }
-		public Dictionary<DateTime, double> StandardDeviations { get; set; }
+		public Dictionary<DateTime, Summary> Daily { get; set; }
 
 		public MasterIntervalView()
 		{
-			Days = new HashSet<DateTime>();
-			Medians = new Dictionary<DateTime, double>();
-			StandardDeviations = new Dictionary<DateTime, double>();
+			Daily = new Dictionary<DateTime, Summary>();
 		}
+	}
+
+	public class Summary
+	{
+		public double Median { get; set; }
+		public double Deviation { get; set; }
 	}
 }

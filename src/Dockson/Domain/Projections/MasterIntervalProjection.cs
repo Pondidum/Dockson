@@ -37,9 +37,11 @@ namespace Dockson.Domain.Projections
 				.Select(d => d.ElapsedMinutes)
 				.ToArray();
 
-			_view.Medians[key] = deltas.Any() ? deltas.Median() : 0;
-			_view.StandardDeviations[key] = deltas.Any() ? deltas.StandardDeviation() : 0;
-			_view.Days.Add(key);
+			_view.Daily[key] = new Summary
+			{
+				Median = deltas.Any() ? deltas.Median() : 0,
+				Deviation = deltas.Any() ? deltas.StandardDeviation() : 0
+			};
 		}
 
 		private class CommitDelta
