@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Dockson.Events
+namespace Dockson.Domain.Events
 {
 	public class MasterCommit
 	{

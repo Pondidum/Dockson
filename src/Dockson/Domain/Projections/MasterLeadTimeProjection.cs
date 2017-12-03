@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Dockson.Events;
-using Dockson.Views;
+using Dockson.Domain.Events;
+using Dockson.Domain.Views;
 
-namespace Dockson.Projections
+namespace Dockson.Domain.Projections
 {
 	public class MasterLeadTimeProjection
 	{

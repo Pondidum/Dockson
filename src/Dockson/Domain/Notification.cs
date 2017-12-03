@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Dockson
+namespace Dockson.Domain
 {
 	public class Notification
 	{
@@ -13,6 +13,7 @@ namespace Dockson
 		public string Version { get; set; }
 		public string Status { get; set; }
 		
+		public HashSet<string> Groups { get; set; }
 		public Dictionary<string, string> Tags { get; set; }
 	}
 }

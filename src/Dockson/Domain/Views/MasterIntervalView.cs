@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Dockson.Views
+namespace Dockson.Domain.Views
 {
 	public class MasterIntervalView
 	{

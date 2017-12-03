@@ -1,4 +1,4 @@
-﻿namespace Dockson
+﻿namespace Dockson.Domain
 {
 	public enum Stages
 	{

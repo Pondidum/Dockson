@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using Dockson.Events;
-using Dockson.Projections;
-using Dockson.Views;
+using Dockson.Domain;
+using Dockson.Domain.Events;
+using Dockson.Domain.Projections;
+using Dockson.Domain.Views;
 using Shouldly;
 using Xunit;
 
-namespace Dockson.Tests.Projections
+namespace Dockson.Tests.Domain.Projections
 {
 	public class MasterIntervalProjectionTests
 	{

@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using Dockson.Projections;
+using Dockson.Domain;
+using Dockson.Domain.Projections;
 using Shouldly;
 using Xunit;
 
-namespace Dockson.Tests.Projections
+namespace Dockson.Tests.Domain.Projections
 {
 	public class MasterCommitsProjectionTests
 	{
