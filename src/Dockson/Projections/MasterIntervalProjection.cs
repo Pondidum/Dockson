@@ -9,12 +9,12 @@ namespace Dockson.Projections
 	public class MasterIntervalProjection
 	{
 		private readonly MasterIntervalView _view;
-		private readonly List<DateTime> _source;
+		private readonly List<CommitDelta> _source;
 
 		public MasterIntervalProjection(MasterIntervalView view)
 		{
 			_view = view;
-			_source = new List<DateTime>();
+			_source = new List<CommitDelta>();
 		}
 
 		public void Project(MasterCommit message, Action<object> dispatch)
@@ -22,19 +22,30 @@ namespace Dockson.Projections
 			var commitTime = message.TimeStamp;
 			var key = commitTime.Date;
 
-			//improvement: just calculate new delta and append to _source
-			_source.Add(commitTime); //assumes sorted for now!
+			var last = _source.LastOrDefault();
+
+			_source.Add(new CommitDelta
+			{
+				Timestamp = commitTime,
+				ElapsedMinutes = last != null
+					? (commitTime - last.Timestamp).TotalMinutes
+					: 0
+			});
 
 			var deltas = _source
-				.Skip(1)
-				.Select((timestamp, i) => new { Timestamp = timestamp, Elapsed = timestamp - _source[i] })
-				.Where(d => d.Timestamp.Date == key)
-				.Select(d => d.Elapsed.TotalMinutes)
+				.Where(d => d.Timestamp.Date == key && d.ElapsedMinutes > 0)
+				.Select(d => d.ElapsedMinutes)
 				.ToArray();
 
 			_view.Medians[key] = deltas.Any() ? deltas.Median() : 0;
 			_view.StandardDeviations[key] = deltas.Any() ? deltas.StandardDeviation() : 0;
 			_view.Days.Add(key);
+		}
+
+		private class CommitDelta
+		{
+			public DateTime Timestamp;
+			public double ElapsedMinutes;
 		}
 	}
 }
