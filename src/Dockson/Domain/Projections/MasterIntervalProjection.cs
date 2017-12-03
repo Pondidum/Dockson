@@ -20,7 +20,6 @@ namespace Dockson.Domain.Projections
 		public void Project(MasterCommit message, Action<object> dispatch)
 		{
 			var commitTime = message.TimeStamp;
-			var key = commitTime.Date;
 
 			var last = _source.LastOrDefault();
 
@@ -32,12 +31,36 @@ namespace Dockson.Domain.Projections
 					: 0
 			});
 
+			UpdateDailySummary(commitTime);
+			UpdateWeeklySummary(commitTime);
+		}
+
+		private void UpdateDailySummary(DateTime commitTime)
+		{
+			var key = commitTime.Date;
 			var deltas = _source
 				.Where(d => d.Timestamp.Date == key && d.ElapsedMinutes > 0)
 				.Select(d => d.ElapsedMinutes)
 				.ToArray();
 
 			_view.Daily[key] = new Summary
+			{
+				Median = deltas.Any() ? deltas.Median() : 0,
+				Deviation = deltas.Any() ? deltas.StandardDeviation() : 0
+			};
+		}
+
+		private void UpdateWeeklySummary(DateTime commitTime)
+		{
+			var start = commitTime.PreviousMonday().Date;
+			var finish = start.AddDays(6);
+
+			var deltas = _source
+				.Where(d => d.Timestamp.Date >= start && d.Timestamp.Date <= finish && d.ElapsedMinutes > 0)
+				.Select(d => d.ElapsedMinutes)
+				.ToArray();
+
+			_view.Weekly[start] = new Summary
 			{
 				Median = deltas.Any() ? deltas.Median() : 0,
 				Deviation = deltas.Any() ? deltas.StandardDeviation() : 0

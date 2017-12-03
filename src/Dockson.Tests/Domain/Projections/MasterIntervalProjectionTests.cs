@@ -11,6 +11,7 @@ namespace Dockson.Tests.Domain.Projections
 {
 	public class MasterIntervalProjectionTests
 	{
+		private static readonly DateTime LastWeek = new DateTime(2017, 11, 23, 11, 47, 00);
 		private static readonly DateTime Yesterday = new DateTime(2017, 11, 29, 11, 47, 00);
 		private static readonly DateTime Today = new DateTime(2017, 11, 30, 11, 47, 00);
 		private static readonly DateTime Tomorrow = new DateTime(2017, 12, 1, 11, 47, 00);
@@ -62,7 +63,6 @@ namespace Dockson.Tests.Domain.Projections
 			);
 		}
 
-
 		[Fact]
 		public void When_projecting_several_commits_on_several_days()
 		{
@@ -82,6 +82,30 @@ namespace Dockson.Tests.Domain.Projections
 				() => _view.Daily[Tomorrow.Date].Deviation.ShouldBe(676.165, tolerance: 0.005)
 			);
 		}
+
+		[Fact]
+		public void When_projecting_several_commits_over_two_weeks()
+		{
+			var weekStart = Day(0);
+			var secondWeek = weekStart.AddDays(7);
+
+			_projection.Project(CreateCommit(Day(0), 0), message => { });
+			_projection.Project(CreateCommit(Day(1), 0), message => { });
+			_projection.Project(CreateCommit(Day(2), 0), message => { });
+			_projection.Project(CreateCommit(Day(3), 0), message => { });
+			_projection.Project(CreateCommit(Day(4), 0), message => { });
+			_projection.Project(CreateCommit(Day(5), 0), message => { });
+			_projection.Project(CreateCommit(Day(6), 0), message => { });
+			_projection.Project(CreateCommit(Day(7), 0), message => { });
+			_projection.Project(CreateCommit(Day(8), 0), message => { });
+
+			_view.ShouldSatisfyAllConditions(
+				() => _view.Weekly[weekStart.Date].Median.ShouldBe(TimeSpan.FromHours(24).TotalMinutes),
+				() => _view.Weekly[secondWeek.Date].Median.ShouldBe(TimeSpan.FromHours(24).TotalMinutes)
+			);
+		}
+
+		private DateTime Day(int day) => Today.PreviousMonday().AddDays(day);
 
 		private MasterCommit CreateCommit(DateTime day, int hoursOffset) => new MasterCommit(
 			CreateNotification(day.AddHours(hoursOffset), "master"),
