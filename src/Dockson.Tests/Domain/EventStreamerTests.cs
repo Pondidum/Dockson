@@ -45,10 +45,10 @@ namespace Dockson.Tests.Domain
 			);
 
 			leadTimeView.ShouldSatisfyAllConditions(
-				() => leadTimeView.Medians[Today.Date].ShouldBe(5),
-				() => leadTimeView.StandardDeviations[Today.Date].ShouldBe(0),
-				() => leadTimeView.Medians[Tomorrow.Date].ShouldBe(5),
-				() => leadTimeView.StandardDeviations[Tomorrow.Date].ShouldBe(0)
+				() => leadTimeView.Medians[new DayDate(Today)].ShouldBe(5),
+				() => leadTimeView.StandardDeviations[new DayDate(Today)].ShouldBe(0),
+				() => leadTimeView.Medians[new DayDate(Tomorrow)].ShouldBe(5),
+				() => leadTimeView.StandardDeviations[new DayDate(Tomorrow)].ShouldBe(0)
 			);
 		}
 

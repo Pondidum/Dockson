@@ -26,11 +26,12 @@ namespace Dockson.Tests.Domain.Projections
 		public void When_projecting_one_commit()
 		{
 			_projection.Project(CreateCommit(TimeSpan.Zero, TimeSpan.FromHours(1)), message => { });
+			var day = new DayDate(_now);
 
 			_view.ShouldSatisfyAllConditions(
-				() => _view.Days.ShouldBe(new[] { _now.Date }),
-				() => _view.Medians.ShouldContainKeyAndValue(_now.Date, TimeSpan.FromHours(1).TotalMinutes),
-				() => _view.StandardDeviations.ShouldContainKeyAndValue(_now.Date, 0)
+				() => _view.Days.ShouldBe(new[] { day }),
+				() => _view.Medians.ShouldContainKeyAndValue(day, TimeSpan.FromHours(1).TotalMinutes),
+				() => _view.StandardDeviations.ShouldContainKeyAndValue(day, 0)
 			);
 		}
 

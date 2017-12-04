@@ -9,17 +9,17 @@ namespace Dockson.Domain.Projections
 	public class MasterLeadTimeProjection
 	{
 		private readonly MasterLeadTimeView _view;
-		private readonly Dictionary<DateTime, List<TimeSpan>> _source;
+		private readonly Dictionary<DayDate, List<TimeSpan>> _source;
 
 		public MasterLeadTimeProjection(MasterLeadTimeView view)
 		{
 			_view = view;
-			_source = new Dictionary<DateTime, List<TimeSpan>>();
+			_source = new Dictionary<DayDate, List<TimeSpan>>();
 		}
 
 		public void Project(MasterCommit message, Action<object> dispatch)
 		{
-			var key = message.TimeStamp.Date;
+			var key = new DayDate(message.TimeStamp);
 			var leadTime = message.LeadTime;
 
 			if (_source.ContainsKey(key) == false)
