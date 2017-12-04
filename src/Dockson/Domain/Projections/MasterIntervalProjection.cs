@@ -52,15 +52,14 @@ namespace Dockson.Domain.Projections
 
 		private void UpdateWeeklySummary(DateTime commitTime)
 		{
-			var start = commitTime.PreviousMonday().Date;
-			var finish = start.AddDays(6);
+			var week = new WeekDate(commitTime); 
 
 			var deltas = _source
-				.Where(d => d.Timestamp.Date >= start && d.Timestamp.Date <= finish && d.ElapsedMinutes > 0)
+				.Where(d => d.Timestamp.Date >= week.Start && d.Timestamp.Date <= week.Finish && d.ElapsedMinutes > 0)
 				.Select(d => d.ElapsedMinutes)
 				.ToArray();
 
-			_view.Weekly[start] = new Summary
+			_view.Weekly[week] = new Summary
 			{
 				Median = deltas.Any() ? deltas.Median() : 0,
 				Deviation = deltas.Any() ? deltas.StandardDeviation() : 0

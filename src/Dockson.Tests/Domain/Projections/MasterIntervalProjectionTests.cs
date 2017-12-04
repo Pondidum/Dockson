@@ -86,8 +86,8 @@ namespace Dockson.Tests.Domain.Projections
 		[Fact]
 		public void When_projecting_several_commits_over_two_weeks()
 		{
-			var weekStart = Day(0);
-			var secondWeek = weekStart.AddDays(7);
+			var week = new WeekDate(Day(0));
+			var secondWeek = new WeekDate(Day(7));
 
 			_projection.Project(CreateCommit(Day(0), 0), message => { });
 			_projection.Project(CreateCommit(Day(1), 0), message => { });
@@ -100,8 +100,8 @@ namespace Dockson.Tests.Domain.Projections
 			_projection.Project(CreateCommit(Day(8), 0), message => { });
 
 			_view.ShouldSatisfyAllConditions(
-				() => _view.Weekly[weekStart.Date].Median.ShouldBe(TimeSpan.FromHours(24).TotalMinutes),
-				() => _view.Weekly[secondWeek.Date].Median.ShouldBe(TimeSpan.FromHours(24).TotalMinutes)
+				() => _view.Weekly[week].Median.ShouldBe(TimeSpan.FromHours(24).TotalMinutes),
+				() => _view.Weekly[secondWeek].Median.ShouldBe(TimeSpan.FromHours(24).TotalMinutes)
 			);
 		}
 
