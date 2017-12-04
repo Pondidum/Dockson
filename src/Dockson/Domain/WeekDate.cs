@@ -13,8 +13,7 @@ namespace Dockson.Domain
 			_toDate = _fromDate.AddDays(6);
 		}
 
-		public DateTime Start => _fromDate;
-		public DateTime Finish => _toDate;
+		public bool Includes(DateTime timestamp) => timestamp.Date >= _fromDate && timestamp.Date <= _toDate;
 
 		public bool Equals(WeekDate other)
 		{

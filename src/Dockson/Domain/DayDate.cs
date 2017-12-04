@@ -11,7 +11,7 @@ namespace Dockson.Domain
 			_fromDate = fromDate.Date;
 		}
 
-		public DateTime Start => _fromDate;
+		public bool Includes(DateTime timestamp) => _fromDate == timestamp.Date;
 
 		public bool Equals(DayDate other)
 		{

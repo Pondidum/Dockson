@@ -40,7 +40,7 @@ namespace Dockson.Domain.Projections
 			var key = new DayDate(commitTime);
 
 			var deltas = _source
-				.Where(d => d.Timestamp.Date == key.Start && d.ElapsedMinutes > 0)
+				.Where(d => key.Includes( d.Timestamp) && d.ElapsedMinutes > 0)
 				.Select(d => d.ElapsedMinutes)
 				.ToArray();
 
@@ -56,7 +56,7 @@ namespace Dockson.Domain.Projections
 			var week = new WeekDate(commitTime); 
 
 			var deltas = _source
-				.Where(d => d.Timestamp.Date >= week.Start && d.Timestamp.Date <= week.Finish && d.ElapsedMinutes > 0)
+				.Where(d => week.Includes(d.Timestamp) && d.ElapsedMinutes > 0)
 				.Select(d => d.ElapsedMinutes)
 				.ToArray();
 
