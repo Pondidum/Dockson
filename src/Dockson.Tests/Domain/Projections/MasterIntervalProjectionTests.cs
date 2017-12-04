@@ -31,8 +31,8 @@ namespace Dockson.Tests.Domain.Projections
 			_projection.Project(CreateCommit(Today, 0), message => { });
 
 			_view.ShouldSatisfyAllConditions(
-				() => _view.Daily[Today.Date].Median.ShouldBe(0),
-				() => _view.Daily[Today.Date].Deviation.ShouldBe(0)
+				() => _view.Daily[new DayDate(Today)].Median.ShouldBe(0),
+				() => _view.Daily[new DayDate(Today)].Deviation.ShouldBe(0)
 			);
 		}
 
@@ -43,8 +43,8 @@ namespace Dockson.Tests.Domain.Projections
 			_projection.Project(CreateCommit(Today, 1), message => { });
 
 			_view.ShouldSatisfyAllConditions(
-				() => _view.Daily[Today.Date].Median.ShouldBe(60), //1 hour
-				() => _view.Daily[Today.Date].Deviation.ShouldBe(0)
+				() => _view.Daily[new DayDate(Today)].Median.ShouldBe(60), //1 hour
+				() => _view.Daily[new DayDate(Today)].Deviation.ShouldBe(0)
 			);
 		}
 
@@ -58,8 +58,8 @@ namespace Dockson.Tests.Domain.Projections
 			_projection.Project(CreateCommit(Today, 5), message => { });
 
 			_view.ShouldSatisfyAllConditions(
-				() => _view.Daily[Today.Date].Median.ShouldBe(60), //1 hour
-				() => _view.Daily[Today.Date].Deviation.ShouldBe(30) // half hour
+				() => _view.Daily[new DayDate(Today)].Median.ShouldBe(60), //1 hour
+				() => _view.Daily[new DayDate(Today)].Deviation.ShouldBe(30) // half hour
 			);
 		}
 
@@ -76,10 +76,10 @@ namespace Dockson.Tests.Domain.Projections
 			_projection.Project(CreateCommit(Tomorrow, 5), message => { });
 
 			_view.ShouldSatisfyAllConditions(
-				() => _view.Daily[Today.Date].Median.ShouldBe(60), //1 hour
-				() => _view.Daily[Today.Date].Deviation.ShouldBe(30), // half hour
-				() => _view.Daily[Tomorrow.Date].Median.ShouldBe(120), //2 hours
-				() => _view.Daily[Tomorrow.Date].Deviation.ShouldBe(676.165, tolerance: 0.005)
+				() => _view.Daily[new DayDate(Today)].Median.ShouldBe(60), //1 hour
+				() => _view.Daily[new DayDate(Today)].Deviation.ShouldBe(30), // half hour
+				() => _view.Daily[new DayDate(Tomorrow)].Median.ShouldBe(120), //2 hours
+				() => _view.Daily[new DayDate(Tomorrow)].Deviation.ShouldBe(676.165, tolerance: 0.005)
 			);
 		}
 

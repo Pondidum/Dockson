@@ -38,10 +38,10 @@ namespace Dockson.Tests.Domain
 			streamer.Handle(CreateCommit(Tomorrow, 5));
 
 			intervalView.ShouldSatisfyAllConditions(
-				() => intervalView.Daily[Today.Date].Median.ShouldBe(60), //1 hour
-				() => intervalView.Daily[Today.Date].Deviation.ShouldBe(30), // half hour
-				() => intervalView.Daily[Tomorrow.Date].Median.ShouldBe(120), //2 hours
-				() => intervalView.Daily[Tomorrow.Date].Deviation.ShouldBe(676.165, tolerance: 0.005)
+				() => intervalView.Daily[new DayDate(Today)].Median.ShouldBe(60), //1 hour
+				() => intervalView.Daily[new DayDate(Today)].Deviation.ShouldBe(30), // half hour
+				() => intervalView.Daily[new DayDate(Tomorrow)].Median.ShouldBe(120), //2 hours
+				() => intervalView.Daily[new DayDate(Tomorrow)].Deviation.ShouldBe(676.165, tolerance: 0.005)
 			);
 
 			leadTimeView.ShouldSatisfyAllConditions(

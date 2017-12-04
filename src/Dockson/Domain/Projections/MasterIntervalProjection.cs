@@ -37,9 +37,10 @@ namespace Dockson.Domain.Projections
 
 		private void UpdateDailySummary(DateTime commitTime)
 		{
-			var key = commitTime.Date;
+			var key = new DayDate(commitTime);
+
 			var deltas = _source
-				.Where(d => d.Timestamp.Date == key && d.ElapsedMinutes > 0)
+				.Where(d => d.Timestamp.Date == key.Start && d.ElapsedMinutes > 0)
 				.Select(d => d.ElapsedMinutes)
 				.ToArray();
 

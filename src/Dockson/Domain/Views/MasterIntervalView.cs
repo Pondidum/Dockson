@@ -5,12 +5,12 @@ namespace Dockson.Domain.Views
 {
 	public class MasterIntervalView
 	{
-		public Dictionary<DateTime, Summary> Daily { get; set; }
+		public Dictionary<DayDate, Summary> Daily { get; set; }
 		public Dictionary<WeekDate, Summary> Weekly { get; set; }
 
 		public MasterIntervalView()
 		{
-			Daily = new Dictionary<DateTime, Summary>();
+			Daily = new Dictionary<DayDate, Summary>();
 			Weekly = new Dictionary<WeekDate, Summary>();
 		}
 	}
