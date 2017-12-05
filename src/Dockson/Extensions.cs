@@ -6,6 +6,8 @@ namespace Dockson
 {
 	public static class Extensions
 	{
+		public static bool EqualsIgnore(this string left, string right) => string.Equals(left, right, StringComparison.OrdinalIgnoreCase);
+
 		public static DateTime PreviousMonday(this DateTime self)
 		{
 			var daysToRemove = ((int) self.DayOfWeek  - (int) DayOfWeek.Monday+ 7) % 7;

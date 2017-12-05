@@ -21,46 +21,58 @@ namespace Dockson.Domain.Projections
 		{
 			var commitTime = message.TimeStamp;
 
-			var last = _source.LastOrDefault();
-
-			_source.Add(new CommitDelta
+			foreach (var group in message.Groups)
 			{
-				Timestamp = commitTime,
-				ElapsedMinutes = last != null
-					? (commitTime - last.Timestamp).TotalMinutes
-					: 0
-			});
+				var last = _source.LastOrDefault(commit => commit.Group.EqualsIgnore(group));
 
-			UpdateDailySummary(commitTime);
-			UpdateWeeklySummary(commitTime);
+				_source.Add(new CommitDelta
+				{
+					Timestamp = commitTime,
+					Group = group,
+					ElapsedMinutes = last != null
+						? (commitTime - last.Timestamp).TotalMinutes
+						: 0
+				});
+
+				UpdateDailySummary(commitTime, group);
+				UpdateWeeklySummary(commitTime, group);
+			}
 		}
 
-		private void UpdateDailySummary(DateTime commitTime)
+		private void UpdateDailySummary(DateTime commitTime, string group)
 		{
 			var key = new DayDate(commitTime);
 
 			var deltas = _source
-				.Where(d => key.Includes( d.Timestamp) && d.ElapsedMinutes > 0)
+				.Where(d => d.Group.EqualsIgnore(group))
+				.Where(d => key.Includes(d.Timestamp) && d.ElapsedMinutes > 0)
 				.Select(d => d.ElapsedMinutes)
 				.ToArray();
 
-			_view.Daily[key] = new Summary
+			if (_view.ContainsKey(group) == false)
+				_view.Add(group, new GroupSummary());
+
+			_view[group].Daily[key] = new Summary
 			{
 				Median = deltas.Any() ? deltas.Median() : 0,
 				Deviation = deltas.Any() ? deltas.StandardDeviation() : 0
 			};
 		}
 
-		private void UpdateWeeklySummary(DateTime commitTime)
+		private void UpdateWeeklySummary(DateTime commitTime, string group)
 		{
-			var week = new WeekDate(commitTime); 
+			var week = new WeekDate(commitTime);
 
 			var deltas = _source
+				.Where(d => d.Group.EqualsIgnore(group))
 				.Where(d => week.Includes(d.Timestamp) && d.ElapsedMinutes > 0)
 				.Select(d => d.ElapsedMinutes)
 				.ToArray();
 
-			_view.Weekly[week] = new Summary
+			if (_view.ContainsKey(group) == false)
+				_view.Add(group, new GroupSummary());
+
+			_view[group].Weekly[week] = new Summary
 			{
 				Median = deltas.Any() ? deltas.Median() : 0,
 				Deviation = deltas.Any() ? deltas.StandardDeviation() : 0
@@ -71,6 +83,7 @@ namespace Dockson.Domain.Projections
 		{
 			public DateTime Timestamp;
 			public double ElapsedMinutes;
+			public string Group;
 		}
 	}
 }

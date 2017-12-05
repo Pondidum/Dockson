@@ -15,5 +15,11 @@ namespace Dockson.Domain
 		
 		public HashSet<string> Groups { get; set; }
 		public Dictionary<string, string> Tags { get; set; }
+
+		public Notification()
+		{
+			Groups = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+			Tags = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+		}
 	}
 }

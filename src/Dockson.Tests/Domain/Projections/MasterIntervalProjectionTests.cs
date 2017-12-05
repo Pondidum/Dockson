@@ -11,6 +11,8 @@ namespace Dockson.Tests.Domain.Projections
 {
 	public class MasterIntervalProjectionTests
 	{
+		private const string Group = "wat_service";
+
 		private static readonly DateTime LastWeek = new DateTime(2017, 11, 23, 11, 47, 00);
 		private static readonly DateTime Yesterday = new DateTime(2017, 11, 29, 11, 47, 00);
 		private static readonly DateTime Today = new DateTime(2017, 11, 30, 11, 47, 00);
@@ -31,8 +33,8 @@ namespace Dockson.Tests.Domain.Projections
 			_projection.Project(CreateCommit(Today, 0), message => { });
 
 			_view.ShouldSatisfyAllConditions(
-				() => _view.Daily[new DayDate(Today)].Median.ShouldBe(0),
-				() => _view.Daily[new DayDate(Today)].Deviation.ShouldBe(0)
+				() => _view[Group].Daily[new DayDate(Today)].Median.ShouldBe(0),
+				() => _view[Group].Daily[new DayDate(Today)].Deviation.ShouldBe(0)
 			);
 		}
 
@@ -43,8 +45,8 @@ namespace Dockson.Tests.Domain.Projections
 			_projection.Project(CreateCommit(Today, 1), message => { });
 
 			_view.ShouldSatisfyAllConditions(
-				() => _view.Daily[new DayDate(Today)].Median.ShouldBe(60), //1 hour
-				() => _view.Daily[new DayDate(Today)].Deviation.ShouldBe(0)
+				() => _view[Group].Daily[new DayDate(Today)].Median.ShouldBe(60), //1 hour
+				() => _view[Group].Daily[new DayDate(Today)].Deviation.ShouldBe(0)
 			);
 		}
 
@@ -58,8 +60,8 @@ namespace Dockson.Tests.Domain.Projections
 			_projection.Project(CreateCommit(Today, 5), message => { });
 
 			_view.ShouldSatisfyAllConditions(
-				() => _view.Daily[new DayDate(Today)].Median.ShouldBe(60), //1 hour
-				() => _view.Daily[new DayDate(Today)].Deviation.ShouldBe(30) // half hour
+				() => _view[Group].Daily[new DayDate(Today)].Median.ShouldBe(60), //1 hour
+				() => _view[Group].Daily[new DayDate(Today)].Deviation.ShouldBe(30) // half hour
 			);
 		}
 
@@ -76,10 +78,10 @@ namespace Dockson.Tests.Domain.Projections
 			_projection.Project(CreateCommit(Tomorrow, 5), message => { });
 
 			_view.ShouldSatisfyAllConditions(
-				() => _view.Daily[new DayDate(Today)].Median.ShouldBe(60), //1 hour
-				() => _view.Daily[new DayDate(Today)].Deviation.ShouldBe(30), // half hour
-				() => _view.Daily[new DayDate(Tomorrow)].Median.ShouldBe(120), //2 hours
-				() => _view.Daily[new DayDate(Tomorrow)].Deviation.ShouldBe(676.165, tolerance: 0.005)
+				() => _view[Group].Daily[new DayDate(Today)].Median.ShouldBe(60), //1 hour
+				() => _view[Group].Daily[new DayDate(Today)].Deviation.ShouldBe(30), // half hour
+				() => _view[Group].Daily[new DayDate(Tomorrow)].Median.ShouldBe(120), //2 hours
+				() => _view[Group].Daily[new DayDate(Tomorrow)].Deviation.ShouldBe(676.165, tolerance: 0.005)
 			);
 		}
 
@@ -100,8 +102,8 @@ namespace Dockson.Tests.Domain.Projections
 			_projection.Project(CreateCommit(Day(8), 0), message => { });
 
 			_view.ShouldSatisfyAllConditions(
-				() => _view.Weekly[week].Median.ShouldBe(TimeSpan.FromHours(24).TotalMinutes),
-				() => _view.Weekly[secondWeek].Median.ShouldBe(TimeSpan.FromHours(24).TotalMinutes)
+				() => _view[Group].Weekly[week].Median.ShouldBe(TimeSpan.FromHours(24).TotalMinutes),
+				() => _view[Group].Weekly[secondWeek].Median.ShouldBe(TimeSpan.FromHours(24).TotalMinutes)
 			);
 		}
 
@@ -119,11 +121,12 @@ namespace Dockson.Tests.Domain.Projections
 			Source = "github",
 			Name = "SomeService",
 			Version = "1.0.0",
-			Tags = new Dictionary<string, string>
+			Tags =
 			{
 				{ "commit", Guid.NewGuid().ToString() },
 				{ "branch", branch }
-			}
+			},
+			Groups = { Group }
 		};
 	}
 }

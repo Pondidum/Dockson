@@ -11,6 +11,7 @@ namespace Dockson.Tests.Domain
 {
 	public class EventStreamerTests
 	{
+		private const string Group = "wat_service";
 		private static readonly DateTime Yesterday = new DateTime(2017, 11, 29, 11, 47, 00);
 		private static readonly DateTime Today = new DateTime(2017, 11, 30, 11, 47, 00);
 		private static readonly DateTime Tomorrow = new DateTime(2017, 12, 1, 11, 47, 00);
@@ -38,10 +39,10 @@ namespace Dockson.Tests.Domain
 			streamer.Handle(CreateCommit(Tomorrow, 5));
 
 			intervalView.ShouldSatisfyAllConditions(
-				() => intervalView.Daily[new DayDate(Today)].Median.ShouldBe(60), //1 hour
-				() => intervalView.Daily[new DayDate(Today)].Deviation.ShouldBe(30), // half hour
-				() => intervalView.Daily[new DayDate(Tomorrow)].Median.ShouldBe(120), //2 hours
-				() => intervalView.Daily[new DayDate(Tomorrow)].Deviation.ShouldBe(676.165, tolerance: 0.005)
+				() => intervalView[Group].Daily[new DayDate(Today)].Median.ShouldBe(60), //1 hour
+				() => intervalView[Group].Daily[new DayDate(Today)].Deviation.ShouldBe(30), // half hour
+				() => intervalView[Group].Daily[new DayDate(Tomorrow)].Median.ShouldBe(120), //2 hours
+				() => intervalView[Group].Daily[new DayDate(Tomorrow)].Deviation.ShouldBe(676.165, tolerance: 0.005)
 			);
 
 			leadTimeView.ShouldSatisfyAllConditions(
@@ -77,7 +78,8 @@ namespace Dockson.Tests.Domain
 			{
 				{ "commit", Guid.NewGuid().ToString() },
 				{ "branch", branch }
-			}
+			},
+			Groups = new HashSet<string> { Group }
 		};
 	}
 
