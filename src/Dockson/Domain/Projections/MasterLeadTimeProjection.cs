@@ -27,9 +27,15 @@ namespace Dockson.Domain.Projections
 
 			_source[key].Add(leadTime);
 
-			_view.StandardDeviations[key] = _source[key].Select(spans => spans.TotalMinutes).StandardDeviation();
-			_view.Medians[key] = _source[key].Select(spans => spans.TotalMinutes).Median();
-			_view.Days.Add(key);
+			var deltas = _source[key]
+				.Select(spans => spans.TotalMinutes)
+				.ToArray();
+
+			_view.Daily[key] = new Summary
+			{
+				Median = deltas.Any() ? deltas.Median() : 0,
+				Deviation = deltas.Any() ? deltas.StandardDeviation() : 0
+			};
 		}
 	}
 }

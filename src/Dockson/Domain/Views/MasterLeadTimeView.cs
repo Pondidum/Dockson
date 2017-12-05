@@ -5,15 +5,11 @@ namespace Dockson.Domain.Views
 {
 	public class MasterLeadTimeView
 	{
-		public HashSet<DayDate> Days { get; set; }
-		public Dictionary<DayDate, double> Medians { get; set; }
-		public Dictionary<DayDate, double> StandardDeviations { get; set; }
+		public Dictionary<DayDate, Summary> Daily { get; set; }
 
 		public MasterLeadTimeView()
 		{
-			Days = new HashSet<DayDate>();
-			Medians = new Dictionary<DayDate, double>();
-			StandardDeviations = new Dictionary<DayDate, double>();
+			Daily = new Dictionary<DayDate, Summary>();
 		}
 	}
 }

@@ -29,9 +29,8 @@ namespace Dockson.Tests.Domain.Projections
 			var day = new DayDate(_now);
 
 			_view.ShouldSatisfyAllConditions(
-				() => _view.Days.ShouldBe(new[] { day }),
-				() => _view.Medians.ShouldContainKeyAndValue(day, TimeSpan.FromHours(1).TotalMinutes),
-				() => _view.StandardDeviations.ShouldContainKeyAndValue(day, 0)
+				() => _view.Daily[day].Median.ShouldBe(TimeSpan.FromHours(1).TotalMinutes),
+				() => _view.Daily[day].Deviation.ShouldBe(0)
 			);
 		}
 
