@@ -2,9 +2,9 @@
 
 namespace Dockson.Domain.Transformers.Build
 {
-	public class BuildProjection
+	public class BuildTransformer : ITransformer
 	{
-		public void Project(Notification notification, Action<object> dispatch)
+		public void Transform(Notification notification, Action<object> dispatch)
 		{
 			if (notification.Type != Stages.Build)
 				return;

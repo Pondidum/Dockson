@@ -24,7 +24,7 @@ namespace Dockson.Tests.Domain
 			var leadTimeView = new MasterLeadTimeView();
 			var projections = new List<Action<object, Action<object>>>();
 
-			projections.Add(Wrap<Notification>(new MasterCommitsProjection().Project));
+			projections.Add(Wrap<Notification>(new MasterCommitsTransformer().Transform));
 			projections.Add(Wrap<MasterCommit>(new MasterIntervalProjection(intervalView).Project));
 			projections.Add(Wrap<MasterCommit>(new MasterLeadTimeProjection(leadTimeView).Project));
 

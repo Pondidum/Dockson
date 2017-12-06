@@ -3,18 +3,18 @@ using System.Collections.Generic;
 
 namespace Dockson.Domain.Transformers.MasterCommit
 {
-	public class MasterCommitsProjection
+	public class MasterCommitsTransformer : ITransformer
 	{
 		private readonly Dictionary<string, Notification> _branchCommits;
 
-		public MasterCommitsProjection()
+		public MasterCommitsTransformer()
 		{
 			_branchCommits = new Dictionary<string, Notification>();
 		}
 
 		private static bool IsMaster(string branch) => string.Equals(branch, "Master", StringComparison.OrdinalIgnoreCase);
 
-		public void Project(Notification notification, Action<object> dispatch)
+		public void Transform(Notification notification, Action<object> dispatch)
 		{
 			if (notification.Type != Stages.Commit)
 				return;

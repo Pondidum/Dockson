@@ -7,14 +7,14 @@ using Xunit;
 
 namespace Dockson.Tests.Domain.Transformers.MasterCommit
 {
-	public class MasterCommitsProjectionTests
+	public class MasterCommitsTransformerTests
 	{
-		private readonly MasterCommitsProjection _projection;
+		private readonly MasterCommitsTransformer _transformer;
 		private readonly DateTime _now;
 
-		public MasterCommitsProjectionTests()
+		public MasterCommitsTransformerTests()
 		{
-			_projection = new MasterCommitsProjection();
+			_transformer = new MasterCommitsTransformer();
 			_now = DateTime.UtcNow;
 		}
 
@@ -23,7 +23,7 @@ namespace Dockson.Tests.Domain.Transformers.MasterCommit
 		{
 			var commits = new List<object>();
 
-			_projection.Project(Commit(0, "feature-1", "commit-sha"), commits.Add);
+			_transformer.Transform(Commit(0, "feature-1", "commit-sha"), commits.Add);
 			commits.ShouldBeEmpty();
 		}
 
@@ -32,8 +32,8 @@ namespace Dockson.Tests.Domain.Transformers.MasterCommit
 		{
 			var commits = new List<object>();
 
-			_projection.Project(Commit(0, "feature-1", "commit-sha"), commits.Add);
-			_projection.Project(Commit(10, "master", "commit-sha"), commits.Add);
+			_transformer.Transform(Commit(0, "feature-1", "commit-sha"), commits.Add);
+			_transformer.Transform(Commit(10, "master", "commit-sha"), commits.Add);
 
 			commits.ShouldHaveSingleItem();
 		}
@@ -49,8 +49,8 @@ namespace Dockson.Tests.Domain.Transformers.MasterCommit
 			featureCommit.Type = Stages.Build;
 			masterCommit.Type = Stages.Build;
 
-			_projection.Project(featureCommit, commits.Add);
-			_projection.Project(masterCommit, commits.Add);
+			_transformer.Transform(featureCommit, commits.Add);
+			_transformer.Transform(masterCommit, commits.Add);
 
 			commits.ShouldBeEmpty();
 		}

@@ -7,15 +7,15 @@ using Xunit;
 
 namespace Dockson.Tests.Domain.Transformers.Build
 {
-	public class BuildProjectionTests
+	public class BuildTransformerTests
 	{
-		private readonly BuildProjection _projection;
+		private readonly BuildTransformer _transformer;
 		private readonly List<object> _events;
 
-		public BuildProjectionTests()
+		public BuildTransformerTests()
 		{
 			_events = new List<object>();
-			_projection = new BuildProjection();
+			_transformer = new BuildTransformer();
 		}
 
 		[Fact]
@@ -24,7 +24,7 @@ namespace Dockson.Tests.Domain.Transformers.Build
 			var notification = Build("success");
 			notification.Type = Stages.Commit;
 
-			_projection.Project(notification, _events.Add);
+			_transformer.Transform(notification, _events.Add);
 
 			_events.ShouldBeEmpty();
 		}
@@ -34,7 +34,7 @@ namespace Dockson.Tests.Domain.Transformers.Build
 		{
 			var notification = Build("success");
 
-			_projection.Project(notification, _events.Add);
+			_transformer.Transform(notification, _events.Add);
 
 			_events
 				.ShouldHaveSingleItem()
@@ -46,7 +46,7 @@ namespace Dockson.Tests.Domain.Transformers.Build
 		{
 			var notification = Build("failure");
 
-			_projection.Project(notification, _events.Add);
+			_transformer.Transform(notification, _events.Add);
 
 			_events
 				.ShouldHaveSingleItem()
@@ -58,7 +58,7 @@ namespace Dockson.Tests.Domain.Transformers.Build
 		{
 			var notification = Build("wfwewg");
 
-			_projection.Project(notification, _events.Add);
+			_transformer.Transform(notification, _events.Add);
 
 			_events
 				.ShouldHaveSingleItem()
