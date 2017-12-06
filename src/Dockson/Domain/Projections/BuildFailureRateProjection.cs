@@ -8,70 +8,53 @@ namespace Dockson.Domain.Projections
 	public class BuildFailureRateProjection
 	{
 		private readonly BuildFailureRateView _view;
-		private readonly Dictionary<string, Dictionary<DayDate, Counts>> _trackers;
+		private readonly Cache<string, Cache<DayDate, Counts>> _trackers;
 
 		public BuildFailureRateProjection(BuildFailureRateView view)
 		{
 			_view = view;
-			_trackers = new Dictionary<string, Dictionary<DayDate, Counts>>(StringComparer.OrdinalIgnoreCase);
+			_trackers = new Cache<string, Cache<DayDate, Counts>>(
+				StringComparer.OrdinalIgnoreCase,
+				key => new Cache<DayDate, Counts>(x => new Counts())
+			);
 		}
 
 		public void Project(BuildSucceeded message, Action<object> dispatch)
 		{
-			EnsureGroups(message.Groups);
-
-			var key = new DayDate(message.TimeStamp);
-
-			foreach (var @group in message.Groups)
-			{
-				EnsureTrackers(@group, key);
-
-				var counts = _trackers[group][key];
-				counts.Successes++;
-
-				UpdateView(@group, key, counts);
-			}
+			Project(message.TimeStamp, message.Groups, counts => counts.Successes++);
 		}
 
 		public void Project(BuildFailed message, Action<object> dispatch)
 		{
-			EnsureGroups(message.Groups);
+			Project(message.TimeStamp, message.Groups, counts => counts.Failures++);
+		}
 
-			var key = new DayDate(message.TimeStamp);
+		private void Project(DateTime timestamp, IEnumerable<string> groups, Action<Counts> action)
+		{
+			var key = new DayDate(timestamp);
 
-			foreach (var @group in message.Groups)
+			foreach (var @group in groups)
 			{
-				EnsureTrackers(@group, key);
-
 				var counts = _trackers[group][key];
-				counts.Failures++;
+				action(counts);
 
 				UpdateView(@group, key, counts);
 			}
 		}
 
-		private void EnsureGroups(IEnumerable<string> groups) => groups
-			.Each(group => _view.TryAdd(@group, new BuildFailureRateGroupSummary()));
-
-		private void EnsureTrackers(string group, DayDate key)
-		{
-			_trackers.TryAdd(group, new Dictionary<DayDate, Counts>());
-			_trackers[group].TryAdd(key, new Counts());
-		}
-
 		private void UpdateView(string @group, DayDate key, Counts counts)
 		{
-			var failureRate = ((double)counts.Failures / (double)counts.Total) * 100;
-
+			_view.TryAdd(@group, new BuildFailureRateGroupSummary());
 			_view[@group].Daily.TryAdd(key, new BuildFailureRateSummary());
-			_view[@group].Daily[key].FailureRate = failureRate;
+
+			_view[@group].Daily[key].FailureRate = (counts.Failures / counts.Total) * 100;
 		}
 
 		private class Counts
 		{
 			public int Failures { get; set; }
 			public int Successes { get; set; }
-			public int Total => Successes + Failures;
+			public double Total => Successes + Failures;
 		}
 	}
 }
