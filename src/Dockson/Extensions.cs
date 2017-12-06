@@ -6,6 +6,12 @@ namespace Dockson
 {
 	public static class Extensions
 	{
+		public static void Each<T>(this IEnumerable<T> self, Action<T> action)
+		{
+			foreach (var item in self)
+				action(item);
+		}
+
 		public static bool EqualsIgnore(this string left, string right) => string.Equals(left, right, StringComparison.OrdinalIgnoreCase);
 
 		public static DateTime PreviousMonday(this DateTime self)
