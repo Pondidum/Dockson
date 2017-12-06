@@ -62,6 +62,15 @@ namespace Dockson.Tests.Domain
 					projection(@event, dispatch);
 			};
 		}
+		
+		private Action<object, Action<object>> Wrap<TMessage>(Action<TMessage> projection) where TMessage : class
+		{
+			return (message, dispatch) =>
+			{
+				if (message is TMessage @event)
+					projection(@event);
+			};
+		}
 
 		private MasterCommit CreateCommit(DateTime day, int hoursOffset) => new MasterCommit(
 			CreateNotification(day.AddHours(hoursOffset), "master"),

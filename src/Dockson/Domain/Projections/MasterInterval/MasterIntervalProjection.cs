@@ -6,7 +6,7 @@ using Dockson.Domain.Views;
 
 namespace Dockson.Domain.Projections.MasterInterval
 {
-	public class MasterIntervalProjection
+	public class MasterIntervalProjection : IProjection<MasterCommit>
 	{
 		private readonly MasterIntervalView _view;
 		private readonly List<CommitDelta> _source;
@@ -17,7 +17,7 @@ namespace Dockson.Domain.Projections.MasterInterval
 			_source = new List<CommitDelta>();
 		}
 
-		public void Project(MasterCommit message, Action<object> dispatch)
+		public void Project(MasterCommit message)
 		{
 			var commitTime = message.TimeStamp;
 

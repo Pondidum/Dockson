@@ -5,7 +5,7 @@ using Dockson.Domain.Views;
 
 namespace Dockson.Domain.Projections.BuildFailureRate
 {
-	public class BuildFailureRateProjection
+	public class BuildFailureRateProjection : IProjection<BuildSucceeded>, IProjection<BuildFailed>
 	{
 		private readonly BuildFailureRateView _view;
 		private readonly Cache<string, Cache<DayDate, Counts>> _trackers;
@@ -19,12 +19,12 @@ namespace Dockson.Domain.Projections.BuildFailureRate
 			);
 		}
 
-		public void Project(BuildSucceeded message, Action<object> dispatch)
+		public void Project(BuildSucceeded message)
 		{
 			Project(message.TimeStamp, message.Groups, counts => counts.Successes++);
 		}
 
-		public void Project(BuildFailed message, Action<object> dispatch)
+		public void Project(BuildFailed message)
 		{
 			Project(message.TimeStamp, message.Groups, counts => counts.Failures++);
 		}

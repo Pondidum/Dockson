@@ -17,13 +17,11 @@ namespace Dockson.Tests.Domain.Projections.BuildFailureRate
 
 		private readonly BuildFailureRateView _view;
 		private readonly BuildFailureRateProjection _projection;
-		private readonly List<object> _events;
 
 		public BuildFailureRateProjectionTests()
 		{
 			_view = new BuildFailureRateView();
 			_projection = new BuildFailureRateProjection(_view);
-			_events = new List<object>();
 
 			var now = DateTime.Now;
 			_today = now;
@@ -33,7 +31,7 @@ namespace Dockson.Tests.Domain.Projections.BuildFailureRate
 		[Fact]
 		public void When_a_build_is_successful()
 		{
-			_projection.Project(Success(), _events.Add);
+			_projection.Project(Success());
 
 			_view[Group]
 				.Daily[new DayDate(_today)]
@@ -44,7 +42,7 @@ namespace Dockson.Tests.Domain.Projections.BuildFailureRate
 		[Fact]
 		public void When_a_build_is_unsuccessful()
 		{
-			_projection.Project(Failure(), _events.Add);
+			_projection.Project(Failure());
 
 			_view[Group]
 				.Daily[new DayDate(_today)]
@@ -56,10 +54,10 @@ namespace Dockson.Tests.Domain.Projections.BuildFailureRate
 		[Fact]
 		public void When_multiple_builds_are_a_mix()
 		{
-			_projection.Project(Failure(), _events.Add);
-			_projection.Project(Success(), _events.Add);
-			_projection.Project(Success(), _events.Add);
-			_projection.Project(Failure(), _events.Add);
+			_projection.Project(Failure());
+			_projection.Project(Success());
+			_projection.Project(Success());
+			_projection.Project(Failure());
 
 			_view[Group]
 				.Daily[new DayDate(_today)]
@@ -70,12 +68,12 @@ namespace Dockson.Tests.Domain.Projections.BuildFailureRate
 		[Fact]
 		public void When_multiple_builds_are_a_mix_over_several_days()
 		{
-			_projection.Project(Failure(_yesterday), _events.Add);
-			_projection.Project(Success(_yesterday), _events.Add);
-			_projection.Project(Success(_yesterday), _events.Add);
-			_projection.Project(Failure(_today), _events.Add);
-			_projection.Project(Success(_today), _events.Add);
-			_projection.Project(Failure(_today), _events.Add);
+			_projection.Project(Failure(_yesterday));
+			_projection.Project(Success(_yesterday));
+			_projection.Project(Success(_yesterday));
+			_projection.Project(Failure(_today));
+			_projection.Project(Success(_today));
+			_projection.Project(Failure(_today));
 
 			var group = _view[Group];
 

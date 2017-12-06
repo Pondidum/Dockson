@@ -6,7 +6,7 @@ using Dockson.Domain.Views;
 
 namespace Dockson.Domain.Projections.MasterLeadTime
 {
-	public class MasterLeadTimeProjection
+	public class MasterLeadTimeProjection : IProjection<MasterCommit>
 	{
 		private readonly MasterLeadTimeView _view;
 		private readonly Cache<string, Cache<DayDate, List<TimeSpan>>> _source;
@@ -19,7 +19,7 @@ namespace Dockson.Domain.Projections.MasterLeadTime
 				key => new Cache<DayDate, List<TimeSpan>>(x => new List<TimeSpan>()));
 		}
 
-		public void Project(MasterCommit message, Action<object> dispatch)
+		public void Project(MasterCommit message)
 		{
 			var key = new DayDate(message.TimeStamp);
 			var leadTime = message.LeadTime;

@@ -25,7 +25,7 @@ namespace Dockson.Tests.Domain.Projections.MasterLeadTime
 		[Fact]
 		public void When_projecting_one_commit()
 		{
-			_projection.Project(CreateCommit(TimeSpan.Zero, TimeSpan.FromHours(1)), message => { });
+			_projection.Project(CreateCommit(TimeSpan.Zero, TimeSpan.FromHours(1)));
 			var day = new DayDate(_now);
 
 			_view.ShouldSatisfyAllConditions(
@@ -37,8 +37,8 @@ namespace Dockson.Tests.Domain.Projections.MasterLeadTime
 		[Fact]
 		public void When_projecting_two_commits()
 		{
-			_projection.Project(CreateCommit(TimeSpan.Zero, TimeSpan.FromHours(1)), message => { });
-			_projection.Project(CreateCommit(TimeSpan.FromHours(4), TimeSpan.FromHours(5)), message => { });
+			_projection.Project(CreateCommit(TimeSpan.Zero, TimeSpan.FromHours(1)));
+			_projection.Project(CreateCommit(TimeSpan.FromHours(4), TimeSpan.FromHours(5)));
 		}
 
 		private MasterCommit CreateCommit(TimeSpan featureTime, TimeSpan masterTime) => new MasterCommit(
