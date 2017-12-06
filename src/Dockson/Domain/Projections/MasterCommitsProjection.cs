@@ -17,6 +17,9 @@ namespace Dockson.Domain.Projections
 
 		public void Project(Notification notification, Action<object> dispatch)
 		{
+			if (notification.Type != Stages.Commit)
+				return;
+
 			notification.Tags.TryGetValue("branch", out var branch);
 			notification.Tags.TryGetValue("commit", out var commit);
 

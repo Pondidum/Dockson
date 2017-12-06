@@ -38,6 +38,23 @@ namespace Dockson.Tests.Domain.Projections
 			commits.ShouldHaveSingleItem();
 		}
 
+		[Fact]
+		public void When_the_notification_is_not_a_commit()
+		{
+			var commits = new List<object>();
+
+			var featureCommit = Commit(0, "feature-1", "commit-sha");
+			var masterCommit = Commit(10, "master", "commit-sha");
+
+			featureCommit.Type = Stages.Build;
+			masterCommit.Type = Stages.Build;
+
+			_projection.Project(featureCommit, commits.Add);
+			_projection.Project(masterCommit, commits.Add);
+
+			commits.ShouldBeEmpty();
+		}
+
 		private Notification Commit(int offset, string branch, string hash) => new Notification
 		{
 			Type = Stages.Commit,
