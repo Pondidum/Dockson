@@ -10,12 +10,10 @@ namespace Dockson.Domain.Views
 	public class GroupSummary
 	{
 		public Dictionary<DayDate, Summary> Daily { get; set; }
-		public Dictionary<WeekDate, Summary> Weekly { get; set; }
 
 		public GroupSummary()
 		{
 			Daily = new Dictionary<DayDate, Summary>();
-			Weekly = new Dictionary<WeekDate, Summary>();
 		}
 	}
 }

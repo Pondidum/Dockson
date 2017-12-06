@@ -35,7 +35,6 @@ namespace Dockson.Domain.Projections
 				});
 
 				UpdateDailySummary(commitTime, group);
-				UpdateWeeklySummary(commitTime, group);
 			}
 		}
 
@@ -53,26 +52,6 @@ namespace Dockson.Domain.Projections
 				_view.Add(group, new GroupSummary());
 
 			_view[group].Daily[key] = new Summary
-			{
-				Median = deltas.Any() ? deltas.Median() : 0,
-				Deviation = deltas.Any() ? deltas.StandardDeviation() : 0
-			};
-		}
-
-		private void UpdateWeeklySummary(DateTime commitTime, string group)
-		{
-			var week = new WeekDate(commitTime);
-
-			var deltas = _source
-				.Where(d => d.Group.EqualsIgnore(group))
-				.Where(d => week.Includes(d.Timestamp) && d.ElapsedMinutes > 0)
-				.Select(d => d.ElapsedMinutes)
-				.ToArray();
-
-			if (_view.ContainsKey(group) == false)
-				_view.Add(group, new GroupSummary());
-
-			_view[group].Weekly[week] = new Summary
 			{
 				Median = deltas.Any() ? deltas.Median() : 0,
 				Deviation = deltas.Any() ? deltas.StandardDeviation() : 0

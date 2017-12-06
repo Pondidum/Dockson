@@ -85,28 +85,6 @@ namespace Dockson.Tests.Domain.Projections
 			);
 		}
 
-		[Fact]
-		public void When_projecting_several_commits_over_two_weeks()
-		{
-			var week = new WeekDate(Day(0));
-			var secondWeek = new WeekDate(Day(7));
-
-			_projection.Project(CreateCommit(Day(0), 0), message => { });
-			_projection.Project(CreateCommit(Day(1), 0), message => { });
-			_projection.Project(CreateCommit(Day(2), 0), message => { });
-			_projection.Project(CreateCommit(Day(3), 0), message => { });
-			_projection.Project(CreateCommit(Day(4), 0), message => { });
-			_projection.Project(CreateCommit(Day(5), 0), message => { });
-			_projection.Project(CreateCommit(Day(6), 0), message => { });
-			_projection.Project(CreateCommit(Day(7), 0), message => { });
-			_projection.Project(CreateCommit(Day(8), 0), message => { });
-
-			_view.ShouldSatisfyAllConditions(
-				() => _view[Group].Weekly[week].Median.ShouldBe(TimeSpan.FromHours(24).TotalMinutes),
-				() => _view[Group].Weekly[secondWeek].Median.ShouldBe(TimeSpan.FromHours(24).TotalMinutes)
-			);
-		}
-
 		private DateTime Day(int day) => Today.PreviousMonday().AddDays(day);
 
 		private MasterCommit CreateCommit(DateTime day, int hoursOffset) => new MasterCommit(
