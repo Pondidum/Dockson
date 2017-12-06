@@ -1,16 +1,16 @@
 ﻿using System;
-using System.Collections.Generic;
 using Dockson.Domain;
-using Dockson.Domain.Events;
-using Dockson.Domain.Projections;
-using Dockson.Domain.Views;
+using Dockson.Domain.Projections.MasterLeadTime;
+using Dockson.Domain.Transformers.MasterCommit;
 using Shouldly;
 using Xunit;
 
-namespace Dockson.Tests.Domain.Projections
+namespace Dockson.Tests.Domain.Projections.MasterLeadTime
 {
 	public class MasterLeadTimeProjectionTests
 	{
+		private const string Group = "omg-service";
+
 		private readonly MasterLeadTimeView _view;
 		private readonly MasterLeadTimeProjection _projection;
 		private readonly DateTime _now;
@@ -29,8 +29,8 @@ namespace Dockson.Tests.Domain.Projections
 			var day = new DayDate(_now);
 
 			_view.ShouldSatisfyAllConditions(
-				() => _view.Daily[day].Median.ShouldBe(TimeSpan.FromHours(1).TotalMinutes),
-				() => _view.Daily[day].Deviation.ShouldBe(0)
+				() => _view[Group].Daily[day].Median.ShouldBe(TimeSpan.FromHours(1).TotalMinutes),
+				() => _view[Group].Daily[day].Deviation.ShouldBe(0)
 			);
 		}
 
@@ -53,7 +53,8 @@ namespace Dockson.Tests.Domain.Projections
 			Source = "github",
 			Name = "SomeService",
 			Version = "1.0.0",
-			Tags = new Dictionary<string, string>
+			Groups = { Group },
+			Tags =
 			{
 				{ "commit", Guid.NewGuid().ToString() },
 				{ "branch", branch }

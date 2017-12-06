@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using Dockson.Domain;
-using Dockson.Domain.Events;
-using Dockson.Domain.Projections;
+using Dockson.Domain.Transformers.Build;
 using Shouldly;
 using Xunit;
 
-namespace Dockson.Tests.Domain.Projections
+namespace Dockson.Tests.Domain.Transformers.Build
 {
 	public class BuildProjectionTests
 	{

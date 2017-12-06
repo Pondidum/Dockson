@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using Dockson.Domain;
-using Dockson.Domain.Events;
-using Dockson.Domain.Projections;
+using Dockson.Domain.Projections.MasterInterval;
+using Dockson.Domain.Projections.MasterLeadTime;
+using Dockson.Domain.Transformers.MasterCommit;
 using Dockson.Domain.Views;
 using Shouldly;
 using Xunit;
@@ -46,10 +47,10 @@ namespace Dockson.Tests.Domain
 			);
 
 			leadTimeView.ShouldSatisfyAllConditions(
-				() => leadTimeView.Daily[new DayDate(Today)].Median.ShouldBe(5),
-				() => leadTimeView.Daily[new DayDate(Today)].Deviation.ShouldBe(0),
-				() => leadTimeView.Daily[new DayDate(Tomorrow)].Median.ShouldBe(5),
-				() => leadTimeView.Daily[new DayDate(Tomorrow)].Deviation.ShouldBe(0)
+				() => leadTimeView[Group].Daily[new DayDate(Today)].Median.ShouldBe(5),
+				() => leadTimeView[Group].Daily[new DayDate(Today)].Deviation.ShouldBe(0),
+				() => leadTimeView[Group].Daily[new DayDate(Tomorrow)].Median.ShouldBe(5),
+				() => leadTimeView[Group].Daily[new DayDate(Tomorrow)].Deviation.ShouldBe(0)
 			);
 		}
 

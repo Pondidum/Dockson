@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using Dockson.Domain.Events;
+using Dockson.Domain.Transformers.Build;
 using Dockson.Domain.Views;
 
-namespace Dockson.Domain.Projections
+namespace Dockson.Domain.Projections.BuildFailureRate
 {
 	public class BuildFailureRateProjection
 	{
@@ -44,7 +44,7 @@ namespace Dockson.Domain.Projections
 
 		private void UpdateView(string @group, DayDate key, Counts counts)
 		{
-			_view.TryAdd(@group, new BuildFailureRateGroupSummary());
+			_view.TryAdd(@group, new GroupSummary<BuildFailureRateSummary>());
 			_view[@group].Daily.TryAdd(key, new BuildFailureRateSummary());
 
 			_view[@group].Daily[key].FailureRate = (counts.Failures / counts.Total) * 100;

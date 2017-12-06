@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Dockson.Domain.Events
+namespace Dockson.Domain.Transformers.Build
 {
 	public class BuildFailed
 	{

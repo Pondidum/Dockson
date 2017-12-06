@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using Dockson.Domain.Events;
 
-namespace Dockson.Domain.Projections
+namespace Dockson.Domain.Transformers.MasterCommit
 {
 	public class MasterCommitsProjection
 	{

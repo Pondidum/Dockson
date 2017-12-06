@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Dockson.Domain.Events;
+using Dockson.Domain.Transformers.MasterCommit;
 using Dockson.Domain.Views;
 
-namespace Dockson.Domain.Projections
+namespace Dockson.Domain.Projections.MasterInterval
 {
 	public class MasterIntervalProjection
 	{
@@ -49,9 +49,9 @@ namespace Dockson.Domain.Projections
 				.ToArray();
 
 			if (_view.ContainsKey(group) == false)
-				_view.Add(group, new GroupSummary());
+				_view.Add(group, new GroupSummary<MasterIntervalSummary>());
 
-			_view[group].Daily[key] = new Summary
+			_view[group].Daily[key] = new MasterIntervalSummary
 			{
 				Median = deltas.Any() ? deltas.Median() : 0,
 				Deviation = deltas.Any() ? deltas.StandardDeviation() : 0

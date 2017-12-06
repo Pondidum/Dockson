@@ -1,7 +1,6 @@
 ﻿using System;
-using Dockson.Domain.Events;
 
-namespace Dockson.Domain.Projections
+namespace Dockson.Domain.Transformers.Build
 {
 	public class BuildProjection
 	{
