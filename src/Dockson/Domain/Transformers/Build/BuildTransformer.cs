@@ -39,6 +39,6 @@ namespace Dockson.Domain.Transformers.Build
 			}
 		}
 
-		private static string KeyFor(Notification notification) => $"{notification.Name}:::${notification.Version}";
+		private static string KeyFor(Notification notification) => notification.Name;
 	}
 }

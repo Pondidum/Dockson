@@ -80,10 +80,45 @@ namespace Dockson.Tests.Domain.Transformers.Build
 			});
 		}
 
-		private Notification Build(string status) => new Notification
+		[Fact]
+		public void When_a_failed_build_becomes_successful_and_the_version_changes()
+		{
+			var failure = Build("failure");
+			var success = Build("success");
+
+			failure.Version = "1.0.0.123";
+			success.Version = "1.0.0.456"; // so many builds to fix it...
+
+			_transformer.Transform(failure, _events.Add);
+			_transformer.Transform(success, _events.Add);
+
+			_events.Select(e => e.GetType()).ShouldBe(new[]
+			{
+				typeof(BuildFailed),
+				typeof(BuildSucceeded),
+				typeof(BuildFixed)
+			});
+		}
+
+		[Fact]
+		public void When_a_build_is_fixed_it_is_timed_from_first_failures_time()
+		{
+			var failureTime = DateTime.UtcNow;
+			var succesTime = failureTime.AddHours(3);
+
+			_transformer.Transform(Build("failure", failureTime), _events.Add);
+			_transformer.Transform(Build("failure", failureTime.AddHours(1)), _events.Add);
+			_transformer.Transform(Build("success", succesTime), _events.Add);
+
+			var fix = _events.OfType<BuildFixed>().Single();
+
+			fix.RecoveryTime.ShouldBe(succesTime - failureTime);
+		}
+
+		private Notification Build(string status, DateTime? timestamp = null) => new Notification
 		{
 			Type = Stages.Build,
-			TimeStamp = DateTime.UtcNow,
+			TimeStamp = timestamp ?? DateTime.UtcNow,
 			Source = "github",
 			Name = "SomeService",
 			Version = "1.0.0",
