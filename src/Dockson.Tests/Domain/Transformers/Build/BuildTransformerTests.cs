@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Dockson.Domain;
 using Dockson.Domain.Transformers.Build;
 using Shouldly;
@@ -63,6 +64,20 @@ namespace Dockson.Tests.Domain.Transformers.Build
 			_events
 				.ShouldHaveSingleItem()
 				.ShouldBeOfType<BuildFailed>();
+		}
+
+		[Fact]
+		public void When_a_failed_build_becomes_successful()
+		{
+			_transformer.Transform(Build("failure"), _events.Add);
+			_transformer.Transform(Build("success"), _events.Add);
+
+			_events.Select(e => e.GetType()).ShouldBe(new[]
+			{
+				typeof(BuildFailed),
+				typeof(BuildSucceeded),
+				typeof(BuildFixed)
+			});
 		}
 
 		private Notification Build(string status) => new Notification
