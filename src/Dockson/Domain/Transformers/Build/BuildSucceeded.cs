@@ -7,14 +7,14 @@ namespace Dockson.Domain.Transformers.Build
 	{
 		public BuildSucceeded(Notification notification)
 		{
-			TimeStamp = notification.TimeStamp;
+			Timestamp = notification.Timestamp;
 			Groups = notification.Groups;
 
 			Name = notification.Name;
 			Version = notification.Version;
 		}
 
-		public DateTime TimeStamp { get; }
+		public DateTime Timestamp { get; }
 		public HashSet<string> Groups { get; }
 		public string Name { get; }
 		public string Version { get; }

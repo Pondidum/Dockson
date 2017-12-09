@@ -118,7 +118,7 @@ namespace Dockson.Tests.Domain.Transformers.Build
 		private Notification Build(string status, DateTime? timestamp = null) => new Notification
 		{
 			Type = Stages.Build,
-			TimeStamp = timestamp ?? DateTime.UtcNow,
+			Timestamp = timestamp ?? DateTime.UtcNow,
 			Source = "github",
 			Name = "SomeService",
 			Version = "1.0.0",

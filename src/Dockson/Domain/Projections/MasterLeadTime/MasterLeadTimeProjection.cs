@@ -21,7 +21,7 @@ namespace Dockson.Domain.Projections.MasterLeadTime
 
 		public void Project(MasterCommit message)
 		{
-			var key = new DayDate(message.TimeStamp);
+			var key = new DayDate(message.Timestamp);
 			var leadTime = message.LeadTime;
 
 			foreach (var @group in message.Groups)

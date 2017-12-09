@@ -21,12 +21,12 @@ namespace Dockson.Domain.Projections.BuildFailureRate
 
 		public void Project(BuildSucceeded message)
 		{
-			Project(message.TimeStamp, message.Groups, counts => counts.Successes++);
+			Project(message.Timestamp, message.Groups, counts => counts.Successes++);
 		}
 
 		public void Project(BuildFailed message)
 		{
-			Project(message.TimeStamp, message.Groups, counts => counts.Failures++);
+			Project(message.Timestamp, message.Groups, counts => counts.Failures++);
 		}
 
 		private void Project(DateTime timestamp, IEnumerable<string> groups, Action<Counts> action)

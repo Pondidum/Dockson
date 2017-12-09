@@ -19,7 +19,7 @@ namespace Dockson.Domain.Projections.MasterInterval
 
 		public void Project(MasterCommit message)
 		{
-			var commitTime = message.TimeStamp;
+			var commitTime = message.Timestamp;
 
 			foreach (var group in message.Groups)
 			{

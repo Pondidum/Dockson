@@ -93,7 +93,7 @@ namespace Dockson.Tests.Domain.Projections.MasterInterval
 		private Notification CreateNotification(DateTime timestamp, string branch) => new Notification
 		{
 			Type = Stages.Commit,
-			TimeStamp = timestamp,
+			Timestamp = timestamp,
 			Source = "github",
 			Name = "SomeService",
 			Version = "1.0.0",

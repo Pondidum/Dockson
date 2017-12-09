@@ -49,7 +49,7 @@ namespace Dockson.Tests.Domain.Projections.MasterLeadTime
 		private Notification CreateNotification(TimeSpan offset, string branch) => new Notification
 		{
 			Type = Stages.Commit,
-			TimeStamp = _now.Add(offset),
+			Timestamp = _now.Add(offset),
 			Source = "github",
 			Name = "SomeService",
 			Version = "1.0.0",

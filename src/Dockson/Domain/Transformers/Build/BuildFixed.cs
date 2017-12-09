@@ -7,9 +7,9 @@ namespace Dockson.Domain.Transformers.Build
 	{
 		public BuildFixed(BuildFailed fail, BuildSucceeded success)
 		{
-			RecoveryTime = success.TimeStamp - fail.TimeStamp;
+			RecoveryTime = success.Timestamp - fail.Timestamp;
 			Groups = success.Groups;
-			FixedTimestamp = success.TimeStamp;
+			FixedTimestamp = success.Timestamp;
 		}
 
 		public TimeSpan RecoveryTime { get; }

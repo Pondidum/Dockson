@@ -85,13 +85,13 @@ namespace Dockson.Tests.Domain.Projections.BuildFailureRate
 
 		private BuildSucceeded Success(DateTime? when = null) => new BuildSucceeded(new Notification
 		{
-			TimeStamp = when ?? _today,
+			Timestamp = when ?? _today,
 			Groups = { Group }
 		});
 
 		private BuildFailed Failure(DateTime? when = null) => new BuildFailed(new Notification
 		{
-			TimeStamp = when ?? _today,
+			Timestamp = when ?? _today,
 			Groups = { Group }
 		});
 	}

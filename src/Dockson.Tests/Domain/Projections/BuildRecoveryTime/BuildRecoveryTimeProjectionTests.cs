@@ -78,13 +78,13 @@ namespace Dockson.Tests.Domain.Projections.BuildRecoveryTime
 			new BuildFailed(new Notification
 			{
 				Name = group,
-				TimeStamp = _today,
+				Timestamp = _today,
 				Groups = { group }
 			}),
 			new BuildSucceeded(new Notification
 			{
 				Name = group,
-				TimeStamp = _today.Add(fixTime),
+				Timestamp = _today.Add(fixTime),
 				Groups = { group }
 			})
 		);
