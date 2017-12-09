@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Dockson.Domain.Transformers.Build
 {
@@ -8,7 +9,7 @@ namespace Dockson.Domain.Transformers.Build
 		public BuildFixed(BuildFailed fail, BuildSucceeded success)
 		{
 			RecoveryTime = success.Timestamp - fail.Timestamp;
-			Groups = success.Groups;
+			Groups = new HashSet<string>(success.Groups.Append(success.Name));
 			FixedTimestamp = success.Timestamp;
 		}
 

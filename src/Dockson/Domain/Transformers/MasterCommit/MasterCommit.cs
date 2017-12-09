@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Dockson.Domain.Transformers.MasterCommit
 {
@@ -9,7 +10,7 @@ namespace Dockson.Domain.Transformers.MasterCommit
 		{
 			Timestamp = masterCommit.Timestamp;
 			LeadTime = masterCommit.Timestamp - branchCommit.Timestamp;
-			Groups = masterCommit.Groups;	// don't bother copying it, this event is thrown away anyway
+			Groups = new HashSet<string>(masterCommit.Groups.Append(masterCommit.Name));
 		}
 
 		public DateTime Timestamp { get; }

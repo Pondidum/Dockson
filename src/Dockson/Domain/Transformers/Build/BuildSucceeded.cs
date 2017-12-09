@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Dockson.Domain.Transformers.Build
 {
@@ -8,15 +9,13 @@ namespace Dockson.Domain.Transformers.Build
 		public BuildSucceeded(Notification notification)
 		{
 			Timestamp = notification.Timestamp;
-			Groups = notification.Groups;
+			Groups = new HashSet<string>(notification.Groups.Append(notification.Name));
 
 			Name = notification.Name;
-			Version = notification.Version;
 		}
 
 		public DateTime Timestamp { get; }
 		public HashSet<string> Groups { get; }
 		public string Name { get; }
-		public string Version { get; }
 	}
 }
