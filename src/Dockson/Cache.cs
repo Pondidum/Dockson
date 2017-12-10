@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace Dockson
 {
-	internal class Cache<TKey, TValue> : IEnumerable<TValue>
+	public class Cache<TKey, TValue> : IEnumerable<TValue>
 	{
 		private readonly object _locker = new object();
 		private readonly IDictionary<TKey, TValue> _values;
