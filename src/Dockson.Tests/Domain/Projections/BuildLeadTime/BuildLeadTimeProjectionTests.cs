@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using Dockson.Domain;
 using Dockson.Domain.Projections.BuildLeadTime;
@@ -12,24 +13,28 @@ namespace Dockson.Tests.Domain.Projections.BuildLeadTime
 	public class BuildLeadTimeProjectionTests
 	{
 		private const string Team = "team-one";
-		private const string Service = "some-service";
-		private static readonly string CommitHash = Guid.NewGuid().ToString();
 
 		private readonly BuildLeadTimeView _view;
 		private readonly BuildLeadTimeProjection _projection;
 		private readonly DateTime _now;
+
+		private readonly EventSource _serviceOne;
+		private readonly EventSource _serviceTwo;
 
 		public BuildLeadTimeProjectionTests()
 		{
 			_view = new BuildLeadTimeView();
 			_projection = new BuildLeadTimeProjection(_view);
 			_now = DateTime.UtcNow;
+
+			_serviceOne = new EventSource { Name = "service-one", Groups = { Team } };
+			_serviceTwo = new EventSource { Name = "service-two", Groups = { Team } };
 		}
 
 		[Fact]
 		public void When_projecting_one_commit()
 		{
-			_projection.Project(Commit());
+			_projection.Project(_serviceOne.MasterCommit());
 
 			_view.ShouldBeEmpty();
 		}
@@ -37,7 +42,7 @@ namespace Dockson.Tests.Domain.Projections.BuildLeadTime
 		[Fact]
 		public void When_projecting_one_build()
 		{
-			_projection.Project(BuildSucceeded());
+			_projection.Project(_serviceOne.BuildSucceeded());
 
 			_view.ShouldBeEmpty();
 		}
@@ -45,10 +50,11 @@ namespace Dockson.Tests.Domain.Projections.BuildLeadTime
 		[Fact]
 		public void When_projecting_a_commit_and_matching_build()
 		{
-			_projection.Project(Commit());
-			_projection.Project(BuildSucceeded(when: _now.AddMinutes(20)));
+			_projection.Project(_serviceOne.MasterCommit());
+			_serviceOne.Advance(TimeSpan.FromMinutes(20));
+			_projection.Project(_serviceOne.BuildSucceeded());
 
-			var summary = _view[Service].Daily[new DayDate(_now)];
+			var summary = _view[_serviceOne.Name].Daily[new DayDate(_now)];
 
 			summary.ShouldSatisfyAllConditions(
 				() => summary.Median.ShouldBe(20),
@@ -59,16 +65,18 @@ namespace Dockson.Tests.Domain.Projections.BuildLeadTime
 		[Fact]
 		public void When_projecting_two_commits_and_matching_builds()
 		{
-			var firstCommit = Guid.NewGuid().ToString();
-			var secondCommit = Guid.NewGuid().ToString();
+			_projection.Project(_serviceOne.MasterCommit());
+			_serviceOne.Advance(TimeSpan.FromMinutes(20));
+			_projection.Project(_serviceOne.BuildSucceeded());
 
-			_projection.Project(Commit(firstCommit));
-			_projection.Project(BuildSucceeded(firstCommit, _now.AddMinutes(20)));
+			_serviceOne.Advance(TimeSpan.FromMinutes(20));
+			_serviceOne.CommitHash = Guid.NewGuid().ToString();
+			
+			_projection.Project(_serviceOne.MasterCommit());
+			_serviceOne.Advance(TimeSpan.FromMinutes(15));
+			_projection.Project(_serviceOne.BuildSucceeded());
 
-			_projection.Project(Commit(secondCommit, when: _now.AddMinutes(40)));
-			_projection.Project(BuildSucceeded(secondCommit, _now.AddMinutes(40 + 15)));
-
-			var summary = _view[Service].Daily[new DayDate(_now)];
+			var summary = _view[_serviceOne.Name].Daily[new DayDate(_now)];
 
 			summary.ShouldSatisfyAllConditions(
 				() => summary.Median.ShouldBe(17.5),
@@ -79,19 +87,17 @@ namespace Dockson.Tests.Domain.Projections.BuildLeadTime
 		[Fact]
 		public void When_projecting_two_commits_and_matching_builds_for_different_services()
 		{
-			var commitOne = "sha-1";
-			var commitTwo = "sha-2";
-			var serviceOne = "service-1";
-			var serviceTwo = "service-2";
+			_projection.Project(_serviceOne.MasterCommit());
+			_serviceOne.Advance(TimeSpan.FromMinutes(20));
+			_projection.Project(_serviceOne.BuildSucceeded());
 
-			_projection.Project(Commit(hash: commitOne, service: serviceOne));
-			_projection.Project(BuildSucceeded(hash: commitOne, service: serviceOne, when: _now.AddMinutes(20)));
+			_serviceTwo.Advance(TimeSpan.FromMinutes(40));
+			_projection.Project(_serviceTwo.MasterCommit());
+			_serviceTwo.Advance(TimeSpan.FromMinutes(15));
+			_projection.Project(_serviceTwo.BuildSucceeded());
 
-			_projection.Project(Commit(hash: commitTwo, service: serviceTwo, when: _now.AddMinutes(40)));
-			_projection.Project(BuildSucceeded(hash: commitTwo, service: serviceTwo, when: _now.AddMinutes(40 + 15)));
-
-			var one = _view[serviceOne].Daily[new DayDate(_now)];
-			var two = _view[serviceTwo].Daily[new DayDate(_now)];
+			var one = _view[_serviceOne.Name].Daily[new DayDate(_now)];
+			var two = _view[_serviceTwo.Name].Daily[new DayDate(_now)];
 			var team = _view[Team].Daily[new DayDate(_now)];
 
 			_view.ShouldSatisfyAllConditions(
@@ -103,40 +109,64 @@ namespace Dockson.Tests.Domain.Projections.BuildLeadTime
 				() => team.Deviation.ShouldBe(3.53, tolerance: 0.01)
 			);
 		}
+	}
 
-		private MasterCommit Commit(string hash = null, string service = null, DateTime? when = null) => new MasterCommit(
-			CreateNotification(hash, when, service, "master"),
-			CreateNotification(hash, when, service, "feature-whatever")
+	internal class EventSource
+	{
+		public string Name { get; set; }
+		public string Version { get; set; }
+		public string CommitHash { get; set; }
+		public DateTime Timestamp { get; set; }
+		public HashSet<string> Groups { get; set; }
+
+		public EventSource()
+		{
+			Name = "some-service";
+			Version = "2.13.4";
+			CommitHash = Guid.NewGuid().ToString();
+			Timestamp = DateTime.UtcNow;
+			Groups = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+		}
+
+		public void Advance(TimeSpan time) => Timestamp = Timestamp.Add(time);
+		
+		
+		public MasterCommit MasterCommit(TimeSpan? sinceFeatureCommit = null) => new MasterCommit(
+			CreateNotification(Timestamp, "master"),
+			CreateNotification(Timestamp.Subtract(sinceFeatureCommit ?? TimeSpan.Zero), "feature-whatever")
 		);
 
-		private Notification CreateNotification(string hash, DateTime? timestamp, string service, string branch) => new Notification
+		private Notification CreateNotification(DateTime timestamp, string branch) => new Notification
 		{
 			Type = Stages.Commit,
-			Timestamp = timestamp ?? _now,
+			Timestamp = timestamp,
 			Source = "github",
-			Name = service ?? Service,
+			Name =Name,
 			Version = "1.0.0",
-			Groups = { Team },
+			Groups = Groups,
 			Tags =
 			{
-				{ "commit", hash ?? CommitHash },
+				{ "commit", CommitHash },
 				{ "branch", branch }
 			}
 		};
-
-		private BuildSucceeded BuildSucceeded(DateTime? when = null) => BuildSucceeded(hash: null, service: null, when: when);
-
-		private BuildSucceeded BuildSucceeded(string hash, DateTime when) => BuildSucceeded(hash: hash, service: null, when: when);
-
-		private BuildSucceeded BuildSucceeded(string hash, string service, DateTime? when = null) => new BuildSucceeded(new Notification
+		public BuildSucceeded BuildSucceeded(Action<Notification> modify = null)
 		{
-			Timestamp = when ?? _now,
-			Name = service ?? Service,
-			Groups = { Team },
-			Tags =
+			var notification = new Notification
 			{
-				{ "commit", hash ?? CommitHash }
-			}
-		});
+				Name = Name,
+				Version = Version,
+				Timestamp = Timestamp,
+				Groups = Groups,
+				Tags =
+				{
+					{ "commit", CommitHash }
+				}
+			};
+			modify?.Invoke(notification);
+
+			return new BuildSucceeded(notification);
+		}
+
 	}
 }
