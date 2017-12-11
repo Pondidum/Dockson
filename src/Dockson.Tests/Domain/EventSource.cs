@@ -53,10 +53,16 @@ namespace Dockson.Tests.Domain
 			CommitHash = hash ?? Guid.NewGuid().ToString();
 			return this;
 		}
-		
+
 		public EventSource Advance(TimeSpan time)
 		{
 			Timestamp = Timestamp.Add(time);
+			return this;
+		}
+
+		public EventSource AdvanceTo(DateTime nextTime)
+		{
+			Timestamp = nextTime;
 			return this;
 		}
 
@@ -85,6 +91,26 @@ namespace Dockson.Tests.Domain
 			return this;
 		}
 
+		public EventSource BuildFailed(Action<Notification> modify = null)
+		{
+			var notification = new Notification
+			{
+				Name = Name,
+				Version = Version,
+				Timestamp = Timestamp,
+				Groups = Groups,
+				Tags =
+				{
+					{ "commit", CommitHash }
+				}
+			};
+			modify?.Invoke(notification);
+
+			Dispatch(new BuildFailed(notification));
+
+			return this;
+		}
+
 		private Notification CreateNotification(DateTime timestamp, string branch) => new Notification
 		{
 			Type = Stages.Commit,
@@ -99,6 +125,5 @@ namespace Dockson.Tests.Domain
 				{ "branch", branch }
 			}
 		};
-
 	}
 }
