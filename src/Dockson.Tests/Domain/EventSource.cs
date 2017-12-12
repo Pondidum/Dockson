@@ -23,7 +23,7 @@ namespace Dockson.Tests.Domain
 			Name = "some-service";
 			Version = "2.13.4";
 			CommitHash = Guid.NewGuid().ToString();
-			Timestamp = DateTime.UtcNow;
+			Timestamp = new DateTime(2017, 11, 30, 11, 47, 00);
 			Groups = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 		}
 

@@ -1,7 +1,5 @@
-﻿using System;
-using Dockson.Domain;
+﻿using Dockson.Domain;
 using Dockson.Domain.Projections.MasterInterval;
-using Dockson.Domain.Transformers.MasterCommit;
 using Shouldly;
 using Xunit;
 
@@ -9,100 +7,81 @@ namespace Dockson.Tests.Domain.Projections.MasterInterval
 {
 	public class MasterIntervalProjectionTests
 	{
-		private const string Group = "wat_service";
-
-		private static readonly DateTime LastWeek = new DateTime(2017, 11, 23, 11, 47, 00);
-		private static readonly DateTime Yesterday = new DateTime(2017, 11, 29, 11, 47, 00);
-		private static readonly DateTime Today = new DateTime(2017, 11, 30, 11, 47, 00);
-		private static readonly DateTime Tomorrow = new DateTime(2017, 12, 1, 11, 47, 00);
-
 		private readonly MasterIntervalView _view;
-		private readonly MasterIntervalProjection _projection;
+		private readonly EventSource _service;
 
 		public MasterIntervalProjectionTests()
 		{
 			_view = new MasterIntervalView();
-			_projection = new MasterIntervalProjection(_view);
+			var projection = new MasterIntervalProjection(_view);
+
+			_service = new EventSource(projection);
 		}
 
 		[Fact]
 		public void When_projecting_one_commit()
 		{
-			_projection.Project(CreateCommit(Today, 0));
+			_service.MasterCommit();
 
 			_view.ShouldSatisfyAllConditions(
-				() => _view[Group].Daily[new DayDate(Today)].Median.ShouldBe(0),
-				() => _view[Group].Daily[new DayDate(Today)].Deviation.ShouldBe(0)
+				() => _view[_service.Name].Daily[new DayDate(_service.Timestamp)].Median.ShouldBe(0),
+				() => _view[_service.Name].Daily[new DayDate(_service.Timestamp)].Deviation.ShouldBe(0)
 			);
 		}
 
 		[Fact]
 		public void When_projecting_two_commits_on_the_same_day()
 		{
-			_projection.Project(CreateCommit(Today, 0));
-			_projection.Project(CreateCommit(Today, 1));
+			_service
+				.MasterCommit()
+				.Advance(1.Hour())
+				.MasterCommit();
 
 			_view.ShouldSatisfyAllConditions(
-				() => _view[Group].Daily[new DayDate(Today)].Median.ShouldBe(60), //1 hour
-				() => _view[Group].Daily[new DayDate(Today)].Deviation.ShouldBe(0)
+				() => _view[_service.Name].Daily[new DayDate(_service.Timestamp)].Median.ShouldBe(60), //1 hour
+				() => _view[_service.Name].Daily[new DayDate(_service.Timestamp)].Deviation.ShouldBe(0)
 			);
 		}
 
 		[Fact]
 		public void When_projecting_several_commits_on_the_same_day()
 		{
-			_projection.Project(CreateCommit(Today, 0));
-			_projection.Project(CreateCommit(Today, 1));
-			_projection.Project(CreateCommit(Today, 2));
-			_projection.Project(CreateCommit(Today, 4));
-			_projection.Project(CreateCommit(Today, 5));
+			_service
+				.MasterCommit()
+				.Advance(1.Hour()).MasterCommit()
+				.Advance(1.Hour()).MasterCommit()
+				.Advance(2.Hours()).MasterCommit()
+				.Advance(1.Hour()).MasterCommit();
 
 			_view.ShouldSatisfyAllConditions(
-				() => _view[Group].Daily[new DayDate(Today)].Median.ShouldBe(60), //1 hour
-				() => _view[Group].Daily[new DayDate(Today)].Deviation.ShouldBe(30) // half hour
+				() => _view[_service.Name].Daily[new DayDate(_service.Timestamp)].Median.ShouldBe(60), //1 hour
+				() => _view[_service.Name].Daily[new DayDate(_service.Timestamp)].Deviation.ShouldBe(30) // half hour
 			);
 		}
 
 		[Fact]
 		public void When_projecting_several_commits_on_several_days()
 		{
-			_projection.Project(CreateCommit(Today, 0));
-			_projection.Project(CreateCommit(Today, 1));
-			_projection.Project(CreateCommit(Today, 2));
-			_projection.Project(CreateCommit(Today, 4));
-			_projection.Project(CreateCommit(Today, 5));
-			_projection.Project(CreateCommit(Tomorrow, 2));
-			_projection.Project(CreateCommit(Tomorrow, 4));
-			_projection.Project(CreateCommit(Tomorrow, 5));
+			var firstDay = _service.Timestamp;
+			var secondDay = firstDay.AddDays(1);
+
+			_service
+				.MasterCommit()
+				.Advance(1.Hour()).MasterCommit()
+				.Advance(1.Hour()).MasterCommit()
+				.Advance(2.Hours()).MasterCommit()
+				.Advance(1.Hour()).MasterCommit()
+				.AdvanceTo(secondDay)
+				.Advance(2.Hours()).MasterCommit()
+				.Advance(2.Hours()).MasterCommit()
+				.Advance(1.Hour()).MasterCommit();
 
 			_view.ShouldSatisfyAllConditions(
-				() => _view[Group].Daily[new DayDate(Today)].Median.ShouldBe(60), //1 hour
-				() => _view[Group].Daily[new DayDate(Today)].Deviation.ShouldBe(30), // half hour
-				() => _view[Group].Daily[new DayDate(Tomorrow)].Median.ShouldBe(120), //2 hours
-				() => _view[Group].Daily[new DayDate(Tomorrow)].Deviation.ShouldBe(676.165, tolerance: 0.005)
+				() => _view[_service.Name].Daily[new DayDate(firstDay)].Median.ShouldBe(60), //1 hour
+				() => _view[_service.Name].Daily[new DayDate(firstDay)].Deviation.ShouldBe(30), // half hour
+				() => _view[_service.Name].Daily[new DayDate(secondDay)].Median.ShouldBe(120), //2 hours
+				() => _view[_service.Name].Daily[new DayDate(secondDay)].Deviation.ShouldBe(676.165, tolerance: 0.005)
 			);
 		}
-
-		private DateTime Day(int day) => Today.PreviousMonday().AddDays(day);
-
-		private MasterCommit CreateCommit(DateTime day, int hoursOffset) => new MasterCommit(
-			CreateNotification(day.AddHours(hoursOffset), "master"),
-			CreateNotification(day.AddHours(hoursOffset).Add(TimeSpan.FromMinutes(-5)), "feature-whatever")
-		);
-
-		private Notification CreateNotification(DateTime timestamp, string branch) => new Notification
-		{
-			Type = Stages.Commit,
-			Timestamp = timestamp,
-			Source = "github",
-			Name = "SomeService",
-			Version = "1.0.0",
-			Tags =
-			{
-				{ "commit", Guid.NewGuid().ToString() },
-				{ "branch", branch }
-			},
-			Groups = { Group }
-		};
 	}
 }
