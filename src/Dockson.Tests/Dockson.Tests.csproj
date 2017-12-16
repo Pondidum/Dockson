@@ -12,7 +12,4 @@
   <ItemGroup>
     <ProjectReference Include="..\Dockson\Dockson.csproj" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Domain\Projections\BuildFailure" />
-  </ItemGroup>
 </Project>

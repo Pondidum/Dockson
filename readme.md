@@ -59,10 +59,10 @@
       * [x] time between master commit and build artifact
       * [x] `blt.median = median( ( b^n- m^n ) for b in t )`
       * [x] `blt.stddev = stddev( ( b^n- m^n ) for b in t )`
-    * [ ] build interval
-      * [ ] time between artifact publishes
-      * [ ] `bi.median = median( (b^n - n^n-1 ) for b in t )`
-      * [ ] `bi.stddev = stddev( (b^n - n^n-1 ) for b in t )`
+    * [x] build interval
+      * [x] time between artifact publishes
+      * [x] `bi.median = median( (b^n - n^n-1 ) for b in t )`
+      * [x] `bi.stddev = stddev( (b^n - n^n-1 ) for b in t )`
     * [ ] graphs
       * [ ] axes: `x = time, y = hours`
       * [ ] lines: `blt.median, blt.stddev, bi.median, bi.stddev`
