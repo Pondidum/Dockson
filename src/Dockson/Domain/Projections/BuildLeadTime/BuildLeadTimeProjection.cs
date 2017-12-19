@@ -50,14 +50,4 @@ namespace Dockson.Domain.Projections.BuildLeadTime
 			}
 		}
 	}
-
-	public class BuildLeadTimeView : Dictionary<string, GroupSummary<BuildLeadTimeSummary>>
-	{
-	}
-
-	public class BuildLeadTimeSummary
-	{
-		public double Median { get; set; }
-		public double Deviation { get; set; }
-	}
 }

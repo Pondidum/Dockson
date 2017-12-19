@@ -48,8 +48,7 @@ namespace Dockson.Domain.Projections.MasterInterval
 				.Select(d => d.ElapsedMinutes)
 				.ToArray();
 
-			if (_view.ContainsKey(group) == false)
-				_view.Add(group, new GroupSummary<MasterIntervalSummary>());
+			_view.TryAdd(group, new GroupSummary<MasterIntervalSummary>());
 
 			_view[group].Daily[key] = new MasterIntervalSummary
 			{

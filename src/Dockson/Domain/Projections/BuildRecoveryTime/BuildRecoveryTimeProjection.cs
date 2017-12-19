@@ -34,14 +34,4 @@ namespace Dockson.Domain.Projections.BuildRecoveryTime
 			}
 		}
 	}
-
-	public class BuildRecoveryTimeView : Dictionary<string, GroupSummary<BuildRecoveryTimeSummary>>
-	{
-	}
-
-	public class BuildRecoveryTimeSummary
-	{
-		public double Median { get; set; }
-		public double Deviation { get; set; }
-	}
 }
