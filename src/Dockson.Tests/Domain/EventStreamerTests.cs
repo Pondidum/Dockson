@@ -5,7 +5,6 @@ using Dockson.Domain.Projections;
 using Dockson.Domain.Projections.MasterInterval;
 using Dockson.Domain.Projections.MasterLeadTime;
 using Dockson.Domain.Transformers.MasterCommit;
-using Dockson.Domain.Views;
 using Shouldly;
 using Xunit;
 
@@ -22,7 +21,7 @@ namespace Dockson.Tests.Domain
 		public void When_projecting_two_levels()
 		{
 			var intervalView = new IntervalView();
-			var leadTimeView = new MasterLeadTimeView();
+			var leadTimeView = new LeadTimeView();
 			var projections = new List<Action<object, Action<object>>>();
 
 			projections.Add(Wrap<Notification>(new MasterCommitsTransformer().Transform));

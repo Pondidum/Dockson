@@ -8,10 +8,10 @@ namespace Dockson.Domain.Projections.MasterLeadTime
 {
 	public class MasterLeadTimeProjection : IProjection<MasterCommit>
 	{
-		private readonly MasterLeadTimeView _view;
+		private readonly LeadTimeView _view;
 		private readonly Cache<string, Cache<DayDate, List<TimeSpan>>> _source;
 
-		public MasterLeadTimeProjection(MasterLeadTimeView view)
+		public MasterLeadTimeProjection(LeadTimeView view)
 		{
 			_view = view;
 			_source = new Cache<string, Cache<DayDate, List<TimeSpan>>>(
@@ -34,9 +34,9 @@ namespace Dockson.Domain.Projections.MasterLeadTime
 					.Select(spans => spans.TotalMinutes)
 					.ToArray();
 
-				_view.TryAdd(group, new GroupSummary<MasterLeadTimeSummary>());
+				_view.TryAdd(group, new GroupSummary<LeadTimeSummary>());
 
-				_view[group].Daily[key] = new MasterLeadTimeSummary
+				_view[group].Daily[key] = new LeadTimeSummary
 				{
 					Median = deltas.Any() ? deltas.Median() : 0,
 					Deviation = deltas.Any() ? deltas.StandardDeviation() : 0

@@ -1,7 +1,6 @@
-﻿using System;
-using Dockson.Domain;
+﻿using Dockson.Domain;
+using Dockson.Domain.Projections;
 using Dockson.Domain.Projections.MasterLeadTime;
-using Dockson.Domain.Transformers.MasterCommit;
 using Shouldly;
 using Xunit;
 
@@ -9,12 +8,12 @@ namespace Dockson.Tests.Domain.Projections.MasterLeadTime
 {
 	public class MasterLeadTimeProjectionTests
 	{
-		private readonly MasterLeadTimeView _view;
+		private readonly LeadTimeView _view;
 		private readonly EventSource _service;
 
 		public MasterLeadTimeProjectionTests()
 		{
-			_view = new MasterLeadTimeView();
+			_view = new LeadTimeView();
 			var projection = new MasterLeadTimeProjection(_view);
 			_service = new EventSource(projection);
 		}
