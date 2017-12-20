@@ -30,12 +30,19 @@ namespace Dockson.Tests.Domain
 
 		public EventSource(object projection) : this()
 		{
+			var names = new HashSet<string>
+			{
+				nameof(IProjection<string>.Project),
+				nameof(IProjection<string, string>.Start),
+				nameof(IProjection<string, string>.Finish)
+			};
+
 			_handlers = new Cache<Type, Action<object>>(key =>
 			{
 				var method = projection
 					.GetType()
 					.GetMethods()
-					.Where(m => m.IsPublic && m.Name == nameof(IProjection<string>.Project))
+					.Where(m => m.IsPublic && names.Contains(m.Name))
 					.Where(m => m.GetParameters().Length == 1)
 					.Single(m => m.GetParameters().Single().ParameterType.IsAssignableFrom(key));
 

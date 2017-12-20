@@ -1,5 +1,6 @@
 ﻿using System;
 using Dockson.Domain;
+using Dockson.Domain.Projections;
 using Dockson.Domain.Projections.BuildLeadTime;
 using Shouldly;
 using Xunit;
@@ -10,14 +11,14 @@ namespace Dockson.Tests.Domain.Projections.BuildLeadTime
 	{
 		private const string Team = "team-one";
 
-		private readonly BuildLeadTimeView _view;
+		private readonly LeadTimeView _view;
 
 		private readonly EventSource _serviceOne;
 		private readonly EventSource _serviceTwo;
 
 		public BuildLeadTimeProjectionTests()
 		{
-			_view = new BuildLeadTimeView();
+			_view = new LeadTimeView();
 			var projection = new BuildLeadTimeProjection(_view);
 
 			_serviceOne = new EventSource(projection) { Name = "service-one", Groups = { Team } };
