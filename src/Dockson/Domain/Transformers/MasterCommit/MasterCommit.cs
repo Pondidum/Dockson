@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Dockson.Domain.Projections;
 
 namespace Dockson.Domain.Transformers.MasterCommit
 {
-	public class MasterCommit
+	public class MasterCommit : IProjectable
 	{
 		public MasterCommit(Notification masterCommit, Notification branchCommit)
 		{

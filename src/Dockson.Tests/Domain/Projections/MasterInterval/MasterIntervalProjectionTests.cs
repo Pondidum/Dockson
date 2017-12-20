@@ -1,4 +1,5 @@
 ﻿using Dockson.Domain;
+using Dockson.Domain.Projections;
 using Dockson.Domain.Projections.MasterInterval;
 using Shouldly;
 using Xunit;
@@ -7,12 +8,12 @@ namespace Dockson.Tests.Domain.Projections.MasterInterval
 {
 	public class MasterIntervalProjectionTests
 	{
-		private readonly MasterIntervalView _view;
+		private readonly IntervalView _view;
 		private readonly EventSource _service;
 
 		public MasterIntervalProjectionTests()
 		{
-			_view = new MasterIntervalView();
+			_view = new IntervalView();
 			var projection = new MasterIntervalProjection(_view);
 
 			_service = new EventSource(projection);

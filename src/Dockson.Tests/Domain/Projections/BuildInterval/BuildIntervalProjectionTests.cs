@@ -1,4 +1,5 @@
 ﻿using Dockson.Domain;
+using Dockson.Domain.Projections;
 using Dockson.Domain.Projections.BuildInterval;
 using Shouldly;
 using Xunit;
@@ -7,12 +8,12 @@ namespace Dockson.Tests.Domain.Projections.BuildInterval
 {
 	public class BuildIntervalProjectionTests
 	{
-		private readonly BuildIntervalView _view;
+		private readonly IntervalView _view;
 		private readonly EventSource _service;
 
 		public BuildIntervalProjectionTests()
 		{
-			_view = new BuildIntervalView();
+			_view = new IntervalView();
 			var projection = new BuildIntervalProjection(_view);
 
 			_service = new EventSource(projection);

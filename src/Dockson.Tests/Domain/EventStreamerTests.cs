@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Dockson.Domain;
+using Dockson.Domain.Projections;
 using Dockson.Domain.Projections.MasterInterval;
 using Dockson.Domain.Projections.MasterLeadTime;
 using Dockson.Domain.Transformers.MasterCommit;
@@ -20,7 +21,7 @@ namespace Dockson.Tests.Domain
 		[Fact]
 		public void When_projecting_two_levels()
 		{
-			var intervalView = new MasterIntervalView();
+			var intervalView = new IntervalView();
 			var leadTimeView = new MasterLeadTimeView();
 			var projections = new List<Action<object, Action<object>>>();
 
