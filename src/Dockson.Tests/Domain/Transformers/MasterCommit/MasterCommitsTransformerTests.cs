@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Dockson.Domain;
 using Dockson.Domain.Transformers.MasterCommit;
 using Shouldly;
@@ -24,7 +25,10 @@ namespace Dockson.Tests.Domain.Transformers.MasterCommit
 			var commits = new List<object>();
 
 			_transformer.Transform(Commit(0, "feature-1", "commit-sha"), commits.Add);
-			commits.ShouldBeEmpty();
+
+			commits
+				.ShouldHaveSingleItem()
+				.ShouldBeOfType<BranchCommit>();
 		}
 
 		[Fact]
@@ -35,7 +39,11 @@ namespace Dockson.Tests.Domain.Transformers.MasterCommit
 			_transformer.Transform(Commit(0, "feature-1", "commit-sha"), commits.Add);
 			_transformer.Transform(Commit(10, "master", "commit-sha"), commits.Add);
 
-			commits.ShouldHaveSingleItem();
+			commits.Select(c => c.GetType()).ShouldBe(new[]
+			{
+				typeof(BranchCommit),
+				typeof(Dockson.Domain.Transformers.MasterCommit.MasterCommit)
+			});
 		}
 
 		[Fact]

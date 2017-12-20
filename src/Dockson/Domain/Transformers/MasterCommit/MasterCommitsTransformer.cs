@@ -35,6 +35,7 @@ namespace Dockson.Domain.Transformers.MasterCommit
 			else
 			{
 				_branchCommits.Add(commit, notification);
+				dispatch(new BranchCommit());
 			}
 		}
 	}
