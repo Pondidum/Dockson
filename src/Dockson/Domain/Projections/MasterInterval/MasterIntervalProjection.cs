@@ -1,4 +1,4 @@
-﻿using Dockson.Domain.Transformers.MasterCommit;
+﻿using Dockson.Domain.Transformers.Commits;
 
 namespace Dockson.Domain.Projections.MasterInterval
 {

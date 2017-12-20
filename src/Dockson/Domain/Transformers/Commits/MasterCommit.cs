@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Dockson.Domain.Projections;
 
-namespace Dockson.Domain.Transformers.MasterCommit
+namespace Dockson.Domain.Transformers.Commits
 {
 	public class MasterCommit : IProjectable
 	{

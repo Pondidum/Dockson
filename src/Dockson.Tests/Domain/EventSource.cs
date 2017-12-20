@@ -4,8 +4,8 @@ using System.Linq;
 using Dockson.Domain;
 using Dockson.Domain.Projections;
 using Dockson.Domain.Transformers.Build;
+using Dockson.Domain.Transformers.Commits;
 using Dockson.Domain.Transformers.Deployment;
-using Dockson.Domain.Transformers.MasterCommit;
 
 namespace Dockson.Tests.Domain
 {

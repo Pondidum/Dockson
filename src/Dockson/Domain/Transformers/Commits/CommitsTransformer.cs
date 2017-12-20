@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Dockson.Domain.Transformers.MasterCommit
+namespace Dockson.Domain.Transformers.Commits
 {
-	public class MasterCommitsTransformer : ITransformer
+	public class CommitsTransformer : ITransformer
 	{
 		private readonly Dictionary<string, Notification> _branchCommits;
 
-		public MasterCommitsTransformer()
+		public CommitsTransformer()
 		{
 			_branchCommits = new Dictionary<string, Notification>();
 		}

@@ -2,20 +2,20 @@
 using System.Collections.Generic;
 using System.Linq;
 using Dockson.Domain;
-using Dockson.Domain.Transformers.MasterCommit;
+using Dockson.Domain.Transformers.Commits;
 using Shouldly;
 using Xunit;
 
-namespace Dockson.Tests.Domain.Transformers.MasterCommit
+namespace Dockson.Tests.Domain.Transformers.Commits
 {
-	public class MasterCommitsTransformerTests
+	public class CommitsTransformerTests
 	{
-		private readonly MasterCommitsTransformer _transformer;
+		private readonly CommitsTransformer _transformer;
 		private readonly DateTime _now;
 
-		public MasterCommitsTransformerTests()
+		public CommitsTransformerTests()
 		{
-			_transformer = new MasterCommitsTransformer();
+			_transformer = new CommitsTransformer();
 			_now = DateTime.UtcNow;
 		}
 
@@ -42,7 +42,7 @@ namespace Dockson.Tests.Domain.Transformers.MasterCommit
 			commits.Select(c => c.GetType()).ShouldBe(new[]
 			{
 				typeof(BranchCommit),
-				typeof(Dockson.Domain.Transformers.MasterCommit.MasterCommit)
+				typeof(MasterCommit)
 			});
 		}
 

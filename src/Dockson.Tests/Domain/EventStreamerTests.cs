@@ -4,7 +4,7 @@ using Dockson.Domain;
 using Dockson.Domain.Projections;
 using Dockson.Domain.Projections.MasterInterval;
 using Dockson.Domain.Projections.MasterLeadTime;
-using Dockson.Domain.Transformers.MasterCommit;
+using Dockson.Domain.Transformers.Commits;
 using Shouldly;
 using Xunit;
 
@@ -24,7 +24,7 @@ namespace Dockson.Tests.Domain
 			var leadTimeView = new LeadTimeView();
 			var projections = new List<Action<object, Action<object>>>();
 
-			projections.Add(Wrap<Notification>(new MasterCommitsTransformer().Transform));
+			projections.Add(Wrap<Notification>(new CommitsTransformer().Transform));
 			projections.Add(Wrap<MasterCommit>(new MasterIntervalProjection(intervalView).Project));
 			projections.Add(Wrap<MasterCommit>(new MasterLeadTimeProjection(leadTimeView).Project));
 

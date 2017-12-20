@@ -1,5 +1,5 @@
 ﻿using Dockson.Domain.Transformers.Build;
-using Dockson.Domain.Transformers.MasterCommit;
+using Dockson.Domain.Transformers.Commits;
 
 namespace Dockson.Domain.Projections.BuildLeadTime
 {

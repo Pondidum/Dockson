@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Dockson.Domain.Transformers.MasterCommit;
+using Dockson.Domain.Transformers.Commits;
 using Dockson.Domain.Views;
 
 namespace Dockson.Domain.Projections.MasterLeadTime
