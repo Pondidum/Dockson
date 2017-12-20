@@ -74,10 +74,17 @@ namespace Dockson.Tests.Domain
 			return this;
 		}
 
-		public EventSource MasterCommit(TimeSpan? sinceFeatureCommit = null) => Dispatch(new MasterCommit(
-			CreateNotification(Timestamp, "master"),
-			CreateNotification(Timestamp.Subtract(sinceFeatureCommit ?? TimeSpan.Zero), "feature-whatever")
-		));
+		public EventSource BranchCommit()
+		{
+			Dispatch(new BranchCommit(CreateNotification("feature-whatever")));
+			return this;
+		}
+
+		public EventSource MasterCommit()
+		{
+			Dispatch(new MasterCommit(CreateNotification("master")));
+			return this;
+		}
 
 		public EventSource BuildSucceeded(Action<Notification> modify = null)
 		{
@@ -136,10 +143,10 @@ namespace Dockson.Tests.Domain
 		}
 
 
-		private Notification CreateNotification(DateTime timestamp, string branch) => new Notification
+		private Notification CreateNotification(string branch) => new Notification
 		{
 			Type = Stages.Commit,
-			Timestamp = timestamp,
+			Timestamp = Timestamp,
 			Source = "github",
 			Name = Name,
 			Version = "1.0.0",

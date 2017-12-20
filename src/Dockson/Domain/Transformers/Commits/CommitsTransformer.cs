@@ -30,12 +30,12 @@ namespace Dockson.Domain.Transformers.Commits
 				_branchCommits.Remove(commit, out var matchingCommit);
 
 				if (matchingCommit != null)
-					dispatch(new MasterCommit(notification, matchingCommit));
+					dispatch(new MasterCommit(notification));
 			}
 			else
 			{
 				_branchCommits.Add(commit, notification);
-				dispatch(new BranchCommit());
+				dispatch(new BranchCommit(notification));
 			}
 		}
 	}

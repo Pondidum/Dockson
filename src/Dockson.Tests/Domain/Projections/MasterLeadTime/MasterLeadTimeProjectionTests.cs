@@ -21,7 +21,10 @@ namespace Dockson.Tests.Domain.Projections.MasterLeadTime
 		[Fact]
 		public void When_projecting_one_commit()
 		{
-			_service.MasterCommit(sinceFeatureCommit: 1.Hour());
+			_service
+				.BranchCommit()
+				.Advance(1.Hour())
+				.MasterCommit();
 			var day = new DayDate(_service.Timestamp);
 
 			_view.ShouldSatisfyAllConditions(
@@ -36,9 +39,12 @@ namespace Dockson.Tests.Domain.Projections.MasterLeadTime
 			var day = new DayDate(_service.Timestamp);
 
 			_service
-				.MasterCommit(sinceFeatureCommit: 1.Hour())
-				.Advance(4.Hours())
-				.MasterCommit(sinceFeatureCommit: 5.Hours());
+				.BranchCommit()
+				.Advance(1.Hour())
+				.MasterCommit()
+				.BranchCommit()
+				.Advance(5.Hours())
+				.MasterCommit();
 
 			_view.ShouldSatisfyAllConditions(
 				() => _view[_service.Name].Daily[day].Median.ShouldBe(3.Hours().TotalMinutes),

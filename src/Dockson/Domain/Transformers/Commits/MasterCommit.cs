@@ -7,19 +7,17 @@ namespace Dockson.Domain.Transformers.Commits
 {
 	public class MasterCommit : IProjectable
 	{
-		public MasterCommit(Notification masterCommit, Notification branchCommit)
+		public MasterCommit(Notification masterCommit)
 		{
 			masterCommit.Tags.TryGetValue("commit", out var commit);
-			
+
 			Timestamp = masterCommit.Timestamp;
-			LeadTime = masterCommit.Timestamp - branchCommit.Timestamp;
 			Groups = new HashSet<string>(masterCommit.Groups.Append(masterCommit.Name));
 			Name = masterCommit.Name;
 			CommitHash = commit;
 		}
 
 		public DateTime Timestamp { get; }
-		public TimeSpan LeadTime { get; }
 		public string Name { get; }
 		public HashSet<string> Groups { get; }
 		public string CommitHash { get; }
