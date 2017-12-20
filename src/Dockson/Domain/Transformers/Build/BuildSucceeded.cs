@@ -12,7 +12,9 @@ namespace Dockson.Domain.Transformers.Build
 			notification.Tags.TryGetValue("commit", out var commit);
 			
 			Timestamp = notification.Timestamp;
-			Groups = new HashSet<string>(notification.Groups.Append(notification.Name));
+			Groups = new HashSet<string>(
+				notification.Groups.Append(notification.Name),
+				StringComparer.OrdinalIgnoreCase);
 
 			Name = notification.Name;
 			CommitHash = commit;

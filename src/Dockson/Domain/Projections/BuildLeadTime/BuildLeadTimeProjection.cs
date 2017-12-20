@@ -42,10 +42,11 @@ namespace Dockson.Domain.Projections.BuildLeadTime
 					_times[group].Add(leadTime.TotalMinutes);
 
 					_view.TryAdd(group, new GroupSummary<BuildLeadTimeSummary>());
-					_view[group].Daily.TryAdd(day, new BuildLeadTimeSummary());
-
-					_view[group].Daily[day].Median = _times[group].Median();
-					_view[group].Daily[day].Deviation = _times[group].StandardDeviation();
+					_view[group].Daily[day] = new BuildLeadTimeSummary
+					{
+						Median = _times[group].Median(),
+						Deviation = _times[group].StandardDeviation()
+					};
 				}
 			}
 		}

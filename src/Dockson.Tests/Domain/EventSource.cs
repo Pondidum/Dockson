@@ -4,6 +4,7 @@ using System.Linq;
 using Dockson.Domain;
 using Dockson.Domain.Projections;
 using Dockson.Domain.Transformers.Build;
+using Dockson.Domain.Transformers.Deployment;
 using Dockson.Domain.Transformers.MasterCommit;
 
 namespace Dockson.Tests.Domain
@@ -110,6 +111,23 @@ namespace Dockson.Tests.Domain
 
 			return this;
 		}
+
+		public EventSource ProductionDeployment(Action<Notification> modify = null)
+		{
+			var notification = new Notification
+			{
+				Name = Name,
+				Version = Version,
+				Timestamp = Timestamp,
+				Groups = Groups
+			};
+			modify?.Invoke(notification);
+
+			Dispatch(new ProductionDeployment(notification));
+
+			return this;
+		}
+
 
 		private Notification CreateNotification(DateTime timestamp, string branch) => new Notification
 		{

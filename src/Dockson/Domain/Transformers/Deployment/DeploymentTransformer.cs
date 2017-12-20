@@ -13,7 +13,7 @@ namespace Dockson.Domain.Transformers.Deployment
 				return;
 
 			if (notification.Tags.TryGetValue("environment", out var environment) && environment.EqualsIgnore("production"))
-				dispatch(new ProductionDeployment());
+				dispatch(new ProductionDeployment(notification));
 		}
 	}
 }

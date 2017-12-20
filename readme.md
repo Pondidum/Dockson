@@ -17,7 +17,7 @@
   ```
 * [ ] measurements
   * [ ] deployment stability
-    * [ ] `d = deployments, f = failures, t = time`
+    * `d = deployments, f = failures, t = time`
     * [ ] failure rate
       * [ ] percentage of deployments which cause prod error
       * [ ] `dfr = percent( f in t / d in t )`
@@ -29,20 +29,20 @@
       * [ ] axes: `x = time, y1 = dfr, y2 = dfrt`
       * [ ] lines: `dfr, dfrt.median, dfrt.stddev`
   * [ ] deployment throughput
-    * [ ] `dn = deploy time, n = build finish time, d = prod deployments, t = time`
+    * `dn = deploy time, n = build finish time, d = prod deployments, t = time`
     * [ ] lead time
       * [ ] time between creating package and it's deployment
       * [ ] `dlt.median = median( (d^n - b^n ) for d in t )`
       * [ ] `dlt.stddev = stddev( (d^n - b^n ) for d in t )`
-    * [ ] frequency / interval
-      * [ ] time between production deployments
-      * [ ] `di.median = median( (d^n - d^n-1 ) for d in t )`
-      * [ ] `di.stddev = stddev( (d^n - d^n-1 ) for d in t )`
+    * [x] frequency / interval
+      * [x] time between production deployments
+      * [x] `di.median = median( (d^n - d^n-1 ) for d in t )`
+      * [x] `di.stddev = stddev( (d^n - d^n-1 ) for d in t )`
     * [ ] graphs:
       * [ ] axes: `x = time, y = days`
       * [ ] lines: `dlt.median, dlt.stddev, di.median, di.stddev`
   * [ ] build stability
-    * [ ] `b = builds, f = failures, t = time`
+    * `b = builds, f = failures, t = time`
     * [x] failure rate
       * [x] percent of builds which fail
       * [x] `bfr = percent( f in t / b in t )`
@@ -54,7 +54,7 @@
       * [ ] axes: `x = time, y1 = bfr, y2 = bfrt`
       * [ ] lines: `bfr, bfrt.median, bfrt.stddev`
   * [ ] build throughput
-    * [ ] `m^n = commit time, b = builds, b^n = build finish time, t = time`
+    * `m^n = commit time, b = builds, b^n = build finish time, t = time`
     * [x] build lead time
       * [x] time between master commit and build artifact
       * [x] `blt.median = median( ( b^n- m^n ) for b in t )`
@@ -67,7 +67,7 @@
       * [ ] axes: `x = time, y = hours`
       * [ ] lines: `blt.median, blt.stddev, bi.median, bi.stddev`
   * [ ] master throughput
-    * [ ] `m^n = master commit time, b^n = branch commit time, m = master commits, t = time`
+    * `m^n = master commit time, b^n = branch commit time, m = master commits, t = time`
     * [x] master lead time
       * [x] time between commit to branch and merge to master
       * [x] `mlt.median = median( ( m^n - b^n ) for m in t )`

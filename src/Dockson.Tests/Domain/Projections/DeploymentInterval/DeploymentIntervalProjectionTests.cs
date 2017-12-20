@@ -1,28 +1,28 @@
 ﻿using Dockson.Domain;
 using Dockson.Domain.Projections;
-using Dockson.Domain.Projections.BuildInterval;
+using Dockson.Domain.Projections.DeploymentInterval;
 using Shouldly;
 using Xunit;
 
-namespace Dockson.Tests.Domain.Projections.BuildInterval
+namespace Dockson.Tests.Domain.Projections.DeploymentInterval
 {
-	public class BuildIntervalProjectionTests
+	public class DeploymentIntervalProjectionTests
 	{
 		private readonly IntervalView _view;
 		private readonly EventSource _service;
 
-		public BuildIntervalProjectionTests()
+		public DeploymentIntervalProjectionTests()
 		{
 			_view = new IntervalView();
-			var projection = new BuildIntervalProjection(_view);
+			var projection = new DeploymentIntervalProjection(_view);
 
 			_service = new EventSource(projection);
 		}
 
 		[Fact]
-		public void When_projecting_one_build()
+		public void WHen_projecting_one_deployment()
 		{
-			_service.BuildSucceeded();
+			_service.ProductionDeployment();
 
 			var day = _view[_service.Name].Daily[new DayDate(_service.Timestamp)];
 
@@ -33,12 +33,12 @@ namespace Dockson.Tests.Domain.Projections.BuildInterval
 		}
 
 		[Fact]
-		public void When_projecting_two_builds()
+		public void When_projecting_two_deployments()
 		{
 			_service
-				.BuildSucceeded()
+				.ProductionDeployment()
 				.Advance(1.Hour())
-				.BuildSucceeded();
+				.ProductionDeployment();
 
 			var day = _view[_service.Name].Daily[new DayDate(_service.Timestamp)];
 
@@ -49,14 +49,14 @@ namespace Dockson.Tests.Domain.Projections.BuildInterval
 		}
 
 		[Fact]
-		public void When_projecting_several_builds_on_the_same_day()
+		public void When_projecting_several_deployments_on_the_same_day()
 		{
 			_service
-				.BuildSucceeded()
-				.Advance(1.Hour()).BuildSucceeded()
-				.Advance(1.Hour()).BuildSucceeded()
-				.Advance(2.Hours()).BuildSucceeded()
-				.Advance(1.Hour()).BuildSucceeded();
+				.ProductionDeployment()
+				.Advance(1.Hour()).ProductionDeployment()
+				.Advance(1.Hour()).ProductionDeployment()
+				.Advance(2.Hours()).ProductionDeployment()
+				.Advance(1.Hour()).ProductionDeployment();
 
 			var day = _view[_service.Name].Daily[new DayDate(_service.Timestamp)];
 
@@ -67,21 +67,21 @@ namespace Dockson.Tests.Domain.Projections.BuildInterval
 		}
 
 		[Fact]
-		public void When_projecting_several_builds_on_several_days()
+		public void When_projecting_several_deployments_on_several_days()
 		{
 			var firstDay = _service.Timestamp;
 			var secondDay = firstDay.AddDays(1);
 
 			_service
-				.BuildSucceeded()
-				.Advance(1.Hour()).BuildSucceeded()
-				.Advance(1.Hour()).BuildSucceeded()
-				.Advance(2.Hours()).BuildSucceeded()
-				.Advance(1.Hour()).BuildSucceeded()
+				.ProductionDeployment()
+				.Advance(1.Hour()).ProductionDeployment()
+				.Advance(1.Hour()).ProductionDeployment()
+				.Advance(2.Hours()).ProductionDeployment()
+				.Advance(1.Hour()).ProductionDeployment()
 				.AdvanceTo(secondDay)
-				.Advance(2.Hours()).BuildSucceeded()
-				.Advance(2.Hours()).BuildSucceeded()
-				.Advance(1.Hour()).BuildSucceeded();
+				.Advance(2.Hours()).ProductionDeployment()
+				.Advance(2.Hours()).ProductionDeployment()
+				.Advance(1.Hour()).ProductionDeployment();
 
 			_view.ShouldSatisfyAllConditions(
 				() => _view[_service.Name].Daily[new DayDate(firstDay)].Median.ShouldBe(60), //1 hour
