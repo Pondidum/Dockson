@@ -20,7 +20,7 @@ namespace Dockson.Tests.Domain.Projections.DeploymentInterval
 		}
 
 		[Fact]
-		public void WHen_projecting_one_deployment()
+		public void When_projecting_one_deployment()
 		{
 			_service.ProductionDeployment();
 

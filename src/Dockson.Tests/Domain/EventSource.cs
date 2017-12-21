@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices.ComTypes;
 using Dockson.Domain;
 using Dockson.Domain.Projections;
+using Dockson.Domain.Transformers;
 using Dockson.Domain.Transformers.Build;
 using Dockson.Domain.Transformers.Commits;
 using Dockson.Domain.Transformers.Deployment;
@@ -18,6 +20,7 @@ namespace Dockson.Tests.Domain
 		public HashSet<string> Groups { get; set; }
 
 		private readonly Cache<Type, Action<object>> _handlers;
+		private readonly List<ITransformer> _transformers;
 
 		public EventSource()
 		{
@@ -26,6 +29,13 @@ namespace Dockson.Tests.Domain
 			CommitHash = Guid.NewGuid().ToString();
 			Timestamp = new DateTime(2017, 11, 30, 11, 47, 00);
 			Groups = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+
+			_transformers = new List<ITransformer>
+			{
+				new CommitsTransformer(),
+				new BuildTransformer(),
+				new DeploymentTransformer()
+			};
 		}
 
 		public EventSource(object projection) : this()
@@ -44,15 +54,22 @@ namespace Dockson.Tests.Domain
 					.GetMethods()
 					.Where(m => m.IsPublic && names.Contains(m.Name))
 					.Where(m => m.GetParameters().Length == 1)
-					.Single(m => m.GetParameters().Single().ParameterType.IsAssignableFrom(key));
+					.SingleOrDefault(m => m.GetParameters().Single().ParameterType.IsAssignableFrom(key));
+
+				if (method == null)
+					return value => { };
 
 				return value => method.Invoke(projection, new[] { value });
 			});
 		}
 
-		private EventSource Dispatch<T>(T message)
+		private EventSource Dispatch(Notification notification)
 		{
-			_handlers[typeof(T)].Invoke(message);
+			var events = new List<object>();
+
+			_transformers.ForEach(tx => tx.Transform(notification, events.Add));
+			events.ForEach(message => _handlers[message.GetType()].Invoke(message));
+
 			return this;
 		}
 
@@ -76,13 +93,13 @@ namespace Dockson.Tests.Domain
 
 		public EventSource BranchCommit()
 		{
-			Dispatch(new BranchCommit(CreateNotification("feature-whatever")));
+			Dispatch(CreateNotification("feature-whatever"));
 			return this;
 		}
 
 		public EventSource MasterCommit()
 		{
-			Dispatch(new MasterCommit(CreateNotification("master")));
+			Dispatch(CreateNotification("master"));
 			return this;
 		}
 
@@ -90,9 +107,11 @@ namespace Dockson.Tests.Domain
 		{
 			var notification = new Notification
 			{
+				Type = Stages.Build,
+				Timestamp = Timestamp,
 				Name = Name,
 				Version = Version,
-				Timestamp = Timestamp,
+				Status = "success",
 				Groups = Groups,
 				Tags =
 				{
@@ -101,7 +120,7 @@ namespace Dockson.Tests.Domain
 			};
 			modify?.Invoke(notification);
 
-			Dispatch(new BuildSucceeded(notification));
+			Dispatch(notification);
 
 			return this;
 		}
@@ -110,9 +129,11 @@ namespace Dockson.Tests.Domain
 		{
 			var notification = new Notification
 			{
+				Type = Stages.Build,
+				Timestamp = Timestamp,
 				Name = Name,
 				Version = Version,
-				Timestamp = Timestamp,
+				Status = "failure",
 				Groups = Groups,
 				Tags =
 				{
@@ -121,7 +142,7 @@ namespace Dockson.Tests.Domain
 			};
 			modify?.Invoke(notification);
 
-			Dispatch(new BuildFailed(notification));
+			Dispatch(notification);
 
 			return this;
 		}
@@ -130,14 +151,20 @@ namespace Dockson.Tests.Domain
 		{
 			var notification = new Notification
 			{
+				Type = Stages.Deploy,
+				Timestamp = Timestamp,
 				Name = Name,
 				Version = Version,
-				Timestamp = Timestamp,
-				Groups = Groups
+				Status = "success",
+				Groups = Groups,
+				Tags =
+				{
+					{ "environment", "production" }
+				}
 			};
 			modify?.Invoke(notification);
 
-			Dispatch(new ProductionDeployment(notification));
+			Dispatch(notification);
 
 			return this;
 		}

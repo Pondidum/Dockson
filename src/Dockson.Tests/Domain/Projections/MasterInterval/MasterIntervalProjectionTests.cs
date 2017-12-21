@@ -22,7 +22,9 @@ namespace Dockson.Tests.Domain.Projections.MasterInterval
 		[Fact]
 		public void When_projecting_one_commit()
 		{
-			_service.MasterCommit();
+			_service
+				.BranchCommit()
+				.MasterCommit();
 
 			_view.ShouldSatisfyAllConditions(
 				() => _view[_service.Name].Daily[new DayDate(_service.Timestamp)].Median.ShouldBe(0),
@@ -34,8 +36,10 @@ namespace Dockson.Tests.Domain.Projections.MasterInterval
 		public void When_projecting_two_commits_on_the_same_day()
 		{
 			_service
+				.BranchCommit()
 				.MasterCommit()
 				.Advance(1.Hour())
+				.BranchCommit()
 				.MasterCommit();
 
 			_view.ShouldSatisfyAllConditions(
@@ -48,11 +52,11 @@ namespace Dockson.Tests.Domain.Projections.MasterInterval
 		public void When_projecting_several_commits_on_the_same_day()
 		{
 			_service
-				.MasterCommit()
-				.Advance(1.Hour()).MasterCommit()
-				.Advance(1.Hour()).MasterCommit()
-				.Advance(2.Hours()).MasterCommit()
-				.Advance(1.Hour()).MasterCommit();
+				.BranchCommit().MasterCommit()
+				.Advance(1.Hour()).BranchCommit().MasterCommit()
+				.Advance(1.Hour()).BranchCommit().MasterCommit()
+				.Advance(2.Hours()).BranchCommit().MasterCommit()
+				.Advance(1.Hour()).BranchCommit().MasterCommit();
 
 			_view.ShouldSatisfyAllConditions(
 				() => _view[_service.Name].Daily[new DayDate(_service.Timestamp)].Median.ShouldBe(60), //1 hour
@@ -67,15 +71,15 @@ namespace Dockson.Tests.Domain.Projections.MasterInterval
 			var secondDay = firstDay.AddDays(1);
 
 			_service
-				.MasterCommit()
-				.Advance(1.Hour()).MasterCommit()
-				.Advance(1.Hour()).MasterCommit()
-				.Advance(2.Hours()).MasterCommit()
-				.Advance(1.Hour()).MasterCommit()
+				.BranchCommit().MasterCommit()
+				.Advance(1.Hour()).BranchCommit().MasterCommit()
+				.Advance(1.Hour()).BranchCommit().MasterCommit()
+				.Advance(2.Hours()).BranchCommit().MasterCommit()
+				.Advance(1.Hour()).BranchCommit().MasterCommit()
 				.AdvanceTo(secondDay)
-				.Advance(2.Hours()).MasterCommit()
-				.Advance(2.Hours()).MasterCommit()
-				.Advance(1.Hour()).MasterCommit();
+				.Advance(2.Hours()).BranchCommit().MasterCommit()
+				.Advance(2.Hours()).BranchCommit().MasterCommit()
+				.Advance(1.Hour()).BranchCommit().MasterCommit();
 
 			_view.ShouldSatisfyAllConditions(
 				() => _view[_service.Name].Daily[new DayDate(firstDay)].Median.ShouldBe(60), //1 hour

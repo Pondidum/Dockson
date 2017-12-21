@@ -45,6 +45,7 @@ namespace Dockson.Tests.Domain.Projections.BuildLeadTime
 		public void When_projecting_a_commit_and_matching_build()
 		{
 			_serviceOne
+				.BranchCommit()
 				.MasterCommit()
 				.Advance(TimeSpan.FromMinutes(20))
 				.BuildSucceeded();
@@ -61,11 +62,13 @@ namespace Dockson.Tests.Domain.Projections.BuildLeadTime
 		public void When_projecting_two_commits_and_matching_builds()
 		{
 			_serviceOne
+				.BranchCommit()
 				.MasterCommit()
 				.Advance(TimeSpan.FromMinutes(20))
 				.BuildSucceeded()
 				.Advance(TimeSpan.FromMinutes(20))
 				.NewCommitHash()
+				.BranchCommit()
 				.MasterCommit()
 				.Advance(TimeSpan.FromMinutes(15))
 				.BuildSucceeded();
@@ -82,12 +85,14 @@ namespace Dockson.Tests.Domain.Projections.BuildLeadTime
 		public void When_projecting_two_commits_and_matching_builds_for_different_services()
 		{
 			_serviceOne
+				.BranchCommit()
 				.MasterCommit()
 				.Advance(TimeSpan.FromMinutes(20))
 				.BuildSucceeded();
 
 			_serviceTwo
 				.Advance(TimeSpan.FromMinutes(40))
+				.BranchCommit()
 				.MasterCommit()
 				.Advance(TimeSpan.FromMinutes(15))
 				.BuildSucceeded();
