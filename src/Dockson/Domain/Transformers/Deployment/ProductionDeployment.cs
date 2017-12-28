@@ -13,9 +13,14 @@ namespace Dockson.Domain.Transformers.Deployment
 			Groups = new HashSet<string>(
 				notification.Groups.Append(notification.Name),
 				StringComparer.OrdinalIgnoreCase);
+
+			Name = notification.Name;
+			Version = notification.Version;
 		}
 
 		public DateTime Timestamp { get; }
 		public HashSet<string> Groups { get; }
+		public string Name { get; }
+		public string Version { get; }
 	}
 }

@@ -30,10 +30,10 @@
       * [ ] lines: `dfr, dfrt.median, dfrt.stddev`
   * [ ] deployment throughput
     * `dn = deploy time, n = build finish time, d = prod deployments, t = time`
-    * [ ] lead time
-      * [ ] time between creating package and it's deployment
-      * [ ] `dlt.median = median( (d^n - b^n ) for d in t )`
-      * [ ] `dlt.stddev = stddev( (d^n - b^n ) for d in t )`
+    * [x] lead time
+      * [x] time between creating package and it's deployment
+      * [x] `dlt.median = median( (d^n - b^n ) for d in t )`
+      * [x] `dlt.stddev = stddev( (d^n - b^n ) for d in t )`
     * [x] frequency / interval
       * [x] time between production deployments
       * [x] `di.median = median( (d^n - d^n-1 ) for d in t )`

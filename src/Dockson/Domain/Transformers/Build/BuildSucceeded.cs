@@ -18,11 +18,13 @@ namespace Dockson.Domain.Transformers.Build
 
 			Name = notification.Name;
 			CommitHash = commit;
+			Version = notification.Version;
 		}
 
 		public DateTime Timestamp { get; }
 		public HashSet<string> Groups { get; }
 		public string Name { get; }
 		public string CommitHash { get; }
+		public string Version { get; }
 	}
 }
