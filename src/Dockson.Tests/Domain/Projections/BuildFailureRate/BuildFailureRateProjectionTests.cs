@@ -1,5 +1,6 @@
 ﻿using Dockson.Domain;
 using Dockson.Domain.Projections.BuildFailureRate;
+using Dockson.Domain.Views;
 using Shouldly;
 using Xunit;
 
@@ -13,7 +14,11 @@ namespace Dockson.Tests.Domain.Projections.BuildFailureRate
 		public BuildFailureRateProjectionTests()
 		{
 			_view = new BuildFailureRateView();
-			var projection = new BuildFailureRateProjection(_view);
+			var projection = new BuildFailureRateProjection((group, day, newSummary) =>
+			{
+				_view.TryAdd(@group, new GroupSummary<BuildFailureRateSummary>());
+				_view[@group].Daily[day] = newSummary;
+			});
 
 			_service = new EventSource(projection)
 			{
