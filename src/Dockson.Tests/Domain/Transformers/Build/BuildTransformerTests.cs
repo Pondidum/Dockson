@@ -75,8 +75,7 @@ namespace Dockson.Tests.Domain.Transformers.Build
 			_events.Select(e => e.GetType()).ShouldBe(new[]
 			{
 				typeof(BuildFailed),
-				typeof(BuildSucceeded),
-				typeof(BuildFixed)
+				typeof(BuildSucceeded)
 			});
 		}
 
@@ -95,24 +94,8 @@ namespace Dockson.Tests.Domain.Transformers.Build
 			_events.Select(e => e.GetType()).ShouldBe(new[]
 			{
 				typeof(BuildFailed),
-				typeof(BuildSucceeded),
-				typeof(BuildFixed)
+				typeof(BuildSucceeded)
 			});
-		}
-
-		[Fact]
-		public void When_a_build_is_fixed_it_is_timed_from_first_failures_time()
-		{
-			var failureTime = DateTime.UtcNow;
-			var succesTime = failureTime.AddHours(3);
-
-			_transformer.Transform(Build("failure", failureTime), _events.Add);
-			_transformer.Transform(Build("failure", failureTime.AddHours(1)), _events.Add);
-			_transformer.Transform(Build("success", succesTime), _events.Add);
-
-			var fix = _events.OfType<BuildFixed>().Single();
-
-			fix.RecoveryTime.ShouldBe(succesTime - failureTime);
 		}
 
 		private Notification Build(string status, DateTime? timestamp = null) => new Notification
