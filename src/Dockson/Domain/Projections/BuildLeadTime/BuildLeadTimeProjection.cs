@@ -6,7 +6,7 @@ namespace Dockson.Domain.Projections.BuildLeadTime
 {
 	public class BuildLeadTimeProjection : LeadTimeProjection<MasterCommit, BuildSucceeded>
 	{
-		public BuildLeadTimeProjection(Action<string, DayDate, LeadTimeSummary> updateView)
+		public BuildLeadTimeProjection(Action<string, DayDate, TrendView> updateView)
 			: base(updateView, commit => commit.CommitHash, build => build.CommitHash)
 		{
 		}

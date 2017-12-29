@@ -5,7 +5,7 @@ namespace Dockson.Domain.Projections.BuildRecoveryTime
 {
 	public class BuildRecoveryTimeProjection : LeadTimeProjection<BuildFailed, BuildSucceeded>
 	{
-		public BuildRecoveryTimeProjection(Action<string, DayDate, LeadTimeSummary> updateView)
+		public BuildRecoveryTimeProjection(Action<string, DayDate, TrendView> updateView)
 			: base(updateView, failed => failed.Name, succeeded => succeeded.Name)
 		{
 		}

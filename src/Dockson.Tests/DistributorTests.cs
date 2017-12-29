@@ -1,14 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using Dockson.Domain;
-using Dockson.Domain.Projections;
+﻿using Dockson.Domain;
 using Dockson.Domain.Projections.MasterInterval;
 using Dockson.Domain.Projections.MasterLeadTime;
 using Dockson.Domain.Transformers;
 using Dockson.Domain.Transformers.Build;
 using Dockson.Domain.Transformers.Commits;
 using Dockson.Domain.Transformers.Deployment;
-using Dockson.Domain.Views;
 using Dockson.Tests.Domain;
 using Newtonsoft.Json;
 using Shouldly;
@@ -36,26 +32,17 @@ namespace Dockson.Tests
 				new DeploymentTransformer()
 			});
 
-			var masterInterval = new IntervalView();
-			var masterLeadTime = new LeadTimeView();
+			var view = new View();
 
-			distributor.AddProjection(new MasterIntervalProjection((group, day, newSummary) =>
-			{
-				masterInterval.TryAdd(group, new GroupSummary<IntervalSummary>());
-				masterInterval[group].Daily[day] = newSummary;
-			}));
-			distributor.AddProjection(new MasterLeadTimeProjection((group, day, newSummary) =>
-			{
-				masterLeadTime.TryAdd(group, new GroupSummary<LeadTimeSummary>());
-				masterLeadTime[group].Daily[day] = newSummary;
-			}));
+			distributor.AddProjection(new MasterIntervalProjection(view.UpdateMasterCommitInterval));
+			distributor.AddProjection(new MasterLeadTimeProjection(view.UpdateMasterCommitLeadTime));
 
 			var service = new EventSource(distributor.Project);
 
 			service
-				.BranchCommit()
-				.Advance(20.Minutes())
-				.MasterCommit()
+				.BranchCommit().Advance(20.Minutes()).MasterCommit()
+				.Advance(5.Minutes())
+				.BranchCommit().Advance(20.Minutes()).MasterCommit()
 				.Advance(5.Minutes())
 				.BuildSucceeded()
 				.Advance(7.Minutes())
@@ -64,11 +51,13 @@ namespace Dockson.Tests
 			var date = new DayDate(service.Timestamp);
 
 			service.ShouldSatisfyAllConditions(
-				() => masterInterval[service.Name].Daily[date].Median.ShouldBe(0),
-				() => masterInterval[service.Name].Daily[date].Deviation.ShouldBe(0),
-				() => masterLeadTime[service.Name].Daily[date].Median.ShouldBe(20),
-				() => masterLeadTime[service.Name].Daily[date].Deviation.ShouldBe(0)
+				() => view[service.Name].MasterCommitInterval[date].Median.ShouldBe(25),
+				() => view[service.Name].MasterCommitInterval[date].Deviation.ShouldBe(0),
+				() => view[service.Name].MasterCommitLeadTime[date].Median.ShouldBe(20),
+				() => view[service.Name].MasterCommitLeadTime[date].Deviation.ShouldBe(0)
 			);
+
+			_output.WriteLine(JsonConvert.SerializeObject(view, Formatting.Indented));
 		}
 	}
 }

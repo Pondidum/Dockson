@@ -5,7 +5,7 @@ namespace Dockson.Domain.Projections.MasterInterval
 {
 	public class MasterIntervalProjection : IntervalProjection<MasterCommit>
 	{
-		public MasterIntervalProjection(Action<string, DayDate, IntervalSummary> updateView)
+		public MasterIntervalProjection(Action<string, DayDate, TrendView> updateView)
 			: base(updateView)
 		{
 		}

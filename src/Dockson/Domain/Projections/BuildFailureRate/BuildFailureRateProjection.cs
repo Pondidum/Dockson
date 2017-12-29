@@ -6,10 +6,10 @@ namespace Dockson.Domain.Projections.BuildFailureRate
 {
 	public class BuildFailureRateProjection : IProjection<BuildSucceeded>, IProjection<BuildFailed>
 	{
-		private readonly Action<string, DayDate, BuildFailureRateSummary> _updateView;
+		private readonly Action<string, DayDate, RateView> _updateView;
 		private readonly Cache<string, Cache<DayDate, Counts>> _trackers;
 
-		public BuildFailureRateProjection(Action<string, DayDate, BuildFailureRateSummary> updateView)
+		public BuildFailureRateProjection(Action<string, DayDate, RateView> updateView)
 		{
 			_updateView = updateView;
 			_trackers = new Cache<string, Cache<DayDate, Counts>>(
@@ -37,9 +37,9 @@ namespace Dockson.Domain.Projections.BuildFailureRate
 				var counts = _trackers[group][day];
 				action(counts);
 
-				_updateView(@group, day, new BuildFailureRateSummary
+				_updateView(@group, day, new RateView
 				{
-					FailureRate = (counts.Failures / counts.Total) * 100
+					Rate = (counts.Failures / counts.Total) * 100
 				});
 			}
 		}

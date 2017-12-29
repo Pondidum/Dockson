@@ -9,17 +9,13 @@ namespace Dockson.Tests.Domain.Projections.MasterLeadTime
 {
 	public class MasterLeadTimeProjectionTests
 	{
-		private readonly LeadTimeView _view;
+		private readonly View _view;
 		private readonly EventSource _service;
 
 		public MasterLeadTimeProjectionTests()
 		{
-			_view = new LeadTimeView();
-			var projection = new MasterLeadTimeProjection((group, day, newSummary) =>
-			{
-				_view.TryAdd(group, new GroupSummary<LeadTimeSummary>());
-				_view[group].Daily[day] = newSummary;
-			});
+			_view = new View();
+			var projection = new MasterLeadTimeProjection(_view.UpdateMasterCommitLeadTime);
 			_service = new EventSource(projection);
 		}
 
@@ -33,8 +29,8 @@ namespace Dockson.Tests.Domain.Projections.MasterLeadTime
 			var day = new DayDate(_service.Timestamp);
 
 			_view.ShouldSatisfyAllConditions(
-				() => _view[_service.Name].Daily[day].Median.ShouldBe(1.Hour().TotalMinutes),
-				() => _view[_service.Name].Daily[day].Deviation.ShouldBe(0)
+				() => _view[_service.Name].MasterCommitLeadTime[day].Median.ShouldBe(1.Hour().TotalMinutes),
+				() => _view[_service.Name].MasterCommitLeadTime[day].Deviation.ShouldBe(0)
 			);
 		}
 
@@ -52,8 +48,8 @@ namespace Dockson.Tests.Domain.Projections.MasterLeadTime
 				.MasterCommit();
 
 			_view.ShouldSatisfyAllConditions(
-				() => _view[_service.Name].Daily[day].Median.ShouldBe(3.Hours().TotalMinutes),
-				() => _view[_service.Name].Daily[day].Deviation.ShouldBe(169.70, tolerance: 0.01)
+				() => _view[_service.Name].MasterCommitLeadTime[day].Median.ShouldBe(3.Hours().TotalMinutes),
+				() => _view[_service.Name].MasterCommitLeadTime[day].Deviation.ShouldBe(169.70, tolerance: 0.01)
 			);
 		}
 	}

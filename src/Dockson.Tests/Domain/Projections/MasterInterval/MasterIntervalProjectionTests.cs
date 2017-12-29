@@ -9,17 +9,13 @@ namespace Dockson.Tests.Domain.Projections.MasterInterval
 {
 	public class MasterIntervalProjectionTests
 	{
-		private readonly IntervalView _view;
+		private readonly View _view;
 		private readonly EventSource _service;
 
 		public MasterIntervalProjectionTests()
 		{
-			_view = new IntervalView();
-			var projection = new MasterIntervalProjection((group, day, newSummary) =>
-			{
-				_view.TryAdd(group, new GroupSummary<IntervalSummary>());
-				_view[group].Daily[day] = newSummary;
-			});
+			_view = new View();
+			var projection = new MasterIntervalProjection(_view.UpdateMasterCommitInterval);
 
 			_service = new EventSource(projection);
 		}
@@ -32,8 +28,8 @@ namespace Dockson.Tests.Domain.Projections.MasterInterval
 				.MasterCommit();
 
 			_view.ShouldSatisfyAllConditions(
-				() => _view[_service.Name].Daily[new DayDate(_service.Timestamp)].Median.ShouldBe(0),
-				() => _view[_service.Name].Daily[new DayDate(_service.Timestamp)].Deviation.ShouldBe(0)
+				() => _view[_service.Name].MasterCommitInterval[new DayDate(_service.Timestamp)].Median.ShouldBe(0),
+				() => _view[_service.Name].MasterCommitInterval[new DayDate(_service.Timestamp)].Deviation.ShouldBe(0)
 			);
 		}
 
@@ -48,8 +44,8 @@ namespace Dockson.Tests.Domain.Projections.MasterInterval
 				.MasterCommit();
 
 			_view.ShouldSatisfyAllConditions(
-				() => _view[_service.Name].Daily[new DayDate(_service.Timestamp)].Median.ShouldBe(60), //1 hour
-				() => _view[_service.Name].Daily[new DayDate(_service.Timestamp)].Deviation.ShouldBe(0)
+				() => _view[_service.Name].MasterCommitInterval[new DayDate(_service.Timestamp)].Median.ShouldBe(60), //1 hour
+				() => _view[_service.Name].MasterCommitInterval[new DayDate(_service.Timestamp)].Deviation.ShouldBe(0)
 			);
 		}
 
@@ -64,8 +60,8 @@ namespace Dockson.Tests.Domain.Projections.MasterInterval
 				.Advance(1.Hour()).BranchCommit().MasterCommit();
 
 			_view.ShouldSatisfyAllConditions(
-				() => _view[_service.Name].Daily[new DayDate(_service.Timestamp)].Median.ShouldBe(60), //1 hour
-				() => _view[_service.Name].Daily[new DayDate(_service.Timestamp)].Deviation.ShouldBe(30) // half hour
+				() => _view[_service.Name].MasterCommitInterval[new DayDate(_service.Timestamp)].Median.ShouldBe(60), //1 hour
+				() => _view[_service.Name].MasterCommitInterval[new DayDate(_service.Timestamp)].Deviation.ShouldBe(30) // half hour
 			);
 		}
 
@@ -87,10 +83,10 @@ namespace Dockson.Tests.Domain.Projections.MasterInterval
 				.Advance(1.Hour()).BranchCommit().MasterCommit();
 
 			_view.ShouldSatisfyAllConditions(
-				() => _view[_service.Name].Daily[new DayDate(firstDay)].Median.ShouldBe(60), //1 hour
-				() => _view[_service.Name].Daily[new DayDate(firstDay)].Deviation.ShouldBe(30), // half hour
-				() => _view[_service.Name].Daily[new DayDate(secondDay)].Median.ShouldBe(120), //2 hours
-				() => _view[_service.Name].Daily[new DayDate(secondDay)].Deviation.ShouldBe(676.165, tolerance: 0.005)
+				() => _view[_service.Name].MasterCommitInterval[new DayDate(firstDay)].Median.ShouldBe(60), //1 hour
+				() => _view[_service.Name].MasterCommitInterval[new DayDate(firstDay)].Deviation.ShouldBe(30), // half hour
+				() => _view[_service.Name].MasterCommitInterval[new DayDate(secondDay)].Median.ShouldBe(120), //2 hours
+				() => _view[_service.Name].MasterCommitInterval[new DayDate(secondDay)].Deviation.ShouldBe(676.165, tolerance: 0.005)
 			);
 		}
 	}

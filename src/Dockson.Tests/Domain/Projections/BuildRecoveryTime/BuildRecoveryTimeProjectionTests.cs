@@ -9,18 +9,14 @@ namespace Dockson.Tests.Domain.Projections.BuildRecoveryTime
 {
 	public class BuildRecoveryTimeProjectionTests
 	{
-		private readonly LeadTimeView _view;
+		private readonly View _view;
 		private readonly EventSource _service;
 		private readonly EventSource _serviceTwo;
 
 		public BuildRecoveryTimeProjectionTests()
 		{
-			_view = new LeadTimeView();
-			var projection = new BuildRecoveryTimeProjection((group, day, newSummary) =>
-			{
-				_view.TryAdd(@group, new GroupSummary<LeadTimeSummary>());
-				_view[@group].Daily[day] = newSummary;
-			});
+			_view = new View();
+			var projection = new BuildRecoveryTimeProjection(_view.UpdateBuildRecoveryTime);
 
 			_service = new EventSource(projection) { Name = "ServiceOne" };
 			_serviceTwo = new EventSource(projection) { Name = "ServiceTwo" };
@@ -34,7 +30,7 @@ namespace Dockson.Tests.Domain.Projections.BuildRecoveryTime
 				.Advance(20.Minutes())
 				.BuildSucceeded();
 
-			var daySummary = _view[_service.Name].Daily[new DayDate(_service.Timestamp)];
+			var daySummary = _view[_service.Name].BuildRecoveryTime[new DayDate(_service.Timestamp)];
 
 			daySummary.ShouldSatisfyAllConditions(
 				() => daySummary.Median.ShouldBe(20),
@@ -54,7 +50,7 @@ namespace Dockson.Tests.Domain.Projections.BuildRecoveryTime
 				.Advance(10.Minutes())
 				.BuildSucceeded();
 
-			var daySummary = _view[_service.Name].Daily[new DayDate(_service.Timestamp)];
+			var daySummary = _view[_service.Name].BuildRecoveryTime[new DayDate(_service.Timestamp)];
 
 			daySummary.ShouldSatisfyAllConditions(
 				() => daySummary.Median.ShouldBe(15),
@@ -73,14 +69,14 @@ namespace Dockson.Tests.Domain.Projections.BuildRecoveryTime
 				.Advance(5.Minutes())
 				.BuildFailed().Advance(20.Minutes()).BuildSucceeded();
 				
-			var serviceOne = _view[_service.Name].Daily[new DayDate(_service.Timestamp)];
+			var serviceOne = _view[_service.Name].BuildRecoveryTime[new DayDate(_service.Timestamp)];
 
 			serviceOne.ShouldSatisfyAllConditions(
 				() => serviceOne.Median.ShouldBe(20),
 				() => serviceOne.Deviation.ShouldBe(0)
 			);
 
-			var serviceTwo = _view[_serviceTwo.Name].Daily[new DayDate(_serviceTwo.Timestamp)];
+			var serviceTwo = _view[_serviceTwo.Name].BuildRecoveryTime[new DayDate(_serviceTwo.Timestamp)];
 
 			serviceTwo.ShouldSatisfyAllConditions(
 				() => serviceTwo.Median.ShouldBe(15),

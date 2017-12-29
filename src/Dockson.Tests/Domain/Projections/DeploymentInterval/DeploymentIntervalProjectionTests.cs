@@ -9,17 +9,13 @@ namespace Dockson.Tests.Domain.Projections.DeploymentInterval
 {
 	public class DeploymentIntervalProjectionTests
 	{
-		private readonly IntervalView _view;
+		private readonly View _view;
 		private readonly EventSource _service;
 
 		public DeploymentIntervalProjectionTests()
 		{
-			_view = new IntervalView();
-			var projection = new DeploymentIntervalProjection((group, day, newSummary) =>
-			{
-				_view.TryAdd(group, new GroupSummary<IntervalSummary>());
-				_view[group].Daily[day] = newSummary;
-			});
+			_view = new View();
+			var projection = new DeploymentIntervalProjection(_view.UpdateDeploymentInterval);
 
 			_service = new EventSource(projection);
 		}
@@ -29,7 +25,7 @@ namespace Dockson.Tests.Domain.Projections.DeploymentInterval
 		{
 			_service.ProductionDeployment();
 
-			var day = _view[_service.Name].Daily[new DayDate(_service.Timestamp)];
+			var day = _view[_service.Name].DeploymentInterval[new DayDate(_service.Timestamp)];
 
 			day.ShouldSatisfyAllConditions(
 				() => day.Median.ShouldBe(0),
@@ -45,7 +41,7 @@ namespace Dockson.Tests.Domain.Projections.DeploymentInterval
 				.Advance(1.Hour())
 				.ProductionDeployment();
 
-			var day = _view[_service.Name].Daily[new DayDate(_service.Timestamp)];
+			var day = _view[_service.Name].DeploymentInterval[new DayDate(_service.Timestamp)];
 
 			day.ShouldSatisfyAllConditions(
 				() => day.Median.ShouldBe(1.Hour().TotalMinutes),
@@ -63,7 +59,7 @@ namespace Dockson.Tests.Domain.Projections.DeploymentInterval
 				.Advance(2.Hours()).ProductionDeployment()
 				.Advance(1.Hour()).ProductionDeployment();
 
-			var day = _view[_service.Name].Daily[new DayDate(_service.Timestamp)];
+			var day = _view[_service.Name].DeploymentInterval[new DayDate(_service.Timestamp)];
 
 			_view.ShouldSatisfyAllConditions(
 				() => day.Median.ShouldBe(60), //1 hour
@@ -89,10 +85,10 @@ namespace Dockson.Tests.Domain.Projections.DeploymentInterval
 				.Advance(1.Hour()).ProductionDeployment();
 
 			_view.ShouldSatisfyAllConditions(
-				() => _view[_service.Name].Daily[new DayDate(firstDay)].Median.ShouldBe(60), //1 hour
-				() => _view[_service.Name].Daily[new DayDate(firstDay)].Deviation.ShouldBe(30), // half hour
-				() => _view[_service.Name].Daily[new DayDate(secondDay)].Median.ShouldBe(120), //2 hours
-				() => _view[_service.Name].Daily[new DayDate(secondDay)].Deviation.ShouldBe(676.165, tolerance: 0.005)
+				() => _view[_service.Name].DeploymentInterval[new DayDate(firstDay)].Median.ShouldBe(60), //1 hour
+				() => _view[_service.Name].DeploymentInterval[new DayDate(firstDay)].Deviation.ShouldBe(30), // half hour
+				() => _view[_service.Name].DeploymentInterval[new DayDate(secondDay)].Median.ShouldBe(120), //2 hours
+				() => _view[_service.Name].DeploymentInterval[new DayDate(secondDay)].Deviation.ShouldBe(676.165, tolerance: 0.005)
 			);
 		}
 	}

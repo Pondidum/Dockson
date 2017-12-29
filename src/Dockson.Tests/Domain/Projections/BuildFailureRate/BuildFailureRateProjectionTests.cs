@@ -8,17 +8,13 @@ namespace Dockson.Tests.Domain.Projections.BuildFailureRate
 {
 	public class BuildFailureRateProjectionTests
 	{
-		private readonly BuildFailureRateView _view;
+		private readonly View _view;
 		private readonly EventSource _service;
 
 		public BuildFailureRateProjectionTests()
 		{
-			_view = new BuildFailureRateView();
-			var projection = new BuildFailureRateProjection((group, day, newSummary) =>
-			{
-				_view.TryAdd(@group, new GroupSummary<BuildFailureRateSummary>());
-				_view[@group].Daily[day] = newSummary;
-			});
+			_view = new View();
+			var projection = new BuildFailureRateProjection(_view.UpdateBuildFailureRate);
 
 			_service = new EventSource(projection)
 			{
@@ -32,8 +28,8 @@ namespace Dockson.Tests.Domain.Projections.BuildFailureRate
 			_service.BuildSucceeded();
 
 			_view[_service.Name]
-				.Daily[new DayDate(_service.Timestamp)]
-				.FailureRate
+				.BuildFailureRate[new DayDate(_service.Timestamp)]
+				.Rate
 				.ShouldBe(0);
 		}
 
@@ -43,8 +39,8 @@ namespace Dockson.Tests.Domain.Projections.BuildFailureRate
 			_service.BuildFailed();
 
 			_view[_service.Name]
-				.Daily[new DayDate(_service.Timestamp)]
-				.FailureRate
+				.BuildFailureRate[new DayDate(_service.Timestamp)]
+				.Rate
 				.ShouldBe(100);
 		}
 
@@ -58,8 +54,8 @@ namespace Dockson.Tests.Domain.Projections.BuildFailureRate
 				.BuildFailed();
 
 			_view[_service.Name]
-				.Daily[new DayDate(_service.Timestamp)]
-				.FailureRate
+				.BuildFailureRate[new DayDate(_service.Timestamp)]
+				.Rate
 				.ShouldBe(50);
 		}
 
@@ -81,8 +77,8 @@ namespace Dockson.Tests.Domain.Projections.BuildFailureRate
 			var group = _view[_service.Name];
 
 			group.ShouldSatisfyAllConditions(
-				() => group.Daily[new DayDate(firstDay)].FailureRate.ShouldBe(33.33, tolerance: 0.01),
-				() => group.Daily[new DayDate(secondDay)].FailureRate.ShouldBe(66.66, tolerance: 0.01)
+				() => group.BuildFailureRate[new DayDate(firstDay)].Rate.ShouldBe(33.33, tolerance: 0.01),
+				() => group.BuildFailureRate[new DayDate(secondDay)].Rate.ShouldBe(66.66, tolerance: 0.01)
 			);
 		}
 	}

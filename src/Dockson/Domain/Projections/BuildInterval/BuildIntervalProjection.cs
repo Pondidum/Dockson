@@ -5,7 +5,7 @@ namespace Dockson.Domain.Projections.BuildInterval
 {
 	public class BuildIntervalProjection : IntervalProjection<BuildSucceeded>
 	{
-		public BuildIntervalProjection(Action<string, DayDate, IntervalSummary> updateView)
+		public BuildIntervalProjection(Action<string, DayDate, TrendView> updateView)
 			: base(updateView)
 		{
 		}

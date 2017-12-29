@@ -5,7 +5,7 @@ namespace Dockson.Domain.Projections.DeploymentInterval
 {
 	public class DeploymentIntervalProjection : IntervalProjection<ProductionDeployment>
 	{
-		public DeploymentIntervalProjection(Action<string, DayDate, IntervalSummary> updateView)
+		public DeploymentIntervalProjection(Action<string, DayDate, TrendView> updateView)
 			: base(updateView)
 		{
 		}

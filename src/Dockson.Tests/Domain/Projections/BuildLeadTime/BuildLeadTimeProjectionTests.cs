@@ -12,19 +12,15 @@ namespace Dockson.Tests.Domain.Projections.BuildLeadTime
 	{
 		private const string Team = "team-one";
 
-		private readonly LeadTimeView _view;
+		private readonly View _view;
 
 		private readonly EventSource _serviceOne;
 		private readonly EventSource _serviceTwo;
 
 		public BuildLeadTimeProjectionTests()
 		{
-			_view = new LeadTimeView();
-			var projection = new BuildLeadTimeProjection((group, day, newSummary) =>
-			{
-				_view.TryAdd(group, new GroupSummary<LeadTimeSummary>());
-				_view[group].Daily[day] = newSummary;
-			});
+			_view = new View();
+			var projection = new BuildLeadTimeProjection(_view.UpdateBuildLeadTime);
 
 			_serviceOne = new EventSource(projection) { Name = "service-one", Groups = { Team } };
 			_serviceTwo = new EventSource(projection) { Name = "service-two", Groups = { Team } };
@@ -55,7 +51,7 @@ namespace Dockson.Tests.Domain.Projections.BuildLeadTime
 				.Advance(TimeSpan.FromMinutes(20))
 				.BuildSucceeded();
 
-			var summary = _view[_serviceOne.Name].Daily[new DayDate(_serviceOne.Timestamp)];
+			var summary = _view[_serviceOne.Name].BuildLeadTime[new DayDate(_serviceOne.Timestamp)];
 
 			summary.ShouldSatisfyAllConditions(
 				() => summary.Median.ShouldBe(20),
@@ -78,7 +74,7 @@ namespace Dockson.Tests.Domain.Projections.BuildLeadTime
 				.Advance(TimeSpan.FromMinutes(15))
 				.BuildSucceeded();
 
-			var summary = _view[_serviceOne.Name].Daily[new DayDate(_serviceOne.Timestamp)];
+			var summary = _view[_serviceOne.Name].BuildLeadTime[new DayDate(_serviceOne.Timestamp)];
 
 			summary.ShouldSatisfyAllConditions(
 				() => summary.Median.ShouldBe(17.5),
@@ -102,9 +98,9 @@ namespace Dockson.Tests.Domain.Projections.BuildLeadTime
 				.Advance(TimeSpan.FromMinutes(15))
 				.BuildSucceeded();
 
-			var one = _view[_serviceOne.Name].Daily[new DayDate(_serviceOne.Timestamp)];
-			var two = _view[_serviceTwo.Name].Daily[new DayDate(_serviceTwo.Timestamp)];
-			var team = _view[Team].Daily[new DayDate(_serviceOne.Timestamp)];
+			var one = _view[_serviceOne.Name].BuildLeadTime[new DayDate(_serviceOne.Timestamp)];
+			var two = _view[_serviceTwo.Name].BuildLeadTime[new DayDate(_serviceTwo.Timestamp)];
+			var team = _view[Team].BuildLeadTime[new DayDate(_serviceOne.Timestamp)];
 
 			_view.ShouldSatisfyAllConditions(
 				() => one.Median.ShouldBe(20),

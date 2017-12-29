@@ -8,10 +8,10 @@ namespace Dockson.Domain.Projections
 	public class IntervalProjection<TMessage> : IProjection<TMessage>
 		where TMessage : IProjectable
 	{
-		private readonly Action<string, DayDate, IntervalSummary> _updateView;
+		private readonly Action<string, DayDate, TrendView> _updateView;
 		private readonly List<Interval> _builds;
 
-		public IntervalProjection(Action<string, DayDate, IntervalSummary> updateView)
+		public IntervalProjection(Action<string, DayDate, TrendView> updateView)
 		{
 			_updateView = updateView;
 			_builds = new List<Interval>();
@@ -41,7 +41,7 @@ namespace Dockson.Domain.Projections
 					.Select(d => d.ElapsedMinutes)
 					.ToArray();
 
-				_updateView(@group, day, new IntervalSummary
+				_updateView(@group, day, new TrendView
 				{
 					Median = deltas.Any() ? deltas.Median() : 0,
 					Deviation = deltas.Any() ? deltas.StandardDeviation() : 0
