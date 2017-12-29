@@ -21,6 +21,7 @@ namespace Dockson.Tests.Domain
 
 		private readonly Cache<Type, Action<object>> _handlers;
 		private readonly List<ITransformer> _transformers;
+		private readonly Action<Notification> _projector;
 
 		public EventSource()
 		{
@@ -36,6 +37,11 @@ namespace Dockson.Tests.Domain
 				new BuildTransformer(),
 				new DeploymentTransformer()
 			};
+		}
+
+		public EventSource(Action<Notification> projector) : this()
+		{
+			_projector = projector;
 		}
 
 		public EventSource(object projection) : this()
@@ -65,6 +71,12 @@ namespace Dockson.Tests.Domain
 
 		private EventSource Dispatch(Notification notification)
 		{
+			if (_projector != null)
+			{
+				_projector(notification);
+				return this;
+			}
+
 			var events = new List<object>();
 
 			_transformers.ForEach(tx => tx.Transform(notification, events.Add));
