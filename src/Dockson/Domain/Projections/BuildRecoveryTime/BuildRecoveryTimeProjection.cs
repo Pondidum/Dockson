@@ -1,37 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
 using Dockson.Domain.Transformers.Build;
-using Dockson.Domain.Views;
 
 namespace Dockson.Domain.Projections.BuildRecoveryTime
 {
-	public class BuildRecoveryTimeProjection : IProjection<BuildFixed>
+	public class BuildRecoveryTimeProjection : LeadTimeProjection<BuildFailed, BuildSucceeded>
 	{
-		private readonly BuildRecoveryTimeView _view;
-		private readonly Cache<string, List<double>> _recoveries;
-
-		public BuildRecoveryTimeProjection(BuildRecoveryTimeView view)
+		public BuildRecoveryTimeProjection(Action<string, DayDate, LeadTimeSummary> updateView)
+			: base(updateView, failed => failed.Name, succeeded => succeeded.Name)
 		{
-			_view = view;
-			_recoveries = new Cache<string, List<double>>(
-				StringComparer.OrdinalIgnoreCase,
-				key => new List<double>());
-		}
-
-		public void Project(BuildFixed message)
-		{
-			var day = new DayDate(message.FixedTimestamp);
-			foreach (var @group in message.Groups)
-			{
-				_recoveries[group].Add(message.RecoveryTime.TotalMinutes);
-
-				_view.TryAdd(group, new GroupSummary<BuildRecoveryTimeSummary>());
-				_view[group].Daily[day] = new BuildRecoveryTimeSummary
-				{
-					Median = _recoveries[group].Median(),
-					Deviation = _recoveries[group].StandardDeviation()
-				};
-			}
 		}
 	}
 }

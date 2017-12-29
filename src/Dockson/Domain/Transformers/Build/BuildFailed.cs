@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Dockson.Domain.Projections;
 
 namespace Dockson.Domain.Transformers.Build
 {
-	public class BuildFailed
+	public class BuildFailed : IProjectable
 	{
 		public BuildFailed(Notification notification)
 		{
