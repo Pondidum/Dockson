@@ -1,6 +1,7 @@
 ﻿using Dockson.Domain;
 using Dockson.Domain.Projections;
 using Dockson.Domain.Projections.DeploymentInterval;
+using Dockson.Domain.Views;
 using Shouldly;
 using Xunit;
 
@@ -14,7 +15,11 @@ namespace Dockson.Tests.Domain.Projections.DeploymentInterval
 		public DeploymentIntervalProjectionTests()
 		{
 			_view = new IntervalView();
-			var projection = new DeploymentIntervalProjection(_view);
+			var projection = new DeploymentIntervalProjection((group, day, newSummary) =>
+			{
+				_view.TryAdd(group, new GroupSummary<IntervalSummary>());
+				_view[group].Daily[day] = newSummary;
+			});
 
 			_service = new EventSource(projection);
 		}

@@ -8,18 +8,19 @@ namespace Dockson.Domain.Projections
 	public class IntervalProjection<TMessage> : IProjection<TMessage>
 		where TMessage : IProjectable
 	{
-		private readonly IntervalView _view;
+		private readonly Action<string, DayDate, IntervalSummary> _updateView;
 		private readonly List<Interval> _builds;
 
-		public IntervalProjection(IntervalView view)
+		public IntervalProjection(Action<string, DayDate, IntervalSummary> updateView)
 		{
-			_view = view;
+			_updateView = updateView;
 			_builds = new List<Interval>();
 		}
 
 		public void Project(TMessage message)
 		{
 			var buildTime = message.Timestamp;
+			var day = new DayDate(buildTime);
 
 			foreach (var group in message.Groups)
 			{
@@ -34,27 +35,18 @@ namespace Dockson.Domain.Projections
 						: 0
 				});
 
-				UpdateDailySummary(buildTime, group);
+				var deltas = _builds
+					.Where(d => d.Group.EqualsIgnore(group))
+					.Where(d => day.Includes(d.Timestamp) && d.ElapsedMinutes > 0)
+					.Select(d => d.ElapsedMinutes)
+					.ToArray();
+
+				_updateView(@group, day, new IntervalSummary
+				{
+					Median = deltas.Any() ? deltas.Median() : 0,
+					Deviation = deltas.Any() ? deltas.StandardDeviation() : 0
+				});
 			}
-		}
-
-		private void UpdateDailySummary(DateTime buildTime, string group)
-		{
-			var key = new DayDate(buildTime);
-
-			var deltas = _builds
-				.Where(d => d.Group.EqualsIgnore(group))
-				.Where(d => key.Includes(d.Timestamp) && d.ElapsedMinutes > 0)
-				.Select(d => d.ElapsedMinutes)
-				.ToArray();
-
-			_view.TryAdd(group, new GroupSummary<IntervalSummary>());
-
-			_view[group].Daily[key] = new IntervalSummary
-			{
-				Median = deltas.Any() ? deltas.Median() : 0,
-				Deviation = deltas.Any() ? deltas.StandardDeviation() : 0
-			};
 		}
 
 		private class Interval

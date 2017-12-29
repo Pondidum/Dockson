@@ -8,6 +8,7 @@ using Dockson.Domain.Transformers;
 using Dockson.Domain.Transformers.Build;
 using Dockson.Domain.Transformers.Commits;
 using Dockson.Domain.Transformers.Deployment;
+using Dockson.Domain.Views;
 using Dockson.Tests.Domain;
 using Newtonsoft.Json;
 using Shouldly;
@@ -38,7 +39,11 @@ namespace Dockson.Tests
 			var masterInterval = new IntervalView();
 			var masterLeadTime = new LeadTimeView();
 
-			distributor.AddProjection(new MasterIntervalProjection(masterInterval));
+			distributor.AddProjection(new MasterIntervalProjection((group, day, newSummary) =>
+			{
+				masterInterval.TryAdd(group, new GroupSummary<IntervalSummary>());
+				masterInterval[group].Daily[day] = newSummary;
+			}));
 			distributor.AddProjection(new MasterLeadTimeProjection(masterLeadTime));
 
 			var service = new EventSource(distributor.Project);

@@ -1,6 +1,7 @@
 ﻿using Dockson.Domain;
 using Dockson.Domain.Projections;
 using Dockson.Domain.Projections.MasterInterval;
+using Dockson.Domain.Views;
 using Shouldly;
 using Xunit;
 
@@ -14,7 +15,11 @@ namespace Dockson.Tests.Domain.Projections.MasterInterval
 		public MasterIntervalProjectionTests()
 		{
 			_view = new IntervalView();
-			var projection = new MasterIntervalProjection(_view);
+			var projection = new MasterIntervalProjection((group, day, newSummary) =>
+			{
+				_view.TryAdd(group, new GroupSummary<IntervalSummary>());
+				_view[group].Daily[day] = newSummary;
+			});
 
 			_service = new EventSource(projection);
 		}
