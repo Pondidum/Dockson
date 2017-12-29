@@ -1,6 +1,5 @@
 ﻿using Dockson.Domain;
-using Dockson.Domain.Projections.MasterInterval;
-using Dockson.Domain.Projections.MasterLeadTime;
+using Dockson.Domain.Projections;
 using Dockson.Domain.Transformers;
 using Dockson.Domain.Transformers.Build;
 using Dockson.Domain.Transformers.Commits;

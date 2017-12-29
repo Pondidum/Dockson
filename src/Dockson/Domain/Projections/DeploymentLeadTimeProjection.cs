@@ -2,7 +2,7 @@
 using Dockson.Domain.Transformers.Build;
 using Dockson.Domain.Transformers.Deployment;
 
-namespace Dockson.Domain.Projections.DeploymentLeadTime
+namespace Dockson.Domain.Projections
 {
 	public class DeploymentLeadTimeProjection : LeadTimeProjection<BuildSucceeded, ProductionDeployment>
 	{

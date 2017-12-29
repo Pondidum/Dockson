@@ -1,7 +1,7 @@
 ﻿using System;
 using Dockson.Domain.Transformers.Commits;
 
-namespace Dockson.Domain.Projections.MasterInterval
+namespace Dockson.Domain.Projections
 {
 	public class MasterIntervalProjection : IntervalProjection<MasterCommit>
 	{

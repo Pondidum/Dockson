@@ -1,10 +1,9 @@
 ﻿using Dockson.Domain;
-using Dockson.Domain.Projections.BuildFailureRate;
-using Dockson.Domain.Views;
+using Dockson.Domain.Projections;
 using Shouldly;
 using Xunit;
 
-namespace Dockson.Tests.Domain.Projections.BuildFailureRate
+namespace Dockson.Tests.Domain.Projections
 {
 	public class BuildFailureRateProjectionTests
 	{

@@ -1,11 +1,9 @@
 ﻿using Dockson.Domain;
 using Dockson.Domain.Projections;
-using Dockson.Domain.Projections.DeploymentInterval;
-using Dockson.Domain.Views;
 using Shouldly;
 using Xunit;
 
-namespace Dockson.Tests.Domain.Projections.DeploymentInterval
+namespace Dockson.Tests.Domain.Projections
 {
 	public class DeploymentIntervalProjectionTests
 	{

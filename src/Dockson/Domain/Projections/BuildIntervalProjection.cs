@@ -1,7 +1,7 @@
 ﻿using System;
 using Dockson.Domain.Transformers.Build;
 
-namespace Dockson.Domain.Projections.BuildInterval
+namespace Dockson.Domain.Projections
 {
 	public class BuildIntervalProjection : IntervalProjection<BuildSucceeded>
 	{

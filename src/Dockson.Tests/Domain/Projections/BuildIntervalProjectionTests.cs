@@ -1,9 +1,9 @@
 ﻿using Dockson.Domain;
-using Dockson.Domain.Projections.BuildInterval;
+using Dockson.Domain.Projections;
 using Shouldly;
 using Xunit;
 
-namespace Dockson.Tests.Domain.Projections.BuildInterval
+namespace Dockson.Tests.Domain.Projections
 {
 	public class BuildIntervalProjectionTests
 	{

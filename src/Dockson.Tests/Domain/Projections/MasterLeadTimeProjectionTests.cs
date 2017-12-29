@@ -1,11 +1,9 @@
 ﻿using Dockson.Domain;
 using Dockson.Domain.Projections;
-using Dockson.Domain.Projections.MasterLeadTime;
-using Dockson.Domain.Views;
 using Shouldly;
 using Xunit;
 
-namespace Dockson.Tests.Domain.Projections.MasterLeadTime
+namespace Dockson.Tests.Domain.Projections
 {
 	public class MasterLeadTimeProjectionTests
 	{

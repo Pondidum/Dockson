@@ -1,11 +1,9 @@
 ﻿using Dockson.Domain;
 using Dockson.Domain.Projections;
-using Dockson.Domain.Projections.BuildRecoveryTime;
-using Dockson.Domain.Views;
 using Shouldly;
 using Xunit;
 
-namespace Dockson.Tests.Domain.Projections.BuildRecoveryTime
+namespace Dockson.Tests.Domain.Projections
 {
 	public class BuildRecoveryTimeProjectionTests
 	{

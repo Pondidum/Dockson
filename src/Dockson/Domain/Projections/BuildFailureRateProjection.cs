@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using Dockson.Domain.Transformers.Build;
 
-namespace Dockson.Domain.Projections.BuildFailureRate
+namespace Dockson.Domain.Projections
 {
 	public class BuildFailureRateProjection : IProjection<BuildSucceeded>, IProjection<BuildFailed>
 	{

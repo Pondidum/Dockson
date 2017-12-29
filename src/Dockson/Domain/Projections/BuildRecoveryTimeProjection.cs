@@ -1,7 +1,7 @@
 ﻿using System;
 using Dockson.Domain.Transformers.Build;
 
-namespace Dockson.Domain.Projections.BuildRecoveryTime
+namespace Dockson.Domain.Projections
 {
 	public class BuildRecoveryTimeProjection : LeadTimeProjection<BuildFailed, BuildSucceeded>
 	{

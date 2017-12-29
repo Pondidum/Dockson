@@ -1,11 +1,9 @@
 ﻿using Dockson.Domain;
 using Dockson.Domain.Projections;
-using Dockson.Domain.Projections.MasterInterval;
-using Dockson.Domain.Views;
 using Shouldly;
 using Xunit;
 
-namespace Dockson.Tests.Domain.Projections.MasterInterval
+namespace Dockson.Tests.Domain.Projections
 {
 	public class MasterIntervalProjectionTests
 	{

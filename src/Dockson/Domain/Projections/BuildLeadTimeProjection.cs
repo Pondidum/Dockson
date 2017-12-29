@@ -2,7 +2,7 @@
 using Dockson.Domain.Transformers.Build;
 using Dockson.Domain.Transformers.Commits;
 
-namespace Dockson.Domain.Projections.BuildLeadTime
+namespace Dockson.Domain.Projections
 {
 	public class BuildLeadTimeProjection : LeadTimeProjection<MasterCommit, BuildSucceeded>
 	{

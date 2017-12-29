@@ -1,7 +1,7 @@
 ﻿using System;
 using Dockson.Domain.Transformers.Commits;
 
-namespace Dockson.Domain.Projections.MasterLeadTime
+namespace Dockson.Domain.Projections
 {
 	public class MasterLeadTimeProjection : LeadTimeProjection<BranchCommit, MasterCommit>
 	{

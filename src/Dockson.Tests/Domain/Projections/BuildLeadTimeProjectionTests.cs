@@ -1,12 +1,10 @@
 ﻿using System;
 using Dockson.Domain;
 using Dockson.Domain.Projections;
-using Dockson.Domain.Projections.BuildLeadTime;
-using Dockson.Domain.Views;
 using Shouldly;
 using Xunit;
 
-namespace Dockson.Tests.Domain.Projections.BuildLeadTime
+namespace Dockson.Tests.Domain.Projections
 {
 	public class BuildLeadTimeProjectionTests
 	{
