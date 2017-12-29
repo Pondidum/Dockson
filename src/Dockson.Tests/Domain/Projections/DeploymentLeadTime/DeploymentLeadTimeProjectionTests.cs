@@ -2,6 +2,7 @@
 using Dockson.Domain;
 using Dockson.Domain.Projections;
 using Dockson.Domain.Projections.DeploymentLeadTime;
+using Dockson.Domain.Views;
 using Shouldly;
 using Xunit;
 
@@ -19,7 +20,11 @@ namespace Dockson.Tests.Domain.Projections.DeploymentLeadTime
 		public DeploymentLeadTimeProjectionTests()
 		{
 			_view = new LeadTimeView();
-			var projection = new DeploymentLeadTimeProjection(_view);
+			var projection = new DeploymentLeadTimeProjection((group, day, newSummary) =>
+			{
+				_view.TryAdd(group, new GroupSummary<LeadTimeSummary>());
+				_view[group].Daily[day] = newSummary;
+			});
 
 			_serviceOne = new EventSource(projection) { Name = "service-one", Groups = { Team } };
 			_serviceTwo = new EventSource(projection) { Name = "service-two", Groups = { Team } };

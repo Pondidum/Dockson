@@ -1,12 +1,13 @@
-﻿using Dockson.Domain.Transformers.Build;
+﻿using System;
+using Dockson.Domain.Transformers.Build;
 using Dockson.Domain.Transformers.Deployment;
 
 namespace Dockson.Domain.Projections.DeploymentLeadTime
 {
 	public class DeploymentLeadTimeProjection : LeadTimeProjection<BuildSucceeded, ProductionDeployment>
 	{
-		public DeploymentLeadTimeProjection(LeadTimeView view)
-			: base(view, build => build.Name + ":" + build.Version, deploy => deploy.Name + ":" + deploy.Version)
+		public DeploymentLeadTimeProjection(Action<string, DayDate, LeadTimeSummary> updateView)
+			: base(updateView, build => build.Name + ":" + build.Version, deploy => deploy.Name + ":" + deploy.Version)
 		{
 		}
 	}

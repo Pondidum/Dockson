@@ -8,15 +8,15 @@ namespace Dockson.Domain.Projections
 		where TStart : IProjectable
 		where TFinish : IProjectable
 	{
-		private readonly LeadTimeView _view;
+		private readonly Action<string, DayDate, LeadTimeSummary> _updateView;
 		private readonly Func<TStart, string> _startIdentity;
 		private readonly Func<TFinish, string> _finishIdentity;
 		private readonly Dictionary<string, DateTime> _commits;
 		private readonly Cache<string, List<double>> _times;
 
-		public LeadTimeProjection(LeadTimeView view, Func<TStart, string> startIdentity, Func<TFinish, string> finishIdentity)
+		public LeadTimeProjection(Action<string, DayDate, LeadTimeSummary> updateView, Func<TStart, string> startIdentity, Func<TFinish, string> finishIdentity)
 		{
-			_view = view;
+			_updateView = updateView;
 			_startIdentity = startIdentity;
 			_finishIdentity = finishIdentity;
 			_commits = new Dictionary<string, DateTime>(StringComparer.OrdinalIgnoreCase);
@@ -45,12 +45,11 @@ namespace Dockson.Domain.Projections
 				{
 					_times[group].Add(leadTime.TotalMinutes);
 
-					_view.TryAdd(group, new GroupSummary<LeadTimeSummary>());
-					_view[group].Daily[day] = new LeadTimeSummary
+					_updateView(group, day, new LeadTimeSummary
 					{
-						Median = _times[group].Median(),
-						Deviation = _times[group].StandardDeviation()
-					};
+						Median = _times[@group].Median(),
+						Deviation = _times[@group].StandardDeviation()
+					});
 				}
 			}
 		}

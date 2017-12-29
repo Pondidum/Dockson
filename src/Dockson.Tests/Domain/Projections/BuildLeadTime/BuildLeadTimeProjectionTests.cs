@@ -2,6 +2,7 @@
 using Dockson.Domain;
 using Dockson.Domain.Projections;
 using Dockson.Domain.Projections.BuildLeadTime;
+using Dockson.Domain.Views;
 using Shouldly;
 using Xunit;
 
@@ -19,7 +20,11 @@ namespace Dockson.Tests.Domain.Projections.BuildLeadTime
 		public BuildLeadTimeProjectionTests()
 		{
 			_view = new LeadTimeView();
-			var projection = new BuildLeadTimeProjection(_view);
+			var projection = new BuildLeadTimeProjection((group, day, newSummary) =>
+			{
+				_view.TryAdd(group, new GroupSummary<LeadTimeSummary>());
+				_view[group].Daily[day] = newSummary;
+			});
 
 			_serviceOne = new EventSource(projection) { Name = "service-one", Groups = { Team } };
 			_serviceTwo = new EventSource(projection) { Name = "service-two", Groups = { Team } };

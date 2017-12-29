@@ -1,6 +1,7 @@
 ﻿using Dockson.Domain;
 using Dockson.Domain.Projections;
 using Dockson.Domain.Projections.MasterLeadTime;
+using Dockson.Domain.Views;
 using Shouldly;
 using Xunit;
 
@@ -14,7 +15,11 @@ namespace Dockson.Tests.Domain.Projections.MasterLeadTime
 		public MasterLeadTimeProjectionTests()
 		{
 			_view = new LeadTimeView();
-			var projection = new MasterLeadTimeProjection(_view);
+			var projection = new MasterLeadTimeProjection((group, day, newSummary) =>
+			{
+				_view.TryAdd(group, new GroupSummary<LeadTimeSummary>());
+				_view[group].Daily[day] = newSummary;
+			});
 			_service = new EventSource(projection);
 		}
 

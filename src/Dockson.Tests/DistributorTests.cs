@@ -44,7 +44,11 @@ namespace Dockson.Tests
 				masterInterval.TryAdd(group, new GroupSummary<IntervalSummary>());
 				masterInterval[group].Daily[day] = newSummary;
 			}));
-			distributor.AddProjection(new MasterLeadTimeProjection(masterLeadTime));
+			distributor.AddProjection(new MasterLeadTimeProjection((group, day, newSummary) =>
+			{
+				masterLeadTime.TryAdd(group, new GroupSummary<LeadTimeSummary>());
+				masterLeadTime[group].Daily[day] = newSummary;
+			}));
 
 			var service = new EventSource(distributor.Project);
 
