@@ -15,7 +15,7 @@ namespace Dockson.Tests.Domain.Projections
 			_view = new View();
 			var projection = new BuildIntervalProjection(_view.UpdateBuildInterval);
 
-			_service = new EventSource(projection);
+			_service = EventSource.For(projection);
 		}
 
 		[Fact]

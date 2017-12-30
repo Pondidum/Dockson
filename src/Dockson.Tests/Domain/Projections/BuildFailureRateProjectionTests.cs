@@ -15,10 +15,7 @@ namespace Dockson.Tests.Domain.Projections
 			_view = new View();
 			var projection = new BuildFailureRateProjection(_view.UpdateBuildFailureRate);
 
-			_service = new EventSource(projection)
-			{
-				Name = "wat-service"
-			};
+			_service = EventSource.For(projection, s => s.Name = "wat-service");
 		}
 
 		[Fact]

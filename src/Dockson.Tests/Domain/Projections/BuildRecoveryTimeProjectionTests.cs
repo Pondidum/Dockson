@@ -16,8 +16,8 @@ namespace Dockson.Tests.Domain.Projections
 			_view = new View();
 			var projection = new BuildRecoveryTimeProjection(_view.UpdateBuildRecoveryTime);
 
-			_service = new EventSource(projection) { Name = "ServiceOne" };
-			_serviceTwo = new EventSource(projection) { Name = "ServiceTwo" };
+			_service = EventSource.For(projection, s => s.Name = "ServiceOne");
+			_serviceTwo = EventSource.For(projection, s => s.Name = "ServiceTwo");
 		}
 
 		[Fact]
@@ -66,7 +66,7 @@ namespace Dockson.Tests.Domain.Projections
 				.BuildFailed().Advance(10.Minutes()).BuildSucceeded()
 				.Advance(5.Minutes())
 				.BuildFailed().Advance(20.Minutes()).BuildSucceeded();
-				
+
 			var serviceOne = _view[_service.Name].BuildRecoveryTime[_service.CurrentDay];
 
 			serviceOne.ShouldSatisfyAllConditions(

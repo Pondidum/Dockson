@@ -63,18 +63,15 @@ namespace Dockson.Tests.Domain.Transformers.Commits
 			commits.ShouldBeEmpty();
 		}
 
-		private Notification Commit(int offset, string branch, string hash) => new Notification
+		private CommitNotification Commit(int offset, string branch, string hash) => new CommitNotification
 		{
 			Type = Stages.Commit,
 			Timestamp = _now.AddMinutes(offset),
 			Source = "github",
 			Name = "SomeService",
 			Version = "1.0.0",
-			Tags = new Dictionary<string, string>
-			{
-				{ "commit", hash },
-				{ "branch", branch }
-			}
+			Commit =  hash,
+			Branch = branch
 		};
 	}
 }

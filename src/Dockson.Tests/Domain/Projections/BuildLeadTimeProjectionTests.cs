@@ -20,8 +20,17 @@ namespace Dockson.Tests.Domain.Projections
 			_view = new View();
 			var projection = new BuildLeadTimeProjection(_view.UpdateBuildLeadTime);
 
-			_serviceOne = new EventSource(projection) { Name = "service-one", Groups = { Team } };
-			_serviceTwo = new EventSource(projection) { Name = "service-two", Groups = { Team } };
+			_serviceOne = EventSource.For(projection, s =>
+			{
+				s.Name = "service-one";
+				s.Groups.Add(Team);
+			});
+
+			_serviceTwo = EventSource.For(projection, s =>
+			{
+				s.Name = "service-two";
+				s.Groups.Add(Team);
+			});
 		}
 
 		[Fact]

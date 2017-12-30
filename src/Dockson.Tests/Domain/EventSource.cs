@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using Dockson.Domain;
 using Dockson.Domain.Projections;
-using Dockson.Domain.Transformers;
 using Dockson.Domain.Transformers.Build;
 using Dockson.Domain.Transformers.Commits;
 using Dockson.Domain.Transformers.Deployment;
@@ -19,69 +17,42 @@ namespace Dockson.Tests.Domain
 		public HashSet<string> Groups { get; set; }
 		public DayDate CurrentDay => new DayDate(Timestamp);
 
-		private readonly Cache<Type, Action<object>> _handlers;
-		private readonly List<ITransformer<Notification>> _transformers;
 		private readonly Action<Notification> _projector;
 
-		public EventSource()
+		public EventSource(Action<Notification> projector)
 		{
+			_projector = projector;
+
 			Name = "some-service";
 			Version = "2.13.4";
 			CommitHash = Guid.NewGuid().ToString();
 			Timestamp = new DateTime(2017, 11, 30, 11, 47, 00);
 			Groups = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-
-			_transformers = new List<ITransformer<Notification>>
-			{
-				new CommitsTransformer(),
-				new BuildTransformer(),
-				new DeploymentTransformer()
-			};
 		}
 
-		public EventSource(Action<Notification> projector) : this()
+		public static EventSource For<T>(IProjection<T> projection, Action<EventSource> customise = null)
+			=> CreateSource(dist => dist.AddProjection(projection), customise);
+
+		public static EventSource For<TStart, TFinish>(IProjection<TStart, TFinish> projection, Action<EventSource> customise = null)
+			=> CreateSource(dist => dist.AddProjection(projection), customise);
+
+		private static EventSource CreateSource(Action<Distributor> customiseDistributor, Action<EventSource> customiseEventSource = null)
 		{
-			_projector = projector;
-		}
+			var dist = new Distributor();
+			dist.AddTransformer(new CommitsTransformer());
+			dist.AddTransformer(new BuildTransformer());
+			dist.AddTransformer(new DeploymentTransformer());
 
-		public EventSource(object projection) : this()
-		{
-			var names = new HashSet<string>
-			{
-				nameof(IProjection<string>.Project),
-				nameof(IProjection<string, string>.Start),
-				nameof(IProjection<string, string>.Finish)
-			};
+			customiseDistributor(dist);
 
-			_handlers = new Cache<Type, Action<object>>(key =>
-			{
-				var method = projection
-					.GetType()
-					.GetMethods()
-					.Where(m => m.IsPublic && names.Contains(m.Name))
-					.Where(m => m.GetParameters().Length == 1)
-					.SingleOrDefault(m => m.GetParameters().Single().ParameterType.IsAssignableFrom(key));
-
-				if (method == null)
-					return value => { };
-
-				return value => method.Invoke(projection, new[] { value });
-			});
+			var es = new EventSource(dist.Project);
+			customiseEventSource?.Invoke(es);
+			return es;
 		}
 
 		private EventSource Dispatch(Notification notification)
 		{
-			if (_projector != null)
-			{
-				_projector(notification);
-				return this;
-			}
-
-			var events = new List<object>();
-
-			_transformers.ForEach(tx => tx.Transform(notification, events.Add));
-			events.ForEach(message => _handlers[message.GetType()].Invoke(message));
-
+			_projector(notification);
 			return this;
 		}
 
@@ -182,7 +153,7 @@ namespace Dockson.Tests.Domain
 		}
 
 
-		private Notification CreateNotification(string branch) => new Notification
+		private CommitNotification CreateNotification(string branch) => new CommitNotification()
 		{
 			Type = Stages.Commit,
 			Timestamp = Timestamp,
@@ -190,11 +161,8 @@ namespace Dockson.Tests.Domain
 			Name = Name,
 			Version = "1.0.0",
 			Groups = Groups,
-			Tags =
-			{
-				{ "commit", CommitHash },
-				{ "branch", branch }
-			}
+			Branch = branch,
+			Commit = CommitHash
 		};
 	}
 }

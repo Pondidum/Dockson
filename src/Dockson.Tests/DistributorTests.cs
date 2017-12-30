@@ -24,14 +24,12 @@ namespace Dockson.Tests
 		[Fact]
 		public void When_handling_a_single_project_pipeline()
 		{
-			var distributor = new Distributor(new ITransformer<Notification>[]
-			{
-				new CommitsTransformer(),
-				new BuildTransformer(),
-				new DeploymentTransformer()
-			});
-
 			var view = new View();
+			var distributor = new Distributor();
+
+			distributor.AddTransformer(new CommitsTransformer());
+			distributor.AddTransformer(new BuildTransformer());
+			distributor.AddTransformer(new DeploymentTransformer());
 
 			distributor.AddProjection(new MasterIntervalProjection(view.UpdateMasterCommitInterval));
 			distributor.AddProjection(new MasterLeadTimeProjection(view.UpdateMasterCommitLeadTime));
