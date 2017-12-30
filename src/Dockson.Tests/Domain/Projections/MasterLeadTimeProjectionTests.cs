@@ -24,7 +24,7 @@ namespace Dockson.Tests.Domain.Projections
 				.BranchCommit()
 				.Advance(1.Hour())
 				.MasterCommit();
-			var day = new DayDate(_service.Timestamp);
+			var day = _service.CurrentDay;
 
 			_view.ShouldSatisfyAllConditions(
 				() => _view[_service.Name].MasterCommitLeadTime[day].Median.ShouldBe(1.Hour().TotalMinutes),
@@ -35,7 +35,7 @@ namespace Dockson.Tests.Domain.Projections
 		[Fact]
 		public void When_projecting_two_commits()
 		{
-			var day = new DayDate(_service.Timestamp);
+			var day = _service.CurrentDay;
 
 			_service
 				.BranchCommit()

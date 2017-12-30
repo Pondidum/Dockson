@@ -27,7 +27,7 @@ namespace Dockson.Tests.Domain.Projections
 			_service.BuildSucceeded();
 
 			_view[_service.Name]
-				.BuildFailureRate[new DayDate(_service.Timestamp)]
+				.BuildFailureRate[_service.CurrentDay]
 				.Rate
 				.ShouldBe(0);
 		}
@@ -38,7 +38,7 @@ namespace Dockson.Tests.Domain.Projections
 			_service.BuildFailed();
 
 			_view[_service.Name]
-				.BuildFailureRate[new DayDate(_service.Timestamp)]
+				.BuildFailureRate[_service.CurrentDay]
 				.Rate
 				.ShouldBe(100);
 		}
@@ -53,7 +53,7 @@ namespace Dockson.Tests.Domain.Projections
 				.BuildFailed();
 
 			_view[_service.Name]
-				.BuildFailureRate[new DayDate(_service.Timestamp)]
+				.BuildFailureRate[_service.CurrentDay]
 				.Rate
 				.ShouldBe(50);
 		}

@@ -18,6 +18,7 @@ namespace Dockson.Tests.Domain
 		public string CommitHash { get; set; }
 		public DateTime Timestamp { get; set; }
 		public HashSet<string> Groups { get; set; }
+		public DayDate CurrentDay => new DayDate(Timestamp);
 
 		private readonly Cache<Type, Action<object>> _handlers;
 		private readonly List<ITransformer> _transformers;

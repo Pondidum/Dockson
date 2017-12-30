@@ -28,7 +28,7 @@ namespace Dockson.Tests.Domain.Projections
 				.Advance(20.Minutes())
 				.BuildSucceeded();
 
-			var daySummary = _view[_service.Name].BuildRecoveryTime[new DayDate(_service.Timestamp)];
+			var daySummary = _view[_service.Name].BuildRecoveryTime[_service.CurrentDay];
 
 			daySummary.ShouldSatisfyAllConditions(
 				() => daySummary.Median.ShouldBe(20),
@@ -48,7 +48,7 @@ namespace Dockson.Tests.Domain.Projections
 				.Advance(10.Minutes())
 				.BuildSucceeded();
 
-			var daySummary = _view[_service.Name].BuildRecoveryTime[new DayDate(_service.Timestamp)];
+			var daySummary = _view[_service.Name].BuildRecoveryTime[_service.CurrentDay];
 
 			daySummary.ShouldSatisfyAllConditions(
 				() => daySummary.Median.ShouldBe(15),
@@ -67,14 +67,14 @@ namespace Dockson.Tests.Domain.Projections
 				.Advance(5.Minutes())
 				.BuildFailed().Advance(20.Minutes()).BuildSucceeded();
 				
-			var serviceOne = _view[_service.Name].BuildRecoveryTime[new DayDate(_service.Timestamp)];
+			var serviceOne = _view[_service.Name].BuildRecoveryTime[_service.CurrentDay];
 
 			serviceOne.ShouldSatisfyAllConditions(
 				() => serviceOne.Median.ShouldBe(20),
 				() => serviceOne.Deviation.ShouldBe(0)
 			);
 
-			var serviceTwo = _view[_serviceTwo.Name].BuildRecoveryTime[new DayDate(_serviceTwo.Timestamp)];
+			var serviceTwo = _view[_serviceTwo.Name].BuildRecoveryTime[_serviceTwo.CurrentDay];
 
 			serviceTwo.ShouldSatisfyAllConditions(
 				() => serviceTwo.Median.ShouldBe(15),

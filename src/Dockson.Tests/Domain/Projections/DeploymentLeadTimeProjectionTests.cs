@@ -48,7 +48,7 @@ namespace Dockson.Tests.Domain.Projections
 				.Advance(TimeSpan.FromMinutes(20))
 				.ProductionDeployment();
 
-			var summary = _view[_serviceOne.Name].DeploymentLeadTime[new DayDate(_serviceOne.Timestamp)];
+			var summary = _view[_serviceOne.Name].DeploymentLeadTime[_serviceOne.CurrentDay];
 
 			summary.ShouldSatisfyAllConditions(
 				() => summary.Median.ShouldBe(20),
@@ -69,7 +69,7 @@ namespace Dockson.Tests.Domain.Projections
 				.Advance(TimeSpan.FromMinutes(15))
 				.ProductionDeployment();
 
-			var summary = _view[_serviceOne.Name].DeploymentLeadTime[new DayDate(_serviceOne.Timestamp)];
+			var summary = _view[_serviceOne.Name].DeploymentLeadTime[_serviceOne.CurrentDay];
 
 			summary.ShouldSatisfyAllConditions(
 				() => summary.Median.ShouldBe(17.5),
@@ -91,9 +91,9 @@ namespace Dockson.Tests.Domain.Projections
 				.Advance(TimeSpan.FromMinutes(15))
 				.ProductionDeployment();
 
-			var one = _view[_serviceOne.Name].DeploymentLeadTime[new DayDate(_serviceOne.Timestamp)];
-			var two = _view[_serviceTwo.Name].DeploymentLeadTime[new DayDate(_serviceTwo.Timestamp)];
-			var team = _view[Team].DeploymentLeadTime[new DayDate(_serviceOne.Timestamp)];
+			var one = _view[_serviceOne.Name].DeploymentLeadTime[_serviceOne.CurrentDay];
+			var two = _view[_serviceTwo.Name].DeploymentLeadTime[_serviceTwo.CurrentDay];
+			var team = _view[Team].DeploymentLeadTime[_serviceOne.CurrentDay];
 
 			_view.ShouldSatisfyAllConditions(
 				() => one.Median.ShouldBe(20),

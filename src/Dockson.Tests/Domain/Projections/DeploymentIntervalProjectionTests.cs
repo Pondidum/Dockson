@@ -23,7 +23,7 @@ namespace Dockson.Tests.Domain.Projections
 		{
 			_service.ProductionDeployment();
 
-			var day = _view[_service.Name].DeploymentInterval[new DayDate(_service.Timestamp)];
+			var day = _view[_service.Name].DeploymentInterval[_service.CurrentDay];
 
 			day.ShouldSatisfyAllConditions(
 				() => day.Median.ShouldBe(0),
@@ -39,7 +39,7 @@ namespace Dockson.Tests.Domain.Projections
 				.Advance(1.Hour())
 				.ProductionDeployment();
 
-			var day = _view[_service.Name].DeploymentInterval[new DayDate(_service.Timestamp)];
+			var day = _view[_service.Name].DeploymentInterval[_service.CurrentDay];
 
 			day.ShouldSatisfyAllConditions(
 				() => day.Median.ShouldBe(1.Hour().TotalMinutes),
@@ -57,7 +57,7 @@ namespace Dockson.Tests.Domain.Projections
 				.Advance(2.Hours()).ProductionDeployment()
 				.Advance(1.Hour()).ProductionDeployment();
 
-			var day = _view[_service.Name].DeploymentInterval[new DayDate(_service.Timestamp)];
+			var day = _view[_service.Name].DeploymentInterval[_service.CurrentDay];
 
 			_view.ShouldSatisfyAllConditions(
 				() => day.Median.ShouldBe(60), //1 hour

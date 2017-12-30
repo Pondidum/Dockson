@@ -49,7 +49,7 @@ namespace Dockson.Tests.Domain.Projections
 				.Advance(TimeSpan.FromMinutes(20))
 				.BuildSucceeded();
 
-			var summary = _view[_serviceOne.Name].BuildLeadTime[new DayDate(_serviceOne.Timestamp)];
+			var summary = _view[_serviceOne.Name].BuildLeadTime[_serviceOne.CurrentDay];
 
 			summary.ShouldSatisfyAllConditions(
 				() => summary.Median.ShouldBe(20),
@@ -72,7 +72,7 @@ namespace Dockson.Tests.Domain.Projections
 				.Advance(TimeSpan.FromMinutes(15))
 				.BuildSucceeded();
 
-			var summary = _view[_serviceOne.Name].BuildLeadTime[new DayDate(_serviceOne.Timestamp)];
+			var summary = _view[_serviceOne.Name].BuildLeadTime[_serviceOne.CurrentDay];
 
 			summary.ShouldSatisfyAllConditions(
 				() => summary.Median.ShouldBe(17.5),
@@ -96,9 +96,9 @@ namespace Dockson.Tests.Domain.Projections
 				.Advance(TimeSpan.FromMinutes(15))
 				.BuildSucceeded();
 
-			var one = _view[_serviceOne.Name].BuildLeadTime[new DayDate(_serviceOne.Timestamp)];
-			var two = _view[_serviceTwo.Name].BuildLeadTime[new DayDate(_serviceTwo.Timestamp)];
-			var team = _view[Team].BuildLeadTime[new DayDate(_serviceOne.Timestamp)];
+			var one = _view[_serviceOne.Name].BuildLeadTime[_serviceOne.CurrentDay];
+			var two = _view[_serviceTwo.Name].BuildLeadTime[_serviceTwo.CurrentDay];
+			var team = _view[Team].BuildLeadTime[_serviceOne.CurrentDay];
 
 			_view.ShouldSatisfyAllConditions(
 				() => one.Median.ShouldBe(20),

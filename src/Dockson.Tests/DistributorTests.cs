@@ -47,13 +47,13 @@ namespace Dockson.Tests
 				.Advance(7.Minutes())
 				.ProductionDeployment();
 
-			var date = new DayDate(service.Timestamp);
+			var day = service.CurrentDay;
 
 			service.ShouldSatisfyAllConditions(
-				() => view[service.Name].MasterCommitInterval[date].Median.ShouldBe(25),
-				() => view[service.Name].MasterCommitInterval[date].Deviation.ShouldBe(0),
-				() => view[service.Name].MasterCommitLeadTime[date].Median.ShouldBe(20),
-				() => view[service.Name].MasterCommitLeadTime[date].Deviation.ShouldBe(0)
+				() => view[service.Name].MasterCommitInterval[day].Median.ShouldBe(25),
+				() => view[service.Name].MasterCommitInterval[day].Deviation.ShouldBe(0),
+				() => view[service.Name].MasterCommitLeadTime[day].Median.ShouldBe(20),
+				() => view[service.Name].MasterCommitLeadTime[day].Deviation.ShouldBe(0)
 			);
 
 			_output.WriteLine(JsonConvert.SerializeObject(view, Formatting.Indented));
