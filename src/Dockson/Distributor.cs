@@ -8,10 +8,10 @@ namespace Dockson
 {
 	public class Distributor
 	{
-		private readonly ITransformer[] _transformers;
+		private readonly ITransformer<Notification>[] _transformers;
 		private readonly Cache<Type, List<Action<object>>> _projections;
 
-		public Distributor(ITransformer[] transformers)
+		public Distributor(ITransformer<Notification>[] transformers)
 		{
 			_transformers = transformers;
 			_projections = new Cache<Type, List<Action<object>>>(key => new List<Action<object>>());

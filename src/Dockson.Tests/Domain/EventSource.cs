@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.InteropServices.ComTypes;
 using Dockson.Domain;
 using Dockson.Domain.Projections;
 using Dockson.Domain.Transformers;
@@ -21,7 +20,7 @@ namespace Dockson.Tests.Domain
 		public DayDate CurrentDay => new DayDate(Timestamp);
 
 		private readonly Cache<Type, Action<object>> _handlers;
-		private readonly List<ITransformer> _transformers;
+		private readonly List<ITransformer<Notification>> _transformers;
 		private readonly Action<Notification> _projector;
 
 		public EventSource()
@@ -32,7 +31,7 @@ namespace Dockson.Tests.Domain
 			Timestamp = new DateTime(2017, 11, 30, 11, 47, 00);
 			Groups = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
-			_transformers = new List<ITransformer>
+			_transformers = new List<ITransformer<Notification>>
 			{
 				new CommitsTransformer(),
 				new BuildTransformer(),

@@ -2,8 +2,8 @@
 
 namespace Dockson.Domain.Transformers
 {
-	public interface ITransformer
+	public interface ITransformer<TNotification> where TNotification : Notification
 	{
-		void Transform(Notification notification, Action<object> dispatch);
+		void Transform(TNotification notification, Action<object> dispatch);
 	}
 }

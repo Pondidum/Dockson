@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Dockson.Domain.Transformers.Commits
 {
-	public class CommitsTransformer : ITransformer
+	public class CommitsTransformer : ITransformer<Notification>
 	{
 		private readonly Dictionary<string, Notification> _branchCommits;
 

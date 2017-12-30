@@ -24,7 +24,7 @@ namespace Dockson.Tests
 		[Fact]
 		public void When_handling_a_single_project_pipeline()
 		{
-			var distributor = new Distributor(new ITransformer[]
+			var distributor = new Distributor(new ITransformer<Notification>[]
 			{
 				new CommitsTransformer(),
 				new BuildTransformer(),

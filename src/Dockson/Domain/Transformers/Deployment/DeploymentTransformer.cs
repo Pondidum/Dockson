@@ -2,7 +2,7 @@
 
 namespace Dockson.Domain.Transformers.Deployment
 {
-	public class DeploymentTransformer : ITransformer
+	public class DeploymentTransformer : ITransformer<Notification>
 	{
 		public void Transform(Notification notification, Action<object> dispatch)
 		{
