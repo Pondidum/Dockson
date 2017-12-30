@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using Dockson.Domain.Views;
 
 namespace Dockson.Domain.Projections
 {
