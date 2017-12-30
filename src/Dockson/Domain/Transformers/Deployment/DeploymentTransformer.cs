@@ -2,9 +2,9 @@
 
 namespace Dockson.Domain.Transformers.Deployment
 {
-	public class DeploymentTransformer : ITransformer<Notification>
+	public class DeploymentTransformer : ITransformer<DeploymentNotification>
 	{
-		public void Transform(Notification notification, Action<object> dispatch)
+		public void Transform(DeploymentNotification notification, Action<object> dispatch)
 		{
 			if (notification.Type != Stages.Deploy)
 				return;
@@ -12,7 +12,7 @@ namespace Dockson.Domain.Transformers.Deployment
 			if (notification.Status.EqualsIgnore("success") == false)
 				return;
 
-			if (notification.Tags.TryGetValue("environment", out var environment) && environment.EqualsIgnore("production"))
+			if (notification.Environment.EqualsIgnore("production"))
 				dispatch(new ProductionDeployment(notification));
 		}
 	}

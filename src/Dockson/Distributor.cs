@@ -37,7 +37,7 @@ namespace Dockson
 			_projections[typeof(T)].Add(message => projection.Project((T)message));
 		}
 
-		public void AddProjection<TStart, TFinish>(IProjection<TStart, TFinish> projection)
+		public void AddProjection<TState, TStart, TFinish>(IProjection<TState, TStart, TFinish> projection)
 		{
 			_projections[typeof(TStart)].Add(message => projection.Start((TStart)message));
 			_projections[typeof(TFinish)].Add(message => projection.Finish((TFinish)message));

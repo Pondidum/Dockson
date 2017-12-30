@@ -1,32 +1,29 @@
 ﻿using System;
-using System.Collections.Generic;
 
 namespace Dockson.Domain.Projections
 {
-	public class LeadTimeProjection<TStart, TFinish> : IProjection<TStart, TFinish>
+	public class LeadTimeProjection<TStart, TFinish> : IProjection<LeadTimeState, TStart, TFinish>
 		where TStart : IProjectable
 		where TFinish : IProjectable
 	{
 		private readonly Action<string, DayDate, TrendView> _updateView;
 		private readonly Func<TStart, string> _startIdentity;
+
 		private readonly Func<TFinish, string> _finishIdentity;
-		private readonly Dictionary<string, DateTime> _commits;
-		private readonly Cache<string, List<double>> _times;
 
 		public LeadTimeProjection(Action<string, DayDate, TrendView> updateView, Func<TStart, string> startIdentity, Func<TFinish, string> finishIdentity)
 		{
 			_updateView = updateView;
 			_startIdentity = startIdentity;
 			_finishIdentity = finishIdentity;
-			_commits = new Dictionary<string, DateTime>(StringComparer.OrdinalIgnoreCase);
-			_times = new Cache<string, List<double>>(
-				StringComparer.OrdinalIgnoreCase,
-				key => new List<double>());
+			State = new LeadTimeState();
 		}
+
+		public LeadTimeState State { get; set; }
 
 		public void Start(TStart message)
 		{
-			_commits[_startIdentity(message)] = message.Timestamp;
+			State.Commits[_startIdentity(message)] = message.Timestamp;
 		}
 
 		public void Finish(TFinish message)
@@ -36,18 +33,18 @@ namespace Dockson.Domain.Projections
 
 			DateTime startTimestamp;
 
-			if (_commits.Remove(id, out startTimestamp))
+			if (State.Commits.Remove(id, out startTimestamp))
 			{
 				var leadTime = message.Timestamp - startTimestamp;
 
 				foreach (var @group in message.Groups)
 				{
-					_times[group].Add(leadTime.TotalMinutes);
+					State.Times[group].Add(leadTime.TotalMinutes);
 
 					_updateView(group, day, new TrendView
 					{
-						Median = _times[@group].Median(),
-						Deviation = _times[@group].StandardDeviation()
+						Median = State.Times[@group].Median(),
+						Deviation = State.Times[@group].StandardDeviation()
 					});
 				}
 			}

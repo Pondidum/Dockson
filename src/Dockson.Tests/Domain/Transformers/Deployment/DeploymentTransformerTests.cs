@@ -70,7 +70,7 @@ namespace Dockson.Tests.Domain.Transformers.Deployment
 			_events.ShouldBeEmpty();
 		}
 
-		private Notification Deployment(string status, string environment = "production") => new Notification
+		private DeploymentNotification Deployment(string status, string environment = "production") => new DeploymentNotification
 		{
 			Type = Stages.Deploy,
 			Timestamp = DateTime.UtcNow,
@@ -78,10 +78,7 @@ namespace Dockson.Tests.Domain.Transformers.Deployment
 			Name = "SomeService",
 			Version = "1.0.0",
 			Status = status,
-			Tags =
-			{
-				{ "environment", environment }
-			}
+			Environment = environment
 		};
 	}
 }

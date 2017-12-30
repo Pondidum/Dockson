@@ -33,7 +33,7 @@ namespace Dockson.Tests.Domain
 		public static EventSource For<T>(IProjection<T> projection, Action<EventSource> customise = null)
 			=> CreateSource(dist => dist.AddProjection(projection), customise);
 
-		public static EventSource For<TStart, TFinish>(IProjection<TStart, TFinish> projection, Action<EventSource> customise = null)
+		public static EventSource For<TState, TStart, TFinish>(IProjection<TState, TStart, TFinish> projection, Action<EventSource> customise = null)
 			=> CreateSource(dist => dist.AddProjection(projection), customise);
 
 		private static EventSource CreateSource(Action<Distributor> customiseDistributor, Action<EventSource> customiseEventSource = null)
@@ -132,7 +132,7 @@ namespace Dockson.Tests.Domain
 
 		public EventSource ProductionDeployment(Action<Notification> modify = null)
 		{
-			var notification = new Notification
+			var notification = new DeploymentNotification
 			{
 				Type = Stages.Deploy,
 				Timestamp = Timestamp,
@@ -140,10 +140,7 @@ namespace Dockson.Tests.Domain
 				Version = Version,
 				Status = "success",
 				Groups = Groups,
-				Tags =
-				{
-					{ "environment", "production" }
-				}
+				Environment = "production"
 			};
 			modify?.Invoke(notification);
 

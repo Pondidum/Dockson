@@ -4,18 +4,14 @@ using Dockson.Domain.Transformers.Build;
 
 namespace Dockson.Domain.Projections
 {
-	public class BuildFailureRateProjection : IProjection<BuildFailed, BuildSucceeded>
+	public class BuildFailureRateProjection : IProjection<BuildFailureState, BuildFailed, BuildSucceeded>
 	{
 		private readonly Action<string, DayDate, RateView> _updateView;
-		private readonly Cache<string, Cache<DayDate, Counts>> _trackers;
 
 		public BuildFailureRateProjection(Action<string, DayDate, RateView> updateView)
 		{
 			_updateView = updateView;
-			_trackers = new Cache<string, Cache<DayDate, Counts>>(
-				StringComparer.OrdinalIgnoreCase,
-				key => new Cache<DayDate, Counts>(x => new Counts())
-			);
+			State = new BuildFailureState();
 		}
 
 		public void Finish(BuildSucceeded message)
@@ -23,18 +19,20 @@ namespace Dockson.Domain.Projections
 			Project(message.Timestamp, message.Groups, counts => counts.Successes++);
 		}
 
+		public BuildFailureState State { get; set; }
+
 		public void Start(BuildFailed message)
 		{
 			Project(message.Timestamp, message.Groups, counts => counts.Failures++);
 		}
 
-		private void Project(DateTime timestamp, IEnumerable<string> groups, Action<Counts> action)
+		private void Project(DateTime timestamp, IEnumerable<string> groups, Action<BuildFailureState.Counts> action)
 		{
 			var day = new DayDate(timestamp);
 
 			foreach (var @group in groups)
 			{
-				var counts = _trackers[group][day];
+				var counts = State.Builds[group][day];
 				action(counts);
 
 				_updateView(@group, day, new RateView
@@ -42,13 +40,6 @@ namespace Dockson.Domain.Projections
 					Rate = (counts.Failures / counts.Total) * 100
 				});
 			}
-		}
-
-		private class Counts
-		{
-			public int Failures { get; set; }
-			public int Successes { get; set; }
-			public double Total => Successes + Failures;
 		}
 	}
 }
