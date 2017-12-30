@@ -4,7 +4,7 @@ using Dockson.Domain.Transformers.Build;
 
 namespace Dockson.Domain.Projections
 {
-	public class BuildFailureRateProjection : IProjection<BuildSucceeded>, IProjection<BuildFailed>
+	public class BuildFailureRateProjection : IProjection<BuildFailed, BuildSucceeded>
 	{
 		private readonly Action<string, DayDate, RateView> _updateView;
 		private readonly Cache<string, Cache<DayDate, Counts>> _trackers;
@@ -18,12 +18,12 @@ namespace Dockson.Domain.Projections
 			);
 		}
 
-		public void Project(BuildSucceeded message)
+		public void Finish(BuildSucceeded message)
 		{
 			Project(message.Timestamp, message.Groups, counts => counts.Successes++);
 		}
 
-		public void Project(BuildFailed message)
+		public void Start(BuildFailed message)
 		{
 			Project(message.Timestamp, message.Groups, counts => counts.Failures++);
 		}

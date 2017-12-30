@@ -7,11 +7,9 @@ namespace Dockson.Domain.Transformers.Commits
 {
 	public class BranchCommit : IProjectable
 	{
-		public BranchCommit(Notification notification)
+		public BranchCommit(CommitNotification notification)
 		{
-			notification.Tags.TryGetValue("commit", out var commit);
-
-			CommitHash = commit;
+			CommitHash = notification.Commit;
 			Timestamp = notification.Timestamp;
 			Groups = new HashSet<string>(
 				notification.Groups.Append(notification.Name),

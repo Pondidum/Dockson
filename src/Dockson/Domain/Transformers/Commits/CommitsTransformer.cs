@@ -3,24 +3,24 @@ using System.Collections.Generic;
 
 namespace Dockson.Domain.Transformers.Commits
 {
-	public class CommitsTransformer : ITransformer<Notification>
+	public class CommitsTransformer : ITransformer<CommitNotification>
 	{
-		private readonly Dictionary<string, Notification> _branchCommits;
+		private readonly Dictionary<string, CommitNotification> _branchCommits;
 
 		public CommitsTransformer()
 		{
-			_branchCommits = new Dictionary<string, Notification>();
+			_branchCommits = new Dictionary<string, CommitNotification>();
 		}
 
 		private static bool IsMaster(string branch) => string.Equals(branch, "Master", StringComparison.OrdinalIgnoreCase);
 
-		public void Transform(Notification notification, Action<object> dispatch)
+		public void Transform(CommitNotification notification, Action<object> dispatch)
 		{
 			if (notification.Type != Stages.Commit)
 				return;
 
-			notification.Tags.TryGetValue("branch", out var branch);
-			notification.Tags.TryGetValue("commit", out var commit);
+			var branch = notification.Branch;
+			var commit = notification.Commit;
 
 			if (branch == null || commit == null)
 				return;

@@ -8,12 +8,12 @@ namespace Dockson
 {
 	public class Distributor
 	{
-		private readonly ITransformer<Notification>[] _transformers;
+		private readonly Cache<Type, List<Action<object, Action<object>>>> _transformers;
 		private readonly Cache<Type, List<Action<object>>> _projections;
 
-		public Distributor(ITransformer<Notification>[] transformers)
+		public Distributor()
 		{
-			_transformers = transformers;
+			_transformers = new Cache<Type, List<Action<object, Action<object>>>>(key => new List<Action<object, Action<object>>>());
 			_projections = new Cache<Type, List<Action<object>>>(key => new List<Action<object>>());
 		}
 
@@ -21,11 +21,15 @@ namespace Dockson
 		{
 			var events = new List<object>();
 
-			foreach (var transformer in _transformers)
-				transformer.Transform(notification, events.Add);
+			_transformers[notification.GetType()].ForEach(tx => tx(notification, events.Add));
 
 			foreach (var @event in events)
 				_projections[@event.GetType()].ForEach(project => project(@event));
+		}
+
+		public void AddTransformer<T>(ITransformer<T> transformer)
+		{
+			_transformers[typeof(T)].Add((notification, dispatch) => transformer.Transform((T)notification, dispatch));
 		}
 
 		public void AddProjection<T>(IProjection<T> projection)
