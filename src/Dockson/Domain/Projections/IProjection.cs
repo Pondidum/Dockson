@@ -1,8 +1,8 @@
 ﻿namespace Dockson.Domain.Projections
 {
-	public interface IProjection<TMessage>
+	public interface IProjection<TState, TMessage>
 	{
-//		TState State { get; set; }
+		TState State { get; set; }
 		void Project(TMessage message);
 	}
 

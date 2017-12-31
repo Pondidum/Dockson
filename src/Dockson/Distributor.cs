@@ -32,9 +32,9 @@ namespace Dockson
 			_transformers[typeof(T)].Add((notification, dispatch) => transformer.Transform((T)notification, dispatch));
 		}
 
-		public void AddProjection<T>(IProjection<T> projection)
+		public void AddProjection<TState, TMessage>(IProjection<TState, TMessage> projection)
 		{
-			_projections[typeof(T)].Add(message => projection.Project((T)message));
+			_projections[typeof(TMessage)].Add(message => projection.Project((TMessage)message));
 		}
 
 		public void AddProjection<TState, TStart, TFinish>(IProjection<TState, TStart, TFinish> projection)

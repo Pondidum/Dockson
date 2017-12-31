@@ -4,28 +4,30 @@ using System.Linq;
 
 namespace Dockson.Domain.Projections
 {
-	public class IntervalProjection<TMessage> : IProjection<TMessage>
+	public class IntervalProjection<TMessage> : IProjection<IntervalState, TMessage>
 		where TMessage : IProjectable
 	{
 		private readonly Action<string, DayDate, TrendView> _updateView;
-		private readonly List<Interval> _builds;
 
 		public IntervalProjection(Action<string, DayDate, TrendView> updateView)
 		{
 			_updateView = updateView;
-			_builds = new List<Interval>();
+			State = new IntervalState();
 		}
+
+		public IntervalState State { get; set; }
 
 		public void Project(TMessage message)
 		{
+			var builds = State.Builds;
 			var buildTime = message.Timestamp;
 			var day = new DayDate(buildTime);
 
 			foreach (var group in message.Groups)
 			{
-				var lastBuild = _builds.LastOrDefault(build => build.Group.EqualsIgnore(group));
+				var lastBuild = builds.LastOrDefault(build => build.Group.EqualsIgnore(group));
 
-				_builds.Add(new Interval
+				builds.Add(new IntervalState.Interval
 				{
 					Timestamp = buildTime,
 					Group = group,
@@ -34,7 +36,7 @@ namespace Dockson.Domain.Projections
 						: 0
 				});
 
-				var deltas = _builds
+				var deltas = builds
 					.Where(d => d.Group.EqualsIgnore(group))
 					.Where(d => day.Includes(d.Timestamp) && d.ElapsedMinutes > 0)
 					.Select(d => d.ElapsedMinutes)
@@ -48,7 +50,19 @@ namespace Dockson.Domain.Projections
 			}
 		}
 
-		private class Interval
+		
+	}
+
+	public class IntervalState
+	{
+		public IntervalState()
+		{
+			Builds = new List<Interval>();
+		}
+
+		public List<Interval> Builds { get; set; }
+
+		public class Interval
 		{
 			public string Group;
 			public DateTime Timestamp;

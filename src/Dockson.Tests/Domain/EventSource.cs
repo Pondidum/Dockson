@@ -30,7 +30,7 @@ namespace Dockson.Tests.Domain
 			Groups = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 		}
 
-		public static EventSource For<T>(IProjection<T> projection, Action<EventSource> customise = null)
+		public static EventSource For<TState, TMessage>(IProjection<TState, TMessage> projection, Action<EventSource> customise = null)
 			=> CreateSource(dist => dist.AddProjection(projection), customise);
 
 		public static EventSource For<TState, TStart, TFinish>(IProjection<TState, TStart, TFinish> projection, Action<EventSource> customise = null)
