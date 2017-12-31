@@ -16,7 +16,6 @@ namespace Dockson.Domain.Projections
 			_updateView = updateView;
 			_startIdentity = startIdentity;
 			_finishIdentity = finishIdentity;
-			State = new LeadTimeState();
 		}
 
 		public LeadTimeState State { get; set; }

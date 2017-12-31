@@ -11,7 +11,6 @@ namespace Dockson.Domain.Projections
 		public BuildFailureRateProjection(Action<string, DayDate, RateView> updateView)
 		{
 			_updateView = updateView;
-			State = new BuildFailureState();
 		}
 
 		public void Finish(BuildSucceeded message)

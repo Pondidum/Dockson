@@ -31,9 +31,11 @@ namespace Dockson.Tests.Domain
 		}
 
 		public static EventSource For<TState, TMessage>(IProjection<TState, TMessage> projection, Action<EventSource> customise = null)
+			where TState : new()
 			=> CreateSource(dist => dist.AddProjection(projection), customise);
 
 		public static EventSource For<TState, TStart, TFinish>(IProjection<TState, TStart, TFinish> projection, Action<EventSource> customise = null)
+			where TState : new()
 			=> CreateSource(dist => dist.AddProjection(projection), customise);
 
 		private static EventSource CreateSource(Action<Distributor> customiseDistributor, Action<EventSource> customiseEventSource = null)

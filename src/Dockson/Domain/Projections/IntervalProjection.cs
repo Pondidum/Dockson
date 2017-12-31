@@ -12,7 +12,6 @@ namespace Dockson.Domain.Projections
 		public IntervalProjection(Action<string, DayDate, TrendView> updateView)
 		{
 			_updateView = updateView;
-			State = new IntervalState();
 		}
 
 		public IntervalState State { get; set; }
