@@ -15,7 +15,11 @@ namespace Dockson.Tests.Domain.Transformers.Commits
 
 		public CommitsTransformerTests()
 		{
-			_transformer = new CommitsTransformer();
+			_transformer = new CommitsTransformer
+			{
+				State = new Dictionary<string, CommitNotification>()
+			};
+
 			_now = DateTime.UtcNow;
 		}
 

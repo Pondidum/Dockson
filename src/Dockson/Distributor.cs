@@ -30,9 +30,11 @@ namespace Dockson
 				_projections[@event.GetType()].ForEach(project => project(@event));
 		}
 
-		public void AddTransformer<T>(ITransformer<T> transformer)
+		public void AddTransformer<TState, TNotification>(ITransformer<TState, TNotification> transformer) where TState : new()
 		{
-			_transformers[typeof(T)].Add((notification, dispatch) => transformer.Transform((T)notification, dispatch));
+			_transformers[typeof(TNotification)].Add((notification, dispatch) => transformer.Transform((TNotification)notification, dispatch));
+
+			transformer.State = StateFor<TState>(transformer.GetType());
 		}
 
 		public void AddProjection<TState, TMessage>(IProjection<TState, TMessage> projection) where TState : new()

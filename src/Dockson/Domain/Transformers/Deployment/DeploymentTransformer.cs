@@ -2,8 +2,10 @@
 
 namespace Dockson.Domain.Transformers.Deployment
 {
-	public class DeploymentTransformer : ITransformer<DeploymentNotification>
+	public class DeploymentTransformer : ITransformer<object, DeploymentNotification>
 	{
+		public object State { get; set; }
+
 		public void Transform(DeploymentNotification notification, Action<object> dispatch)
 		{
 			if (notification.Type != Stages.Deploy)

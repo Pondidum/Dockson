@@ -3,14 +3,9 @@ using System.Collections.Generic;
 
 namespace Dockson.Domain.Transformers.Commits
 {
-	public class CommitsTransformer : ITransformer<CommitNotification>
+	public class CommitsTransformer : ITransformer<Dictionary<string, CommitNotification>, CommitNotification>
 	{
-		private readonly Dictionary<string, CommitNotification> _branchCommits;
-
-		public CommitsTransformer()
-		{
-			_branchCommits = new Dictionary<string, CommitNotification>();
-		}
+		public Dictionary<string, CommitNotification> State { get; set; }
 
 		private static bool IsMaster(string branch) => string.Equals(branch, "Master", StringComparison.OrdinalIgnoreCase);
 
@@ -27,14 +22,14 @@ namespace Dockson.Domain.Transformers.Commits
 
 			if (IsMaster(branch))
 			{
-				_branchCommits.Remove(commit, out var matchingCommit);
+				State.Remove(commit, out var matchingCommit);
 
 				if (matchingCommit != null)
 					dispatch(new MasterCommit(notification));
 			}
 			else
 			{
-				_branchCommits.Add(commit, notification);
+				State.Add(commit, notification);
 				dispatch(new BranchCommit(notification));
 			}
 		}
