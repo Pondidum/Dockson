@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Dockson
+namespace Dockson.Domain
 {
 	public class StateStore : IStateStore
 	{

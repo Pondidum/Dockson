@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using Dockson.Domain;
 
-namespace Dockson
+namespace Dockson.Tests.Domain
 {
 	public class DictionaryStateStore : IStateStore
 	{

@@ -1,16 +1,14 @@
 ﻿using Dockson.Domain;
 using Dockson.Domain.Projections;
-using Dockson.Domain.Transformers;
 using Dockson.Domain.Transformers.Build;
 using Dockson.Domain.Transformers.Commits;
 using Dockson.Domain.Transformers.Deployment;
-using Dockson.Tests.Domain;
 using Newtonsoft.Json;
 using Shouldly;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace Dockson.Tests
+namespace Dockson.Tests.Domain
 {
 	public class DistributorTests
 	{

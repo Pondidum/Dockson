@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
-using Dockson.Domain;
 
-namespace Dockson
+namespace Dockson.Domain
 {
 	public class ViewStore
 	{

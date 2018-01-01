@@ -37,7 +37,7 @@ namespace Dockson
 			dist.AddProjection(new DeploymentLeadTimeProjection(viewStore.UpdateDeploymentLeadTime));
 			dist.AddProjection(new DeploymentIntervalProjection(viewStore.UpdateDeploymentInterval));
 
-			Action<Notification> project = dist.Project;
+			services.AddSingleton<IProjector>(dist);
 		}
 
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using Dockson.Domain;
 using Dockson.Domain.Projections;
 using Dockson.Domain.Transformers;
 
-namespace Dockson
+namespace Dockson.Domain
 {
-	public class Distributor
+	public class Distributor : IProjector
 	{
 		private readonly IStateStore _stateStore;
 		private readonly ViewStore _viewStore;
