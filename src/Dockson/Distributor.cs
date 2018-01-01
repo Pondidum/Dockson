@@ -9,13 +9,15 @@ namespace Dockson
 	public class Distributor
 	{
 		private readonly IStateStore _stateStore;
+		private readonly ViewStore _viewStore;
 
 		private readonly Cache<Type, List<Action<object, Action<object>>>> _transformers;
 		private readonly Cache<Type, List<Action<object>>> _projections;
 
-		public Distributor(IStateStore stateStore)
+		public Distributor(IStateStore stateStore, ViewStore viewStore)
 		{
 			_stateStore = stateStore;
+			_viewStore = viewStore;
 			_transformers = new Cache<Type, List<Action<object, Action<object>>>>(key => new List<Action<object, Action<object>>>());
 			_projections = new Cache<Type, List<Action<object>>>(key => new List<Action<object>>());
 		}
@@ -23,11 +25,17 @@ namespace Dockson
 		public void Project(Notification notification)
 		{
 			var events = new List<object>();
+			var transformers = _transformers[notification.GetType()];
 
-			_transformers[notification.GetType()].ForEach(tx => tx(notification, events.Add));
+			foreach (var transformer in transformers)
+				transformer(notification, events.Add);
 
 			foreach (var @event in events)
-				_projections[@event.GetType()].ForEach(project => project(@event));
+			foreach (var project in _projections[@event.GetType()])
+				project(@event);
+
+			_stateStore.Save();
+			_viewStore.Save();
 		}
 
 		public void AddTransformer<TState, TNotification>(ITransformer<TState, TNotification> transformer) where TState : new()

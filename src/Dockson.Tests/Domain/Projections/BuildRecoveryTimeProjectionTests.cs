@@ -13,9 +13,10 @@ namespace Dockson.Tests.Domain.Projections
 
 		public BuildRecoveryTimeProjectionTests()
 		{
-			_view = new View();
-			var projection = new BuildRecoveryTimeProjection(_view.UpdateBuildRecoveryTime);
+			var updater = new ViewStore();
+			var projection = new BuildRecoveryTimeProjection(updater.UpdateBuildRecoveryTime);
 
+			_view = updater.View;
 			_service = EventSource.For(projection, s => s.Name = "ServiceOne");
 			_serviceTwo = EventSource.For(projection, s => s.Name = "ServiceTwo");
 		}

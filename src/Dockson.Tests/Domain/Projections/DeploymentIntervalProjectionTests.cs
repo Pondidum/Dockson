@@ -12,9 +12,10 @@ namespace Dockson.Tests.Domain.Projections
 
 		public DeploymentIntervalProjectionTests()
 		{
-			_view = new View();
-			var projection = new DeploymentIntervalProjection(_view.UpdateDeploymentInterval);
+			var updater = new ViewStore();
+			var projection = new DeploymentIntervalProjection(updater.UpdateDeploymentInterval);
 
+			_view = updater.View;
 			_service = EventSource.For(projection);
 		}
 

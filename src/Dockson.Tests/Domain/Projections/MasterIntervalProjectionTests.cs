@@ -12,9 +12,10 @@ namespace Dockson.Tests.Domain.Projections
 
 		public MasterIntervalProjectionTests()
 		{
-			_view = new View();
-			var projection = new MasterIntervalProjection(_view.UpdateMasterCommitInterval);
+			var updater = new ViewStore();
+			var projection = new MasterIntervalProjection(updater.UpdateMasterCommitInterval);
 
+			_view = updater.View;
 			_service = EventSource.For(projection);
 		}
 

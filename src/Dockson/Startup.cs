@@ -1,7 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using Dockson.Domain;
+using Dockson.Domain.Projections;
+using Dockson.Domain.Transformers.Build;
+using Dockson.Domain.Transformers.Commits;
+using Dockson.Domain.Transformers.Deployment;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -15,6 +17,27 @@ namespace Dockson
 		// For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
 		public void ConfigureServices(IServiceCollection services)
 		{
+			var viewStore = new ViewStore();
+			var stateStore = new StateStore();
+
+			viewStore.Load();
+			stateStore.Load();
+
+			var dist = new Distributor(stateStore, viewStore);
+			dist.AddTransformer(new CommitsTransformer());
+			dist.AddTransformer(new BuildTransformer());
+			dist.AddTransformer(new DeploymentTransformer());
+
+			dist.AddProjection(new MasterLeadTimeProjection(viewStore.UpdateMasterCommitLeadTime));
+			dist.AddProjection(new MasterIntervalProjection(viewStore.UpdateMasterCommitInterval));
+			dist.AddProjection(new BuildLeadTimeProjection(viewStore.UpdateBuildLeadTime));
+			dist.AddProjection(new BuildIntervalProjection(viewStore.UpdateBuildInterval));
+			dist.AddProjection(new BuildRecoveryTimeProjection(viewStore.UpdateBuildRecoveryTime));
+			dist.AddProjection(new BuildFailureRateProjection(viewStore.UpdateBuildFailureRate));
+			dist.AddProjection(new DeploymentLeadTimeProjection(viewStore.UpdateDeploymentLeadTime));
+			dist.AddProjection(new DeploymentIntervalProjection(viewStore.UpdateDeploymentInterval));
+
+			Action<Notification> project = dist.Project;
 		}
 
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

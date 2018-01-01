@@ -12,9 +12,10 @@ namespace Dockson.Tests.Domain.Projections
 
 		public BuildFailureRateProjectionTests()
 		{
-			_view = new View();
-			var projection = new BuildFailureRateProjection(_view.UpdateBuildFailureRate);
+			var updater = new ViewStore();
+			var projection = new BuildFailureRateProjection(updater.UpdateBuildFailureRate);
 
+			_view = updater.View;
 			_service = EventSource.For(projection, s => s.Name = "wat-service");
 		}
 

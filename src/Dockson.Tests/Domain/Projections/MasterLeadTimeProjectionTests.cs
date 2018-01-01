@@ -12,8 +12,10 @@ namespace Dockson.Tests.Domain.Projections
 
 		public MasterLeadTimeProjectionTests()
 		{
-			_view = new View();
-			var projection = new MasterLeadTimeProjection(_view.UpdateMasterCommitLeadTime);
+			var updater = new ViewStore();
+			var projection = new MasterLeadTimeProjection(updater.UpdateMasterCommitLeadTime);
+
+			_view = updater.View;
 			_service = EventSource.For(projection);
 		}
 

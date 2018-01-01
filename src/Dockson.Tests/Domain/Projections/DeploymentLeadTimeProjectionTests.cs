@@ -17,9 +17,10 @@ namespace Dockson.Tests.Domain.Projections
 
 		public DeploymentLeadTimeProjectionTests()
 		{
-			_view = new View();
-			var projection = new DeploymentLeadTimeProjection(_view.UpdateDeploymentLeadTime);
+			var updater = new ViewStore();
+			var projection = new DeploymentLeadTimeProjection(updater.UpdateDeploymentLeadTime);
 
+			_view = updater.View;
 			_serviceOne = EventSource.For(projection, s =>
 			{
 				s.Name = "service-one";

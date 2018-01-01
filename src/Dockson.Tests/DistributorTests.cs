@@ -24,15 +24,15 @@ namespace Dockson.Tests
 		[Fact]
 		public void When_handling_a_single_project_pipeline()
 		{
-			var view = new View();
-			var distributor = new Distributor(new DictionaryStateStore());
+			var viewStore = new ViewStore();
+			var distributor = new Distributor(new DictionaryStateStore(), new ViewStore());
 
 			distributor.AddTransformer(new CommitsTransformer());
 			distributor.AddTransformer(new BuildTransformer());
 			distributor.AddTransformer(new DeploymentTransformer());
 
-			distributor.AddProjection(new MasterIntervalProjection(view.UpdateMasterCommitInterval));
-			distributor.AddProjection(new MasterLeadTimeProjection(view.UpdateMasterCommitLeadTime));
+			distributor.AddProjection(new MasterIntervalProjection(viewStore.UpdateMasterCommitInterval));
+			distributor.AddProjection(new MasterLeadTimeProjection(viewStore.UpdateMasterCommitLeadTime));
 
 			var service = new EventSource(distributor.Project);
 
@@ -45,6 +45,7 @@ namespace Dockson.Tests
 				.Advance(7.Minutes())
 				.ProductionDeployment();
 
+			var view = viewStore.View;
 			var day = service.CurrentDay;
 
 			service.ShouldSatisfyAllConditions(
