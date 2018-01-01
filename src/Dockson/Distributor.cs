@@ -8,14 +8,14 @@ namespace Dockson
 {
 	public class Distributor
 	{
-		private readonly Dictionary<string, object> _stateStore;
+		private readonly IStateStore _stateStore;
+
 		private readonly Cache<Type, List<Action<object, Action<object>>>> _transformers;
 		private readonly Cache<Type, List<Action<object>>> _projections;
 
-		public Distributor(Dictionary<string, object> stateStore = null)
+		public Distributor(IStateStore stateStore)
 		{
-			_stateStore = stateStore ?? new Dictionary<string, object>();
-
+			_stateStore = stateStore;
 			_transformers = new Cache<Type, List<Action<object, Action<object>>>>(key => new List<Action<object, Action<object>>>());
 			_projections = new Cache<Type, List<Action<object>>>(key => new List<Action<object>>());
 		}
@@ -34,14 +34,14 @@ namespace Dockson
 		{
 			_transformers[typeof(TNotification)].Add((notification, dispatch) => transformer.Transform((TNotification)notification, dispatch));
 
-			transformer.State = StateFor<TState>(transformer.GetType());
+			transformer.State = _stateStore.StateFor<TState>(transformer.GetType());
 		}
 
 		public void AddProjection<TState, TMessage>(IProjection<TState, TMessage> projection) where TState : new()
 		{
 			_projections[typeof(TMessage)].Add(message => projection.Project((TMessage)message));
 
-			projection.State = StateFor<TState>(projection.GetType());
+			projection.State = _stateStore.StateFor<TState>(projection.GetType());
 		}
 
 		public void AddProjection<TState, TStart, TFinish>(IProjection<TState, TStart, TFinish> projection) where TState : new()
@@ -49,13 +49,7 @@ namespace Dockson
 			_projections[typeof(TStart)].Add(message => projection.Start((TStart)message));
 			_projections[typeof(TFinish)].Add(message => projection.Finish((TFinish)message));
 
-			projection.State = StateFor<TState>(projection.GetType());
-		}
-
-		private TState StateFor<TState>(Type projection) where TState : new()
-		{
-			_stateStore.TryAdd(projection.Name, new TState());
-			return (TState)_stateStore[projection.Name];
+			projection.State = _stateStore.StateFor<TState>(projection.GetType());
 		}
 	}
 }

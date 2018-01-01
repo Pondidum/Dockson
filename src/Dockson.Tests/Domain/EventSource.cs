@@ -40,7 +40,7 @@ namespace Dockson.Tests.Domain
 
 		private static EventSource CreateSource(Action<Distributor> customiseDistributor, Action<EventSource> customiseEventSource = null)
 		{
-			var dist = new Distributor();
+			var dist = new Distributor(new DictionaryStateStore());
 			dist.AddTransformer(new CommitsTransformer());
 			dist.AddTransformer(new BuildTransformer());
 			dist.AddTransformer(new DeploymentTransformer());

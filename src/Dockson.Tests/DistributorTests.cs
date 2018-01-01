@@ -25,7 +25,7 @@ namespace Dockson.Tests
 		public void When_handling_a_single_project_pipeline()
 		{
 			var view = new View();
-			var distributor = new Distributor();
+			var distributor = new Distributor(new DictionaryStateStore());
 
 			distributor.AddTransformer(new CommitsTransformer());
 			distributor.AddTransformer(new BuildTransformer());
