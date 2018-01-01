@@ -1,14 +1,15 @@
-﻿using Dockson.Domain;
+﻿using System.Collections.Generic;
+using Dockson.Domain;
 
 namespace Dockson
 {
 	public class ViewStore
 	{
-		public View View { get; private set; }
+		public Dictionary<string, GroupView> View { get; private set; }
 
 		public ViewStore()
 		{
-			View = new View();
+			View = new Dictionary<string, GroupView>();
 		}
 
 		public void Save()

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Dockson.Domain;
 using Dockson.Domain.Projections;
 using Shouldly;
@@ -10,7 +11,7 @@ namespace Dockson.Tests.Domain.Projections
 	{
 		private const string Team = "team-one";
 
-		private readonly View _view;
+		private readonly Dictionary<string, GroupView> _view;
 
 		private readonly EventSource _serviceOne;
 		private readonly EventSource _serviceTwo;

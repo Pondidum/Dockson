@@ -1,4 +1,5 @@
-﻿using Dockson.Domain;
+﻿using System.Collections.Generic;
+using Dockson.Domain;
 using Dockson.Domain.Projections;
 using Shouldly;
 using Xunit;
@@ -7,7 +8,7 @@ namespace Dockson.Tests.Domain.Projections
 {
 	public class BuildIntervalProjectionTests
 	{
-		private readonly View _view;
+		private readonly Dictionary<string, GroupView> _view;
 		private readonly EventSource _service;
 
 		public BuildIntervalProjectionTests()
