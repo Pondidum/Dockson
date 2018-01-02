@@ -4,7 +4,6 @@ namespace Dockson.Domain
 {
 	public interface IViewStore
 	{
-		
 		Dictionary<string, GroupView> View { get; }
 
 		void Save();
