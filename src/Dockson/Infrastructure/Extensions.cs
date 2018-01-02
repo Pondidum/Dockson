@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Dockson
+namespace Dockson.Infrastructure
 {
 	public static class Extensions
 	{

@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
-namespace Dockson
+namespace Dockson.Infrastructure
 {
 	public class Cache<TKey, TValue> : IEnumerable<TValue>
 	{
