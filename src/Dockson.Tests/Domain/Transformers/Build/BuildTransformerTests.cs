@@ -20,17 +20,6 @@ namespace Dockson.Tests.Domain.Transformers.Build
 		}
 
 		[Fact]
-		public void When_the_notification_is_not_a_build()
-		{
-			var notification = Build("success");
-			notification.Type = Stages.Commit;
-
-			_transformer.Transform(notification, _events.Add);
-
-			_events.ShouldBeEmpty();
-		}
-
-		[Fact]
 		public void When_the_notification_is_a_successful_build()
 		{
 			var notification = Build("success");
@@ -98,9 +87,8 @@ namespace Dockson.Tests.Domain.Transformers.Build
 			});
 		}
 
-		private Notification Build(string status, DateTime? timestamp = null) => new Notification
+		private BuildNotification Build(string status, DateTime? timestamp = null) => new BuildNotification
 		{
-			Type = Stages.Build,
 			Timestamp = timestamp ?? DateTime.UtcNow,
 			Source = "github",
 			Name = "SomeService",

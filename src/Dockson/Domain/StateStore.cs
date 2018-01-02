@@ -6,7 +6,7 @@ namespace Dockson.Domain
 	{
 		public TState StateFor<TState>(Type owner) where TState : new()
 		{
-			throw new NotImplementedException();
+			return new TState();
 		}
 
 		public void Save()

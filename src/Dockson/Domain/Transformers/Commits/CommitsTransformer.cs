@@ -11,9 +11,6 @@ namespace Dockson.Domain.Transformers.Commits
 
 		public void Transform(CommitNotification notification, Action<object> dispatch)
 		{
-			if (notification.Type != Stages.Commit)
-				return;
-
 			var branch = notification.Branch;
 			var commit = notification.Commit;
 

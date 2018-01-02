@@ -2,15 +2,12 @@
 
 namespace Dockson.Domain.Transformers.Build
 {
-	public class BuildTransformer : ITransformer<object, Notification>
+	public class BuildTransformer : ITransformer<object, BuildNotification>
 	{
 		public object State { get; set; }
 
-		public void Transform(Notification notification, Action<object> dispatch)
+		public void Transform(BuildNotification notification, Action<object> dispatch)
 		{
-			if (notification.Type != Stages.Build)
-				return;
-
 			var isSuccess = notification.Status.EqualsIgnore("success");
 
 			if (isSuccess)

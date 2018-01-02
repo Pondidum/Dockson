@@ -50,26 +50,8 @@ namespace Dockson.Tests.Domain.Transformers.Commits
 			});
 		}
 
-		[Fact]
-		public void When_the_notification_is_not_a_commit()
-		{
-			var commits = new List<object>();
-
-			var featureCommit = Commit(0, "feature-1", "commit-sha");
-			var masterCommit = Commit(10, "master", "commit-sha");
-
-			featureCommit.Type = Stages.Build;
-			masterCommit.Type = Stages.Build;
-
-			_transformer.Transform(featureCommit, commits.Add);
-			_transformer.Transform(masterCommit, commits.Add);
-
-			commits.ShouldBeEmpty();
-		}
-
 		private CommitNotification Commit(int offset, string branch, string hash) => new CommitNotification
 		{
-			Type = Stages.Commit,
 			Timestamp = _now.AddMinutes(offset),
 			Source = "github",
 			Name = "SomeService",

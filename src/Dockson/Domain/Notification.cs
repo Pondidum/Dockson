@@ -7,7 +7,6 @@ namespace Dockson.Domain
 	{
 		public DateTime Timestamp { get; set; }
 		public string Source { get; set; }
-		public Stages Type { get; set; }
 
 		public string Name { get; set; }
 		public string Version { get; set; }

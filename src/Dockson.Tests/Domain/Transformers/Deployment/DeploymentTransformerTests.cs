@@ -20,17 +20,6 @@ namespace Dockson.Tests.Domain.Transformers.Deployment
 		}
 
 		[Fact]
-		public void When_the_notification_is_not_deployment()
-		{
-			var notification = Deployment("success");
-			notification.Type = Stages.Commit;
-
-			_transformer.Transform(notification, _events.Add);
-
-			_events.ShouldBeEmpty();
-		}
-
-		[Fact]
 		public void When_the_notification_is_successful_non_production_deployment()
 		{
 			var notification = Deployment("success", environment: "test");
@@ -72,7 +61,6 @@ namespace Dockson.Tests.Domain.Transformers.Deployment
 
 		private DeploymentNotification Deployment(string status, string environment = "production") => new DeploymentNotification
 		{
-			Type = Stages.Deploy,
 			Timestamp = DateTime.UtcNow,
 			Source = "github",
 			Name = "SomeService",

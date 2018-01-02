@@ -88,11 +88,10 @@ namespace Dockson.Tests.Domain
 			return this;
 		}
 
-		public EventSource BuildSucceeded(Action<Notification> modify = null)
+		public EventSource BuildSucceeded(Action<BuildNotification> modify = null)
 		{
-			var notification = new Notification
+			var notification = new BuildNotification
 			{
-				Type = Stages.Build,
 				Timestamp = Timestamp,
 				Name = Name,
 				Version = Version,
@@ -110,11 +109,10 @@ namespace Dockson.Tests.Domain
 			return this;
 		}
 
-		public EventSource BuildFailed(Action<Notification> modify = null)
+		public EventSource BuildFailed(Action<BuildNotification> modify = null)
 		{
-			var notification = new Notification
+			var notification = new BuildNotification
 			{
-				Type = Stages.Build,
 				Timestamp = Timestamp,
 				Name = Name,
 				Version = Version,
@@ -132,11 +130,10 @@ namespace Dockson.Tests.Domain
 			return this;
 		}
 
-		public EventSource ProductionDeployment(Action<Notification> modify = null)
+		public EventSource ProductionDeployment(Action<DeploymentNotification> modify = null)
 		{
 			var notification = new DeploymentNotification
 			{
-				Type = Stages.Deploy,
 				Timestamp = Timestamp,
 				Name = Name,
 				Version = Version,
@@ -154,7 +151,6 @@ namespace Dockson.Tests.Domain
 
 		private CommitNotification CreateNotification(string branch) => new CommitNotification()
 		{
-			Type = Stages.Commit,
 			Timestamp = Timestamp,
 			Source = "github",
 			Name = Name,

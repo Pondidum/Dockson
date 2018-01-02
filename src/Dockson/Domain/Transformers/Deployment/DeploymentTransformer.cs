@@ -8,9 +8,6 @@ namespace Dockson.Domain.Transformers.Deployment
 
 		public void Transform(DeploymentNotification notification, Action<object> dispatch)
 		{
-			if (notification.Type != Stages.Deploy)
-				return;
-
 			if (notification.Status.EqualsIgnore("success") == false)
 				return;
 
