@@ -2,5 +2,6 @@
 {
 	public class BuildNotification : Notification
 	{
+		public string Status { get; set; }
 	}
 }

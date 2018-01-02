@@ -53,7 +53,6 @@ namespace Dockson.Tests.Domain.Transformers.Commits
 		private CommitNotification Commit(int offset, string branch, string hash) => new CommitNotification
 		{
 			Timestamp = _now.AddMinutes(offset),
-			Source = "github",
 			Name = "SomeService",
 			Version = "1.0.0",
 			Commit =  hash,

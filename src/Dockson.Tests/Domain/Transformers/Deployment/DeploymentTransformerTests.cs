@@ -62,7 +62,6 @@ namespace Dockson.Tests.Domain.Transformers.Deployment
 		private DeploymentNotification Deployment(string status, string environment = "production") => new DeploymentNotification
 		{
 			Timestamp = DateTime.UtcNow,
-			Source = "github",
 			Name = "SomeService",
 			Version = "1.0.0",
 			Status = status,

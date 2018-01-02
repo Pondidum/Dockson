@@ -153,7 +153,6 @@ namespace Dockson.Tests.Domain
 		private CommitNotification CreateNotification(string branch) => new CommitNotification()
 		{
 			Timestamp = Timestamp,
-			Source = "github",
 			Name = Name,
 			Version = "1.0.0",
 			Groups = Groups,
