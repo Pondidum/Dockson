@@ -1,4 +1,5 @@
 ﻿using System;
+using Dockson.Infrastructure;
 using Shouldly;
 using Xunit;
 

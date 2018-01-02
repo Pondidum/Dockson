@@ -3,6 +3,7 @@ using Dockson.Domain.Projections;
 using Dockson.Domain.Transformers.Build;
 using Dockson.Domain.Transformers.Commits;
 using Dockson.Domain.Transformers.Deployment;
+using Dockson.Storage;
 using Newtonsoft.Json;
 using Shouldly;
 using Xunit;
@@ -22,8 +23,8 @@ namespace Dockson.Tests.Domain
 		[Fact]
 		public void When_handling_a_single_project_pipeline()
 		{
-			var viewStore = new ViewStore();
-			var distributor = new Distributor(new DictionaryStateStore(), new ViewStore());
+			var viewStore = new DictionaryViewStore();
+			var distributor = new Distributor(new DictionaryStateStore(), viewStore);
 
 			distributor.AddTransformer(new CommitsTransformer());
 			distributor.AddTransformer(new BuildTransformer());

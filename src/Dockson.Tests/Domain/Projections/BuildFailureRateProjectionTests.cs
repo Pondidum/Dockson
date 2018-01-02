@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using Dockson.Domain;
 using Dockson.Domain.Projections;
+using Dockson.Storage;
 using Shouldly;
 using Xunit;
 
@@ -13,7 +14,7 @@ namespace Dockson.Tests.Domain.Projections
 
 		public BuildFailureRateProjectionTests()
 		{
-			var updater = new ViewStore();
+			var updater = new DictionaryViewStore();
 			var projection = new BuildFailureRateProjection(updater.UpdateBuildFailureRate);
 
 			_view = updater.View;

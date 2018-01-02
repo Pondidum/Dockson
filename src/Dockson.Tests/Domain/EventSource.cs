@@ -5,6 +5,7 @@ using Dockson.Domain.Projections;
 using Dockson.Domain.Transformers.Build;
 using Dockson.Domain.Transformers.Commits;
 using Dockson.Domain.Transformers.Deployment;
+using Dockson.Storage;
 
 namespace Dockson.Tests.Domain
 {
@@ -40,7 +41,7 @@ namespace Dockson.Tests.Domain
 
 		private static EventSource CreateSource(Action<Distributor> customiseDistributor, Action<EventSource> customiseEventSource = null)
 		{
-			var dist = new Distributor(new DictionaryStateStore(), new ViewStore());
+			var dist = new Distributor(new DictionaryStateStore(), new DictionaryViewStore());
 			dist.AddTransformer(new CommitsTransformer());
 			dist.AddTransformer(new BuildTransformer());
 			dist.AddTransformer(new DeploymentTransformer());

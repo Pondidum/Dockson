@@ -2,18 +2,19 @@
 using System.Collections.Generic;
 using Dockson.Domain.Projections;
 using Dockson.Domain.Transformers;
+using Dockson.Infrastructure;
 
 namespace Dockson.Domain
 {
 	public class Distributor : IProjector
 	{
 		private readonly IStateStore _stateStore;
-		private readonly ViewStore _viewStore;
+		private readonly IViewStore _viewStore;
 
 		private readonly Cache<Type, List<Action<object, Action<object>>>> _transformers;
 		private readonly Cache<Type, List<Action<object>>> _projections;
 
-		public Distributor(IStateStore stateStore, ViewStore viewStore)
+		public Distributor(IStateStore stateStore, IViewStore viewStore)
 		{
 			_stateStore = stateStore;
 			_viewStore = viewStore;
