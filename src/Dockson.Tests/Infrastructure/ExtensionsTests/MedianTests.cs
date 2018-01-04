@@ -3,7 +3,7 @@ using Dockson.Infrastructure;
 using Shouldly;
 using Xunit;
 
-namespace Dockson.Tests.ExtensionsTests
+namespace Dockson.Tests.Infrastructure.ExtensionsTests
 {
 	public class MedianTests
 	{
