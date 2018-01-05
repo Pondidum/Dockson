@@ -1,4 +1,5 @@
-﻿using System;
+﻿using System.Net;
+using System.Threading.Tasks;
 using Dockson.Domain;
 using Dockson.Domain.Projections;
 using Dockson.Domain.Transformers.Build;
@@ -9,22 +10,11 @@ using Dockson.Infrastructure.Validation;
 using Dockson.Storage;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Formatters;
+using Microsoft.AspNetCore.SpaServices.Webpack;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Dockson
 {
-	public class HomeController : Controller
-	{
-		[Route("")]
-		public IActionResult Index()
-		{
-			return Ok();
-		}
-	}
-
 	public class Startup
 	{
 		// This method gets called by the runtime. Use this method to add services to the container.
@@ -64,7 +54,8 @@ namespace Dockson
 
 			services
 				.AddMvcCore(c => c.Filters.Add<NotificationValidationFilter>())
-				.AddJsonFormatters();
+				.AddJsonFormatters()
+				.AddRazorViewEngine();
 		}
 
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -73,9 +64,34 @@ namespace Dockson
 			if (env.IsDevelopment())
 			{
 				app.UseDeveloperExceptionPage();
+				app.UseWebpackDevMiddleware(new WebpackDevMiddlewareOptions
+				{
+					HotModuleReplacement = true,
+					ReactHotModuleReplacement = true
+				});
+			}
+			else
+			{
+				app.UseExceptionHandler("/Home/Error");
 			}
 
-			app.UseMvc();
+			app.UseStaticFiles();
+			app.UseMvc(routes =>
+			{
+				routes.MapRoute(
+					name: "default",
+					template: "{controller=Home}/{action=Index}/{id?}");
+
+				routes.MapSpaFallbackRoute(
+					name: "spa-fallback",
+					defaults: new { controller = "Home", action = "Index" });
+			});
+
+			app.Run(context =>
+			{
+				context.Response.StatusCode = (int)HttpStatusCode.NotFound;
+				return Task.CompletedTask;
+			});
 		}
 	}
 }
