@@ -1,27 +1,27 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
-import { listAllToggles } from "./actions";
+import { listAllGroups } from "../Groups/actions";
 
 const mapStateToProps = state => {
-  return state.toggles;
+  return state.groups;
 };
 
 const mapDispatchToProps = dispatch => {
   return {
-    listAllToggles: () => dispatch(listAllToggles())
+    listAllGroups: () => dispatch(listAllGroups())
   };
 };
 
 class Dashboard extends Component {
   componentDidMount() {
-    //this.props.listAllToggles();
+    this.props.listAllGroups();
   }
 
   render() {
-    const toggles = this.props.toggles || [];
+    const groups = this.props.groups || [];
     return (
       <ul className="list-unstyled row">
-        {toggles.map((toggle, index) => <h4>Test</h4>)}
+        {groups.map((group, index) => <h4 key={index}>{group}</h4>)}
       </ul>
     );
   }
