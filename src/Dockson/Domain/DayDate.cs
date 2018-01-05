@@ -1,7 +1,10 @@
 ﻿using System;
+using System.ComponentModel;
+using System.Globalization;
 
 namespace Dockson.Domain
 {
+	[TypeConverter(typeof(DayDateTypeConverter))]
 	public class DayDate
 	{
 		private readonly DateTime _fromDate;
@@ -32,5 +35,21 @@ namespace Dockson.Domain
 
 		public override int GetHashCode() => _fromDate.GetHashCode();
 		public override string ToString() => _fromDate.ToShortDateString();
+	}
+
+	public class DayDateTypeConverter : TypeConverter
+	{
+		public override bool CanConvertFrom(ITypeDescriptorContext context, Type sourceType)
+		{
+			return sourceType == typeof(string) || base.CanConvertFrom(context, sourceType);
+		}
+
+		public override object ConvertFrom(ITypeDescriptorContext context, CultureInfo culture, object value)
+		{
+			if (value is string == false)
+				return base.ConvertFrom(context, culture, value);
+
+			return new DayDate(DateTime.Parse((string)value));
+		}
 	}
 }
