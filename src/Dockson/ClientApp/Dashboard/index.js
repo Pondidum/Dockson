@@ -1,6 +1,5 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
-import Toggle from "../Toggle";
 import { listAllToggles } from "./actions";
 
 const mapStateToProps = state => {
@@ -22,7 +21,7 @@ class Dashboard extends Component {
     const toggles = this.props.toggles || [];
     return (
       <ul className="list-unstyled row">
-        {toggles.map((toggle, index) => <Toggle key={index} toggle={toggle} />)}
+        {toggles.map((toggle, index) => <h4>Test</h4>)}
       </ul>
     );
   }
