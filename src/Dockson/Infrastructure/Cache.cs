@@ -1,13 +1,15 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using Newtonsoft.Json;
 
 namespace Dockson.Infrastructure
 {
+	[JsonConverter(typeof(CacheJsonConverter))]
 	public class Cache<TKey, TValue> : IEnumerable<TValue>
 	{
 		private readonly object _locker = new object();
-		private readonly IDictionary<TKey, TValue> _values;
+		private IDictionary<TKey, TValue> _values;
 		private readonly Func<TKey, TValue> _onMissing;
 
 		public Cache(Func<TKey, TValue> onMissing)
@@ -34,7 +36,9 @@ namespace Dockson.Infrastructure
 
 		IEnumerator IEnumerable.GetEnumerator() => ((IEnumerable<TValue>)this).GetEnumerator();
 		public IEnumerator<TValue> GetEnumerator() => _values.Values.GetEnumerator();
+
 		public IDictionary<TKey, TValue> ToDictionary() => new Dictionary<TKey, TValue>(_values);
+		public void FromDictionary(IDictionary<TKey, TValue> dictionary) => _values = dictionary;
 
 		private void Fill(TKey key, Func<TKey, TValue> onMissing)
 		{
@@ -49,6 +53,34 @@ namespace Dockson.Infrastructure
 					}
 				}
 			}
+		}
+	}
+
+	public class CacheJsonConverter : JsonConverter
+	{
+		public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
+		{
+			var method = value.GetType().GetMethod(nameof(Cache<int, int>.ToDictionary));
+			var dictionary = method.Invoke(value, null);
+
+			serializer.Serialize(writer, dictionary);
+		}
+
+		public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
+		{
+			var dt = typeof(Dictionary<,>).MakeGenericType(existingValue.GetType().GetGenericArguments());
+
+			var method = existingValue.GetType().GetMethod(nameof(Cache<int, int>.FromDictionary));
+			var dictionary = serializer.Deserialize(reader, dt);
+
+			method.Invoke(existingValue, new[] { dictionary });
+
+			return existingValue;
+		}
+
+		public override bool CanConvert(Type objectType)
+		{
+			return true;
 		}
 	}
 }
