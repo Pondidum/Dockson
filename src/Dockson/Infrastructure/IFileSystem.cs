@@ -4,5 +4,6 @@
 	{
 		string ReadFile(string path);
 		void WriteFile(string path, string contents);
+		void CreateDirectory(string path);
 	}
 }

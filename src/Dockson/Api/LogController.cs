@@ -17,7 +17,7 @@ namespace Dockson.Api
 		}
 
 		[HttpPost]
-		public IActionResult Commit(CommitNotification model)
+		public IActionResult Commit([FromBody]CommitNotification model)
 		{
 			_projector.Project(model);
 			return Ok();

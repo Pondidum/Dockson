@@ -15,4 +15,4 @@ project.lock.json
 /.vscode
 
 /build
-/storage
+/src/Dockson/store
