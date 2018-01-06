@@ -4,7 +4,9 @@ import { listAllGroups } from "../Groups/actions";
 import { NavLink } from "react-router-dom";
 
 const mapStateToProps = state => {
-  return state.groups;
+  return {
+    names: state.groups.names
+  };
 };
 
 const mapDispatchToProps = dispatch => {
@@ -27,12 +29,12 @@ class Menu extends Component {
   }
 
   render() {
-    const groups = this.props.groups || [];
+    const groupNames = this.props.names || [];
     return (
       <ul className="list-unstyled">
         <NavEntry link="/" text="Home" />
-        {groups.map((group, index) => (
-          <NavEntry key={index} link={`group/${group}`} text={group} />
+        {groupNames.map((group, index) => (
+          <NavEntry key={index} link={`/groups/${group}`} text={group} />
         ))}
       </ul>
     );

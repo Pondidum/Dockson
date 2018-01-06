@@ -1,6 +1,6 @@
 const defaultState = {
   loading: false,
-  groups: []
+  names: []
 };
 
 export default (state = defaultState, action) => {
@@ -8,13 +8,13 @@ export default (state = defaultState, action) => {
     case "LIST_GROUPS_REQUEST":
       return {
         loading: true,
-        groups: []
+        names: []
       };
 
     case "LIST_GROUPS_SUCCESS":
       return {
         loading: false,
-        groups: action.groups
+        names: action.names
       };
 
     default:

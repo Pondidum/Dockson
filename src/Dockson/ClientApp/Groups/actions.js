@@ -6,7 +6,7 @@ export const listAllGroups = () => (dispatch, getState) => {
     .then(data =>
       dispatch({
         type: "LIST_GROUPS_SUCCESS",
-        groups: data
+        names: data
       })
     );
 
