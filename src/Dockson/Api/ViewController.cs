@@ -25,5 +25,14 @@ namespace Dockson.Api
 		{
 			return new JsonResult(_viewStore.View.Keys);
 		}
+
+		[HttpGet("groups/{group}")]
+		public IActionResult Groups(string group)
+		{
+			if (_viewStore.View.ContainsKey(group) == false)
+				return NotFound();
+
+			return new JsonResult(_viewStore.View[group]);
+		}
 	}
 }

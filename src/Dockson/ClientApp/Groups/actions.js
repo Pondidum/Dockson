@@ -13,3 +13,20 @@ export const listAllGroups = () => (dispatch, getState) => {
   addTask(fetchTask);
   dispatch({ type: "LIST_GROUPS_REQUEST" });
 };
+
+export const fetchGroupDetails = group => (dispatch, getState) => {
+  const fetchTask = fetch(`/api/view/groups/${group}`)
+    .then(res => res.json())
+    .then(data =>
+      dispatch(
+        Object.assign({
+          type: "FETCH_GROUP_SUCCESS",
+          group: group,
+          view: data
+        })
+      )
+    );
+
+  addTask(fetchTask);
+  dispatch({ type: "FETCH_GROUP_REQUEST" });
+};
