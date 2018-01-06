@@ -1,6 +1,6 @@
 const defaultState = {
   names: [],
-  groups: {}
+  details: {}
 };
 
 const replaceGroup = (existing, name, value) =>
@@ -20,12 +20,12 @@ const buildDelta = (state, action) => {
 
     case "FETCH_GROUP_REQUEST":
       return {
-        groups: replaceGroup(state.groups, action.group, { loading: true })
+        details: replaceGroup(state.details, action.group, { loading: true })
       };
 
     case "FETCH_GROUP_SUCCESS":
       return {
-        groups: replaceGroup(state.groups, action.group, action.view)
+        details: replaceGroup(state.details, action.group, action.view)
       };
 
     default:

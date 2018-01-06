@@ -1,7 +1,7 @@
 import reducer from "./reducers";
 import freeze from "deep-freeze";
 
-const emptyState = freeze({ names: [], groups: {} });
+const emptyState = freeze({ names: [], details: {} });
 describe("undefined action type", () => {
   it("should return the default state when input is null", () => {
     const state = reducer(undefined, {});
@@ -30,7 +30,7 @@ describe("LIST_GROUPS_REQUEST", () => {
   it("should replace names array, and keep other state", () => {
     const existing = freeze({
       names: ["one", "two"],
-      groups: {
+      details: {
         one: { loading: true },
         two: { loading: false }
       }
@@ -42,7 +42,7 @@ describe("LIST_GROUPS_REQUEST", () => {
 
     expect(state).toEqual({
       names: [],
-      groups: {
+      details: {
         one: { loading: true },
         two: { loading: false }
       }
@@ -54,7 +54,7 @@ describe("LIST_GROUPS_SUCCESS", () => {
   it("should populate names when receiving all groups", () => {
     const existing = freeze({
       names: ["one", "two"],
-      groups: {
+      details: {
         one: { loading: true },
         two: { loading: false }
       }
@@ -67,7 +67,7 @@ describe("LIST_GROUPS_SUCCESS", () => {
 
     expect(state).toEqual({
       names: [1, 2, 3],
-      groups: {
+      details: {
         one: { loading: true },
         two: { loading: false }
       }
@@ -84,14 +84,14 @@ describe("FETCH_GROUP_REQUEST", () => {
 
     expect(state).toEqual({
       names: [],
-      groups: { test: { loading: true } }
+      details: { test: { loading: true } }
     });
   });
 
   it("should not remove old values", () => {
     const existing = freeze({
       names: [],
-      groups: {
+      details: {
         one: { loading: true },
         two: { loading: false }
       }
@@ -104,7 +104,7 @@ describe("FETCH_GROUP_REQUEST", () => {
 
     expect(state).toEqual({
       names: [],
-      groups: {
+      details: {
         one: { loading: true },
         two: { loading: false },
         test: { loading: true }
@@ -117,7 +117,7 @@ describe("FETCH_GROUP_SUCCESS", () => {
   it("should not remove old values", () => {
     const existing = freeze({
       names: [],
-      groups: {
+      details: {
         one: { loading: true },
         two: { loading: false }
       }
@@ -134,7 +134,7 @@ describe("FETCH_GROUP_SUCCESS", () => {
 
     expect(state).toEqual({
       names: [],
-      groups: {
+      details: {
         one: { loading: true },
         two: { loading: false },
         test: {
