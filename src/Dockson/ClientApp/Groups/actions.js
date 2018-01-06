@@ -15,6 +15,10 @@ export const listAllGroups = () => (dispatch, getState) => {
 };
 
 export const fetchGroupDetails = group => (dispatch, getState) => {
+  if (!group) {
+    return;
+  }
+
   const fetchTask = fetch(`/api/view/groups/${group}`)
     .then(res => res.json())
     .then(data =>
@@ -28,5 +32,5 @@ export const fetchGroupDetails = group => (dispatch, getState) => {
     );
 
   addTask(fetchTask);
-  dispatch({ type: "FETCH_GROUP_REQUEST" });
+  dispatch({ type: "FETCH_GROUP_REQUEST", group: group });
 };
