@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
+import { Line as Chart } from "react-chartjs-2";
 import { fetchGroupDetails } from "../Groups/actions";
 
 const mapStateToProps = (state, ownProps) => {
@@ -27,7 +28,34 @@ class GroupDetails extends Component {
     if (group.loading) {
       return <div>Loading...</div>;
     }
-    return <pre>Group {JSON.stringify(group, null, 2)}</pre>;
+
+    const days = Object.keys(group.masterCommitLeadTime);
+
+    const data = {
+      labels: days,
+      datasets: [
+        {
+          label: "Median",
+          data: days.map(day => group.masterCommitLeadTime[day].median),
+          fill: false,
+          borderColor: "rgba(255,99,132,1)"
+        },
+        {
+          label: "Standard Deviation",
+          data: days.map(day => group.masterCommitLeadTime[day].deviation),
+          fill: false,
+          borderColor: "rgba(54, 162, 235, 1)"
+        }
+      ]
+    };
+    return (
+      <Chart
+        data={data}
+        options={{
+          maintainAspectRatio: false
+        }}
+      />
+    );
   }
 }
 
