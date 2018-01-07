@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
+import { Row, Col, Panel } from "react-bootstrap";
 import { Line as Chart } from "react-chartjs-2";
 import { fetchGroupDetails } from "../Groups/actions";
 
@@ -22,13 +23,7 @@ class GroupDetails extends Component {
     this.props.fetchGroup(this.props.groupName);
   }
 
-  render() {
-    const group = this.props.group || { loading: true };
-
-    if (group.loading) {
-      return <div>Loading...</div>;
-    }
-
+  chart(group) {
     const days = Object.keys(group.masterCommitLeadTime);
 
     const data = {
@@ -49,12 +44,36 @@ class GroupDetails extends Component {
       ]
     };
     return (
-      <Chart
-        data={data}
-        options={{
-          maintainAspectRatio: false
-        }}
-      />
+      <Col sm={6}>
+        <Panel>
+          <div className="panel-heading">
+            <h4 className="panel-title">Title</h4>
+          </div>
+          <div className="panel-body">
+            <Chart
+              data={data}
+              options={{
+                maintainAspectRatio: false
+              }}
+            />
+          </div>
+        </Panel>
+      </Col>
+    );
+  }
+
+  render() {
+    const group = this.props.group || { loading: true };
+
+    if (group.loading) {
+      return <div>Loading...</div>;
+    }
+
+    return (
+      <Row>
+        {this.chart(group)}
+        {this.chart(group)}
+      </Row>
     );
   }
 }
