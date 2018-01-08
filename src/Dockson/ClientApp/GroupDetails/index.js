@@ -45,6 +45,16 @@ class GroupDetails extends Component {
     };
   }
 
+  renderTitle(name) {
+    return (
+      name.charAt(0).toUpperCase() +
+      name
+        .slice(1)
+        .replace(/([A-Z])/g, " $1")
+        .trim()
+    );
+  }
+
   chart(group, property) {
     const graphData = group[property];
     const days = Object.keys(graphData);
@@ -53,7 +63,7 @@ class GroupDetails extends Component {
       <Col sm={6}>
         <Panel>
           <div className="panel-heading">
-            <h4 className="panel-title">{property}</h4>
+            <h4 className="panel-title">{this.renderTitle(property)}</h4>
           </div>
           <div className="panel-body">
             <Chart
