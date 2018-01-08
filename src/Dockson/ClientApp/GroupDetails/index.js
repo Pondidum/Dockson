@@ -92,6 +92,8 @@ class GroupDetails extends Component {
       <Row>
         {this.chart(group, "masterCommitLeadTime")}
         {this.chart(group, "masterCommitInterval")}
+        {this.chart(group, "buildLeadTime")}
+        {this.chart(group, "buildInterval")}
       </Row>
     );
   }
