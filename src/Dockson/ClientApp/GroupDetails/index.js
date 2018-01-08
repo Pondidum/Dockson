@@ -23,35 +23,44 @@ class GroupDetails extends Component {
     this.props.fetchGroup(this.props.groupName);
   }
 
-  chart(group) {
-    const days = Object.keys(group.masterCommitLeadTime);
+  median(group) {
+    const keys = Object.keys(group);
 
-    const data = {
-      labels: days,
-      datasets: [
-        {
-          label: "Median",
-          data: days.map(day => group.masterCommitLeadTime[day].median),
-          fill: false,
-          borderColor: "rgba(255,99,132,1)"
-        },
-        {
-          label: "Standard Deviation",
-          data: days.map(day => group.masterCommitLeadTime[day].deviation),
-          fill: false,
-          borderColor: "rgba(54, 162, 235, 1)"
-        }
-      ]
+    return {
+      label: "Median",
+      data: keys.map(day => group[day].median),
+      fill: false,
+      borderColor: "rgba(255,99,132,1)"
     };
+  }
+
+  deviation(group) {
+    const keys = Object.keys(group);
+
+    return {
+      label: "Standard Deviation",
+      data: keys.map(day => group[day].deviation),
+      fill: false,
+      borderColor: "rgba(54, 162, 235, 1)"
+    };
+  }
+
+  chart(group, property) {
+    const graphData = group[property];
+    const days = Object.keys(graphData);
+
     return (
       <Col sm={6}>
         <Panel>
           <div className="panel-heading">
-            <h4 className="panel-title">Title</h4>
+            <h4 className="panel-title">{property}</h4>
           </div>
           <div className="panel-body">
             <Chart
-              data={data}
+              data={{
+                labels: days,
+                datasets: [this.median(graphData), this.deviation(graphData)]
+              }}
               options={{
                 maintainAspectRatio: false
               }}
@@ -71,8 +80,8 @@ class GroupDetails extends Component {
 
     return (
       <Row>
-        {this.chart(group)}
-        {this.chart(group)}
+        {this.chart(group, "masterCommitLeadTime")}
+        {this.chart(group, "masterCommitInterval")}
       </Row>
     );
   }
