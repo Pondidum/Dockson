@@ -18,7 +18,7 @@ const mapDispatchToProps = dispatch => {
 const NavEntry = ({ link, text }) => (
   <li>
     <NavLink exact to={link} activeClassName="active">
-      <span className="glyphicon glyphicon-home" /> {text}
+      <span className="glyphicon glyphicon-stats" /> {text}
     </NavLink>
   </li>
 );
@@ -30,9 +30,12 @@ class Menu extends Component {
 
   render() {
     const groupNames = this.props.names || [];
+
+    if (groupNames.length === 0)
+      return <div>No Services or Groups found :(</div>;
+
     return (
       <ul className="list-unstyled">
-        <NavEntry link="/" text="Home" />
         {groupNames.map((group, index) => (
           <NavEntry key={index} link={`/groups/${group}`} text={group} />
         ))}
