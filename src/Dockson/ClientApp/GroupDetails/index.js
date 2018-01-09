@@ -21,27 +21,26 @@ const mapDispatchToProps = dispatch => {
 class GroupDetails extends Component {
   componentDidMount() {
     this.props.fetchGroup(this.props.groupName);
-  }
 
-  median(group) {
-    const keys = Object.keys(group);
-
-    return {
-      label: "Median",
-      data: keys.map(day => group[day].median),
-      fill: false,
-      borderColor: "rgba(255,99,132,1)"
+    this.schemes = {
+      median: { label: "Median", color: "rgba(255,99,132,1)" },
+      deviation: {
+        label: "Standard Deviation",
+        color: "rgba(54, 162, 235, 1)"
+      },
+      rate: { label: "Rate", color: "rgba(255,99,132,1)" }
     };
   }
 
-  deviation(group) {
+  dataset(group, key) {
     const keys = Object.keys(group);
+    const scheme = this.schemes[key];
 
     return {
-      label: "Standard Deviation",
-      data: keys.map(day => group[day].deviation),
+      label: scheme.label,
+      data: keys.map(day => group[day][key]),
       fill: false,
-      borderColor: "rgba(54, 162, 235, 1)"
+      borderColor: scheme.color
     };
   }
 
@@ -55,7 +54,7 @@ class GroupDetails extends Component {
     );
   }
 
-  chart(group, property) {
+  chart(group, property, datasets = ["median", "deviation"]) {
     const graphData = group[property];
     const days = Object.keys(graphData);
 
@@ -69,7 +68,7 @@ class GroupDetails extends Component {
             <Chart
               data={{
                 labels: days,
-                datasets: [this.median(graphData), this.deviation(graphData)]
+                datasets: datasets.map(key => this.dataset(graphData, key))
               }}
               options={{
                 maintainAspectRatio: false
@@ -95,7 +94,7 @@ class GroupDetails extends Component {
         {this.chart(group, "buildLeadTime")}
         {this.chart(group, "buildInterval")}
         {this.chart(group, "buildRecoveryTime")}
-        {this.chart(group, "buildFailureRate")}
+        {this.chart(group, "buildFailureRate", ["rate"])}
         {this.chart(group, "deploymentLeadTime")}
         {this.chart(group, "deploymentInterval")}
       </Row>
