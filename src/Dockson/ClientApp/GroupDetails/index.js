@@ -94,6 +94,10 @@ class GroupDetails extends Component {
         {this.chart(group, "masterCommitInterval")}
         {this.chart(group, "buildLeadTime")}
         {this.chart(group, "buildInterval")}
+        {this.chart(group, "buildRecoveryTime")}
+        {this.chart(group, "buildFailureRate")}
+        {this.chart(group, "deploymentLeadTime")}
+        {this.chart(group, "deploymentInterval")}
       </Row>
     );
   }
