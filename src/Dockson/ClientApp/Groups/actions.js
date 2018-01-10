@@ -19,17 +19,26 @@ export const fetchGroupDetails = group => (dispatch, getState) => {
     return;
   }
 
-  const fetchTask = fetch(`/api/view/groups/${group}`)
-    .then(res => res.json())
-    .then(data =>
-      dispatch(
-        Object.assign({
-          type: "FETCH_GROUP_SUCCESS",
-          group: group,
-          view: data
-        })
-      )
-    );
+  const success = data => ({
+    type: "FETCH_GROUP_SUCCESS",
+    group: group,
+    view: data
+  });
+
+  const failure = res => ({
+    type: "FETCH_GROUP_FAILURE",
+    group: group,
+    status: res.status,
+    message: res.statusText
+  });
+
+  const fetchTask = fetch(`/api/view/groups/${group}`).then(res => {
+    if (res.ok) {
+      return res.json().then(json => dispatch(success(json)));
+    } else {
+      dispatch(failure(res));
+    }
+  });
 
   addTask(fetchTask);
   dispatch({ type: "FETCH_GROUP_REQUEST", group: group });
