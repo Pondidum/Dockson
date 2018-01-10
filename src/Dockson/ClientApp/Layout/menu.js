@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import { listAllGroups } from "../Groups/actions";
-import { NavLink } from "react-router-dom";
+import MenuItem from "./menuItem";
 
 const mapStateToProps = state => {
   return {
@@ -14,14 +14,6 @@ const mapDispatchToProps = dispatch => {
     listAllGroups: () => dispatch(listAllGroups())
   };
 };
-
-const NavEntry = ({ link, text }) => (
-  <li>
-    <NavLink exact to={link} activeClassName="active">
-      <span className="glyphicon glyphicon-stats" /> {text}
-    </NavLink>
-  </li>
-);
 
 class Menu extends Component {
   componentDidMount() {
@@ -37,7 +29,7 @@ class Menu extends Component {
     return (
       <ul className="list-unstyled">
         {groupNames.map((group, index) => (
-          <NavEntry key={index} link={`/groups/${group}`} text={group} />
+          <MenuItem key={index} link={`/groups/${group}`} text={group} />
         ))}
       </ul>
     );
