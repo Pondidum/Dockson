@@ -59,7 +59,7 @@ class GroupDetails extends Component {
     const days = Object.keys(graphData);
 
     return (
-      <Col sm={6}>
+      <Col sm={12} md={6}>
         <Panel>
           <div className="panel-heading">
             <h4 className="panel-title">{this.renderTitle(property)}</h4>
