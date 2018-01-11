@@ -20,7 +20,7 @@ namespace Dockson.Tests.Infrastructure.Validation
 		[Fact]
 		public void When_there_are_no_validators_for_a_message_type()
 		{
-			Should.NotThrow(() => _validation.Project(new TestNotification { Name = "test", Version = "1" }));
+			Should.NotThrow(() => _validation.Project(new TestNotification { Name = "test" }));
 		}
 
 		[Fact]
@@ -30,8 +30,7 @@ namespace Dockson.Tests.Infrastructure.Validation
 
 			ex.Messages.ShouldBe(new[]
 			{
-				"You must specify the project's name",
-				"You must specify the project's version"
+				"You must specify the project's name"
 			});
 		}
 
@@ -43,7 +42,6 @@ namespace Dockson.Tests.Infrastructure.Validation
 			ex.Messages.ShouldBe(new[]
 			{
 				"You must specify the project's name",
-				"You must specify the project's version",
 				"You must specify the project's branch",
 				"You must specify the project's Commit Hash"
 			});

@@ -6,9 +6,7 @@ namespace Dockson.Domain
 	public class Notification
 	{
 		public DateTime Timestamp { get; set; }
-
 		public string Name { get; set; }
-		public string Version { get; set; }
 
 		public HashSet<string> Groups { get; set; }
 		public Dictionary<string, string> Tags { get; set; }

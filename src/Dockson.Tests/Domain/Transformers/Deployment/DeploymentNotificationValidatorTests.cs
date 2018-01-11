@@ -14,7 +14,7 @@ namespace Dockson.Tests.Domain.Transformers.Deployment
 		[Fact]
 		public void When_the_environment_hash_is_missing()
 		{
-			Validate(new DeploymentNotification { Status = "wat" }).ShouldBe(new[]
+			Validate(new DeploymentNotification { Version = "2.0.0", Status = "wat" }).ShouldBe(new[]
 			{
 				"You must specify the project's deployment environment (Production, QA, Test etc)"
 			});
@@ -23,26 +23,25 @@ namespace Dockson.Tests.Domain.Transformers.Deployment
 		[Fact]
 		public void When_the_status_is_missing()
 		{
-			Validate(new DeploymentNotification { Environment = "hash" }).ShouldBe(new[]
+			Validate(new DeploymentNotification { Version = "2.0.0", Environment = "hash" }).ShouldBe(new[]
 			{
 				"You must specify the project's deployment status (success, failure etc)"
 			});
 		}
 
 		[Fact]
-		public void When_both_environment_and_status_are_missing()
+		public void When_the_version_is_missing()
 		{
-			Validate(new DeploymentNotification()).ShouldBe(new[]
+			Validate(new DeploymentNotification { Status = "wat", Environment = "hash" }).ShouldBe(new[]
 			{
-				"You must specify the project's deployment environment (Production, QA, Test etc)",
-				"You must specify the project's deployment status (success, failure etc)"
+				"You must specify the project's version"
 			});
 		}
 
 		[Fact]
-		public void When_both_environment_and_status_are_present()
+		public void When_all_are_present()
 		{
-			Validate(new DeploymentNotification { Status = "wat", Environment = "hashhhh"}).ShouldBeEmpty();
+			Validate(new DeploymentNotification { Version = "2.0.0", Status = "wat", Environment = "hashhhh"}).ShouldBeEmpty();
 		}
 	}
 }

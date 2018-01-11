@@ -7,7 +7,7 @@ namespace Dockson.Domain.Transformers.Build
 {
 	public class BuildSucceeded : IProjectable
 	{
-		public BuildSucceeded(Notification notification)
+		public BuildSucceeded(BuildNotification notification)
 		{
 			notification.Tags.TryGetValue("commit", out var commit);
 			

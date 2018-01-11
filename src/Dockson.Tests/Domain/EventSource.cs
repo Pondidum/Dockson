@@ -154,7 +154,6 @@ namespace Dockson.Tests.Domain
 		{
 			Timestamp = Timestamp,
 			Name = Name,
-			Version = "1.0.0",
 			Groups = Groups,
 			Branch = branch,
 			Commit = CommitHash

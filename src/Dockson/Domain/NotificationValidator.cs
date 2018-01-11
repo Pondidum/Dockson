@@ -9,10 +9,6 @@ namespace Dockson.Domain
 		{
 			if (string.IsNullOrWhiteSpace(notification.Name))
 				yield return "You must specify the project's name";
-
-			if (string.IsNullOrWhiteSpace(notification.Version))
-				yield return "You must specify the project's version";
-
 		}
 	}
 }

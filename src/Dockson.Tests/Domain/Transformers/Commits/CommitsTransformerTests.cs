@@ -54,7 +54,6 @@ namespace Dockson.Tests.Domain.Transformers.Commits
 		{
 			Timestamp = _now.AddMinutes(offset),
 			Name = "SomeService",
-			Version = "1.0.0",
 			Commit =  hash,
 			Branch = branch
 		};

@@ -14,7 +14,7 @@ namespace Dockson.Tests.Domain.Transformers.Build
 		[Fact]
 		public void When_the_status_is_missing()
 		{
-			Validate(new BuildNotification { }).ShouldBe(new[]
+			Validate(new BuildNotification { Version = "1.0.0" }).ShouldBe(new[]
 			{
 				"You must specify the status of the build (success or failure)"
 			});
@@ -23,7 +23,22 @@ namespace Dockson.Tests.Domain.Transformers.Build
 		[Fact]
 		public void When_the_status_is_present()
 		{
-			Validate(new BuildNotification { Status = "success" }).ShouldBeEmpty();
+			Validate(new BuildNotification { Version = "1.0.0", Status = "success" }).ShouldBeEmpty();
+		}
+
+		[Fact]
+		public void When_the_version_is_missing()
+		{
+			Validate(new BuildNotification { Status = "success" }).ShouldBe(new[]
+			{
+				"You must specify the project's version"
+			});
+		}
+
+		[Fact]
+		public void When_the_version_is_present()
+		{
+			Validate(new BuildNotification { Version = "1.0.0", Status = "success" }).ShouldBeEmpty();
 		}
 	}
 }

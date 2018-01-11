@@ -7,7 +7,7 @@ namespace Dockson.Domain.Transformers.Deployment
 {
 	public class ProductionDeployment : IProjectable
 	{
-		public ProductionDeployment(Notification notification)
+		public ProductionDeployment(DeploymentNotification notification)
 		{
 			Timestamp = notification.Timestamp;
 			Groups = new HashSet<string>(
