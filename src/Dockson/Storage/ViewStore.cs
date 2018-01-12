@@ -8,6 +8,11 @@ namespace Dockson.Storage
 {
 	public class ViewStore : IViewStore
 	{
+		private static readonly JsonSerializerSettings Settings = new JsonSerializerSettings
+		{
+			Formatting = Formatting.Indented
+		};
+
 		private readonly IFileSystem _fileSystem;
 		private readonly string _viewFile;
 
@@ -22,7 +27,7 @@ namespace Dockson.Storage
 
 		public void Save()
 		{
-			var json = JsonConvert.SerializeObject(View);
+			var json = JsonConvert.SerializeObject(View, Settings);
 			_fileSystem.WriteFile(_viewFile, json);
 		}
 

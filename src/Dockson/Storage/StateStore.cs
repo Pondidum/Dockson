@@ -11,7 +11,8 @@ namespace Dockson.Storage
 	{
 		private static readonly JsonSerializerSettings Settings = new JsonSerializerSettings
 		{
-			 TypeNameHandling = TypeNameHandling.Auto
+			TypeNameHandling = TypeNameHandling.Auto,
+			Formatting = Formatting.Indented
 		};
 
 		private readonly IFileSystem _fileSystem;
