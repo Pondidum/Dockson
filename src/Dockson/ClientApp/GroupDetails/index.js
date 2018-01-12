@@ -1,8 +1,8 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import { Row, Col, Panel } from "react-bootstrap";
-import { Line as Chart } from "react-chartjs-2";
 import { fetchGroupDetails } from "../Groups/actions";
+import Graph from "./graph";
 
 const mapStateToProps = (state, ownProps) => {
   const groupName = ownProps.match.params.group;
@@ -23,12 +23,31 @@ class GroupDetails extends Component {
     this.props.fetchGroup(this.props.groupName);
 
     this.schemes = {
-      median: { label: "Median", color: "rgba(255,99,132,1)" },
+      median: {
+        label: "Median",
+        color: "rgba(255,99,132,1)",
+        axis: "left"
+      },
       deviation: {
         label: "Standard Deviation",
-        color: "rgba(54, 162, 235, 1)"
+        color: "rgba(54, 162, 235, 1)",
+        axis: "right"
       },
-      rate: { label: "Rate", color: "rgba(255,99,132,1)" }
+      rate: {
+        label: "Rate",
+        color: "rgba(255,99,132,1)",
+        axis: "left"
+      }
+    };
+  }
+
+  axis(key) {
+    const scheme = this.schemes[key];
+
+    return {
+      id: key,
+      type: "linear",
+      position: scheme.axis
     };
   }
 
@@ -38,6 +57,7 @@ class GroupDetails extends Component {
 
     return {
       label: scheme.label,
+      yAxisID: key,
       data: keys.map(day => group[day][key]),
       fill: false,
       borderColor: scheme.color
@@ -65,14 +85,10 @@ class GroupDetails extends Component {
             <h4 className="panel-title">{this.renderTitle(property)}</h4>
           </div>
           <div className="panel-body">
-            <Chart
-              data={{
-                labels: days,
-                datasets: datasets.map(key => this.dataset(graphData, key))
-              }}
-              options={{
-                maintainAspectRatio: false
-              }}
+            <Graph
+              labels={days}
+              datasets={datasets.map(key => this.dataset(graphData, key))}
+              axes={datasets.map(key => this.axis(key))}
             />
           </div>
         </Panel>
