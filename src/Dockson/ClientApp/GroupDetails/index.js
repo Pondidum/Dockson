@@ -21,47 +21,6 @@ const mapDispatchToProps = dispatch => {
 class GroupDetails extends Component {
   componentDidMount() {
     this.props.fetchGroup(this.props.groupName);
-
-    this.schemes = {
-      median: {
-        label: "Median",
-        color: "rgba(255,99,132,1)",
-        axis: "left"
-      },
-      deviation: {
-        label: "Standard Deviation",
-        color: "rgba(54, 162, 235, 1)",
-        axis: "right"
-      },
-      rate: {
-        label: "Rate",
-        color: "rgba(255,99,132,1)",
-        axis: "left"
-      }
-    };
-  }
-
-  axis(key) {
-    const scheme = this.schemes[key];
-
-    return {
-      id: key,
-      type: "linear",
-      position: scheme.axis
-    };
-  }
-
-  dataset(group, key) {
-    const keys = Object.keys(group);
-    const scheme = this.schemes[key];
-
-    return {
-      label: scheme.label,
-      yAxisID: key,
-      data: keys.map(day => group[day][key]),
-      fill: false,
-      borderColor: scheme.color
-    };
   }
 
   renderTitle(name) {
@@ -74,9 +33,8 @@ class GroupDetails extends Component {
     );
   }
 
-  chart(group, property, datasets = ["median", "deviation"]) {
+  chart(group, property, keys = ["median", "deviation"]) {
     const graphData = group[property];
-    const days = Object.keys(graphData);
 
     return (
       <Col sm={12} md={6}>
@@ -85,11 +43,7 @@ class GroupDetails extends Component {
             <h4 className="panel-title">{this.renderTitle(property)}</h4>
           </div>
           <div className="panel-body">
-            <Graph
-              labels={days}
-              datasets={datasets.map(key => this.dataset(graphData, key))}
-              axes={datasets.map(key => this.axis(key))}
-            />
+            <Graph dataSource={graphData} keys={keys} />
           </div>
         </Panel>
       </Col>
