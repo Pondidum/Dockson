@@ -16,7 +16,7 @@ const buildData = (series, key) =>
     .sort(byDate)
     .map(day => series[day][key]);
 
-const buildDataset = (dataSource, what) => {
+export const buildDataset = (dataSource, what) => {
   const datasets = what.map(set => {
     const series = dataSource[set.name];
 
@@ -29,7 +29,18 @@ const buildDataset = (dataSource, what) => {
     });
   });
 
-  return [].concat.apply([], datasets);
+  return {
+    labels: Object.keys(dataSource[what[0].name]).sort(byDate),
+    datasets: [].concat.apply([], datasets)
+  };
 };
 
-export default buildDataset;
+export const buildAxes = (dataSource, what) => {
+  const datasets = what.map(set =>
+    set.keys.map(key => ({
+      id: `${set.name}.${key}`,
+      type: "linear",
+      position: "left"
+    }))
+  );
+};

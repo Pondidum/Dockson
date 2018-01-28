@@ -1,4 +1,4 @@
-import buildDataset from "./graphBuilder";
+import { buildDataset } from "./graphBuilder";
 
 const testData = {
   masterCommitLeadTime: {
@@ -35,12 +35,19 @@ it("should be ordered correctly", () => {
     { name: "masterCommitLeadTime", keys: ["median"] }
   ]);
 
-  expect(result).toEqual([
+  expect(result.datasets).toEqual([
     {
       label: "masterCommitLeadTime.median",
       data: [11.88, 14.08, 22.55, 22.65],
       fill: false
     }
+  ]);
+
+  expect(result.labels).toEqual([
+    "08/02/2017",
+    "09/02/2017",
+    "03/03/2017",
+    "08/03/2017"
   ]);
 });
 
@@ -49,7 +56,7 @@ it("should return a single dataset", () => {
     { name: "masterCommitLeadTime", keys: ["median"] }
   ]);
 
-  expect(result).toEqual([
+  expect(result.datasets).toEqual([
     {
       label: "masterCommitLeadTime.median",
       data: [11.88, 14.08, 22.55, 22.65],
@@ -63,7 +70,7 @@ it("should return two series in one dataset", () => {
     { name: "masterCommitLeadTime", keys: ["median", "deviation"] }
   ]);
 
-  expect(result).toEqual([
+  expect(result.datasets).toEqual([
     {
       label: "masterCommitLeadTime.median",
       data: [11.88, 14.08, 22.55, 22.65],
@@ -83,7 +90,7 @@ it("should return two series in two datasets", () => {
     { name: "masterCommitInterval", keys: ["median", "deviation"] }
   ]);
 
-  expect(result).toEqual([
+  expect(result.datasets).toEqual([
     {
       label: "masterCommitLeadTime.median",
       data: [11.88, 14.08, 22.55, 22.65],
