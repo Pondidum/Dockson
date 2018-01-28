@@ -21,6 +21,29 @@ const testData = {
   deploymentInterval: {}
 };
 
+it("should be ordered correctly", () => {
+  const badOrder = {
+    masterCommitLeadTime: {
+      "03/03/2017": { median: 22.55, deviation: 435.54 },
+      "08/02/2017": { median: 11.88, deviation: 3.11 },
+      "09/02/2017": { median: 14.08, deviation: 478.42 },
+      "08/03/2017": { median: 22.65, deviation: 376.65 }
+    }
+  };
+
+  const result = buildDataset(badOrder, [
+    { name: "masterCommitLeadTime", keys: ["median"] }
+  ]);
+
+  expect(result).toEqual([
+    {
+      label: "masterCommitLeadTime.median",
+      data: [11.88, 14.08, 22.55, 22.65],
+      fill: false
+    }
+  ]);
+});
+
 it("should return a single dataset", () => {
   const result = buildDataset(testData, [
     { name: "masterCommitLeadTime", keys: ["median"] }
