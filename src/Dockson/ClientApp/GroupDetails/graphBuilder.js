@@ -23,6 +23,7 @@ export const buildDataset = (dataSource, what) => {
     return set.keys.map(key => {
       return {
         label: `${set.name}.${key}`,
+        yAxisID: key,
         data: buildData(series, key),
         fill: false
       };
@@ -38,9 +39,11 @@ export const buildDataset = (dataSource, what) => {
 export const buildAxes = (dataSource, what) => {
   const datasets = what.map(set =>
     set.keys.map(key => ({
-      id: `${set.name}.${key}`,
+      id: key,
       type: "linear",
-      position: "left"
+      position: key == "median" ? "left" : "right"
     }))
   );
+
+  return [].concat.apply([], datasets);
 };

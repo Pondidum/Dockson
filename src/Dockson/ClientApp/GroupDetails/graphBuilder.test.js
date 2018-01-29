@@ -39,7 +39,8 @@ it("should be ordered correctly", () => {
     {
       label: "masterCommitLeadTime.median",
       data: [11.88, 14.08, 22.55, 22.65],
-      fill: false
+      fill: false,
+      yAxisID: "median"
     }
   ]);
 
@@ -60,7 +61,8 @@ it("should return a single dataset", () => {
     {
       label: "masterCommitLeadTime.median",
       data: [11.88, 14.08, 22.55, 22.65],
-      fill: false
+      fill: false,
+      yAxisID: "median"
     }
   ]);
 });
@@ -74,12 +76,14 @@ it("should return two series in one dataset", () => {
     {
       label: "masterCommitLeadTime.median",
       data: [11.88, 14.08, 22.55, 22.65],
-      fill: false
+      fill: false,
+      yAxisID: "median"
     },
     {
       label: "masterCommitLeadTime.deviation",
       data: [3.11, 478.42, 435.54, 376.65],
-      fill: false
+      fill: false,
+      yAxisID: "deviation"
     }
   ]);
 });
@@ -94,22 +98,26 @@ it("should return two series in two datasets", () => {
     {
       label: "masterCommitLeadTime.median",
       data: [11.88, 14.08, 22.55, 22.65],
-      fill: false
+      fill: false,
+      yAxisID: "median"
     },
     {
       label: "masterCommitLeadTime.deviation",
       data: [3.11, 478.42, 435.54, 376.65],
-      fill: false
+      fill: false,
+      yAxisID: "deviation"
     },
     {
       label: "masterCommitInterval.median",
       data: [83.01, 137.91, 31486.73, 3695.05],
-      fill: false
+      fill: false,
+      yAxisID: "median"
     },
     {
       label: "masterCommitInterval.deviation",
       data: [0, 743.62, 0, 5086.36],
-      fill: false
+      fill: false,
+      yAxisID: "deviation"
     }
   ]);
 });
