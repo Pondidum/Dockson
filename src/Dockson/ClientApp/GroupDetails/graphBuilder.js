@@ -16,16 +16,26 @@ const buildData = (series, key) =>
     .sort(byDate)
     .map(day => series[day][key]);
 
+const getColor = index => {
+  if (index === 0) return "rgba(255,99,132,1)";
+  if (index === 1) return "rgba(54, 162, 235, 1)";
+  if (index === 2) return "rgba(255, 206, 86, 1)";
+  return "rgba(75, 192, 192, 1)";
+};
+
 export const buildDataset = (dataSource, what) => {
+  let current = -1;
   const datasets = what.map(set => {
     const series = dataSource[set.name];
 
     return set.keys.map(key => {
+      current++;
       return {
         label: `${set.name}.${key}`,
         yAxisID: key,
         data: buildData(series, key),
-        fill: false
+        fill: false,
+        borderColor: getColor(current)
       };
     });
   });

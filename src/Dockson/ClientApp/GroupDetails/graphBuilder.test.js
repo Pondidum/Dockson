@@ -40,7 +40,8 @@ it("should be ordered correctly", () => {
       label: "masterCommitLeadTime.median",
       data: [11.88, 14.08, 22.55, 22.65],
       fill: false,
-      yAxisID: "median"
+      yAxisID: "median",
+      borderColor: "rgba(255,99,132,1)"
     }
   ]);
 
@@ -62,7 +63,8 @@ it("should return a single dataset", () => {
       label: "masterCommitLeadTime.median",
       data: [11.88, 14.08, 22.55, 22.65],
       fill: false,
-      yAxisID: "median"
+      yAxisID: "median",
+      borderColor: "rgba(255,99,132,1)"
     }
   ]);
 });
@@ -77,13 +79,15 @@ it("should return two series in one dataset", () => {
       label: "masterCommitLeadTime.median",
       data: [11.88, 14.08, 22.55, 22.65],
       fill: false,
-      yAxisID: "median"
+      yAxisID: "median",
+      borderColor: "rgba(255,99,132,1)"
     },
     {
       label: "masterCommitLeadTime.deviation",
       data: [3.11, 478.42, 435.54, 376.65],
       fill: false,
-      yAxisID: "deviation"
+      yAxisID: "deviation",
+      borderColor: "rgba(54, 162, 235, 1)"
     }
   ]);
 });
@@ -99,25 +103,29 @@ it("should return two series in two datasets", () => {
       label: "masterCommitLeadTime.median",
       data: [11.88, 14.08, 22.55, 22.65],
       fill: false,
-      yAxisID: "median"
+      yAxisID: "median",
+      borderColor: "rgba(255,99,132,1)"
     },
     {
       label: "masterCommitLeadTime.deviation",
       data: [3.11, 478.42, 435.54, 376.65],
       fill: false,
-      yAxisID: "deviation"
+      yAxisID: "deviation",
+      borderColor: "rgba(54, 162, 235, 1)"
     },
     {
       label: "masterCommitInterval.median",
       data: [83.01, 137.91, 31486.73, 3695.05],
       fill: false,
-      yAxisID: "median"
+      yAxisID: "median",
+      borderColor: "rgba(255, 206, 86, 1)"
     },
     {
       label: "masterCommitInterval.deviation",
       data: [0, 743.62, 0, 5086.36],
       fill: false,
-      yAxisID: "deviation"
+      yAxisID: "deviation",
+      borderColor: "rgba(75, 192, 192, 1)"
     }
   ]);
 });
