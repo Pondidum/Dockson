@@ -2,7 +2,8 @@ import React, { Component } from "react";
 import { connect } from "react-redux";
 import { Row, Col, Panel } from "react-bootstrap";
 import { fetchGroupDetails } from "../Groups/actions";
-import Graph from "./graph";
+import { Line as Chart } from "react-chartjs-2";
+import { buildGraph, buildAxes, buildDataset } from "./graphBuilder";
 
 const mapStateToProps = (state, ownProps) => {
   const groupName = ownProps.match.params.group;
@@ -23,27 +24,23 @@ class GroupDetails extends Component {
     this.props.fetchGroup(this.props.groupName);
   }
 
-  renderTitle(name) {
+  compositeChart(group, title, cols, what) {
     return (
-      name.charAt(0).toUpperCase() +
-      name
-        .slice(1)
-        .replace(/([A-Z])/g, " $1")
-        .trim()
-    );
-  }
-
-  chart(group, property, keys = ["median", "deviation"]) {
-    const graphData = group[property];
-
-    return (
-      <Col sm={12} md={6}>
+      <Col sm={12} md={cols}>
         <Panel>
           <div className="panel-heading">
-            <h4 className="panel-title">{this.renderTitle(property)}</h4>
+            <h4 className="panel-title">{title}</h4>
           </div>
           <div className="panel-body">
-            <Graph dataSource={graphData} keys={keys} />
+            <Chart
+              data={buildDataset(group, what)}
+              options={{
+                maintainAspectRatio: false,
+                scales: {
+                  yAxes: buildAxes(group, what)
+                }
+              }}
+            />
           </div>
         </Panel>
       </Col>
@@ -59,14 +56,22 @@ class GroupDetails extends Component {
 
     return (
       <Row>
-        {this.chart(group, "masterCommitLeadTime")}
-        {this.chart(group, "masterCommitInterval")}
-        {this.chart(group, "buildLeadTime")}
+        {this.compositeChart(group, "Commit Lead Time", 6, [
+          { name: "masterCommitLeadTime", keys: ["median", "deviation"] }
+        ])}
+        {this.compositeChart(group, "Commit Interval", 6, [
+          { name: "masterCommitInterval", keys: ["median", "deviation"] }
+        ])}
+        {this.compositeChart(group, "Master Throughput", 12, [
+          { name: "masterCommitLeadTime", keys: ["median" /*, "deviation"*/] },
+          { name: "masterCommitInterval", keys: ["median" /*, "deviation"*/] }
+        ])}
+        {/* {this.chart(group, "buildLeadTime")}
         {this.chart(group, "buildInterval")}
         {this.chart(group, "buildRecoveryTime")}
         {this.chart(group, "buildFailureRate", ["rate"])}
         {this.chart(group, "deploymentLeadTime")}
-        {this.chart(group, "deploymentInterval")}
+        {this.chart(group, "deploymentInterval")} */}
       </Row>
     );
   }
