@@ -22,6 +22,54 @@ const sendToDockson = () => {
 
   console.log(`${merged.length} items to send to Dockson`);
 
+  Promise.all(
+    merged.map(pr =>
+      fetchWithHeaders(pr.commits_url)
+        .then(res => res.json())
+        .then(dto => {
+          return {
+            sha: dto[0].sha,
+            branchCommitDate: dto[0].commit.committer.date,
+            branchName: pr.head.ref,
+            mergeDate: pr.merged_at
+          };
+        })
+    )
+  ).then(merges =>
+    Promise.all(
+      merges.map(m => {
+        const branchRequest = {
+          timestamp: m.branchCommitDate,
+          name: repo,
+          branch: m.branchName,
+          commit: m.sha
+        };
+
+        const masterRequest = {
+          timestamp: m.mergeDate,
+          name: repo,
+          branch: "master",
+          commit: m.sha
+        };
+
+        return fetch("http://localhost:5000/api/log/commit", {
+          method: "POST",
+          body: JSON.stringify(branchRequest),
+          headers: {
+            "Content-Type": "application/json"
+          }
+        }).then(() =>
+          fetch("http://localhost:5000/api/log/commit", {
+            method: "POST",
+            body: JSON.stringify(masterRequest),
+            headers: {
+              "Content-Type": "application/json"
+            }
+          })
+        );
+      })
+    )
+  );
   // const branchSha = pr.head.sha;
 
   // const branchRequest = {
@@ -42,10 +90,13 @@ const parseLinks = linksHeader =>
     return all;
   }, {});
 
-const requestPage = url =>
+const fetchWithHeaders = url =>
   fetch(url, {
     headers: { Authorization: `token ${process.env.DOCKSON_GITHUB}` }
-  }).then(res =>
+  });
+
+const requestPage = url =>
+  fetchWithHeaders(url).then(res =>
     res
       .json()
       .then(appendPulls)
