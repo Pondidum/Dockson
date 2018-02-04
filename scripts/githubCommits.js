@@ -11,11 +11,25 @@ const appendPulls = dto => {
 };
 
 const sendToDockson = () => {
-  const merged = pulls.filter(pr => pr.merged_at).sort((a, b) => {
-    if (a.merged_at > b.merged_at) return 1;
-    if (a.merged_at < b.merged_at) return -1;
-    return 0;
-  });
+  const merged = pulls
+    .filter(pr => pr.merged_at)
+    .filter(pr => pr.base.ref === "master")
+    .sort((a, b) => {
+      if (a.merged_at > b.merged_at) return 1;
+      if (a.merged_at < b.merged_at) return -1;
+      return 0;
+    });
+
+  console.log(`${merged.length} items to send to Dockson`);
+
+  // const branchSha = pr.head.sha;
+
+  // const branchRequest = {
+  //   timestamp: "$masterTimestamp",
+  //   name: repo,
+  //   branch: pr.head.ref,
+  //   commit:  pr.head.sha
+  // };
 };
 
 const parseLinks = linksHeader =>
