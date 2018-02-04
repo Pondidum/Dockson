@@ -4,6 +4,20 @@ import fetch from "node-fetch";
 const owner = argv.owner;
 const repo = argv.repo;
 
+let pulls = [];
+
+const appendPulls = dto => {
+  pulls = pulls.concat(dto);
+};
+
+const sendToDockson = () => {
+  const merged = pulls.filter(pr => pr.merged_at).sort((a, b) => {
+    if (a.merged_at > b.merged_at) return 1;
+    if (a.merged_at < b.merged_at) return -1;
+    return 0;
+  });
+};
+
 const parseLinks = linksHeader =>
   linksHeader.split(",").reduce((all, link) => {
     const match = link.match(/\<(.*)\>.*rel="(.*)"/);
@@ -13,11 +27,6 @@ const parseLinks = linksHeader =>
     all[rel] = url;
     return all;
   }, {});
-
-const appendPulls = dto => {
-  console.log(`adding ${dto.length} items`);
-  return Promise.resolve();
-};
 
 const requestPage = url =>
   fetch(url, {
@@ -43,7 +52,7 @@ const run = () => {
 
   return requestPage(
     `https://api.github.com/repos/${owner}/${repo}/pulls?state=all`
-  );
+  ).then(sendToDockson);
 };
 
 run();
