@@ -52,21 +52,31 @@ const sendToDockson = () => {
           commit: m.sha
         };
 
+        console.log(
+          `${branchRequest.commit} [ ${branchRequest.timestamp} ] => ${
+            branchRequest.branch
+          }`
+        );
         return fetch("http://localhost:5000/api/log/commit", {
           method: "POST",
           body: JSON.stringify(branchRequest),
           headers: {
             "Content-Type": "application/json"
           }
-        }).then(() =>
-          fetch("http://localhost:5000/api/log/commit", {
+        }).then(() => {
+          console.log(
+            `${masterRequest.commit} [ ${masterRequest.timestamp} ] => ${
+              masterRequest.branch
+            }`
+          );
+          return fetch("http://localhost:5000/api/log/commit", {
             method: "POST",
             body: JSON.stringify(masterRequest),
             headers: {
               "Content-Type": "application/json"
             }
-          })
-        );
+          });
+        });
       })
     )
   );
