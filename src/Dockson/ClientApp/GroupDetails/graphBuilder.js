@@ -11,12 +11,14 @@ const byDate = (a, b) => {
   return ra < rb ? -1 : ra > rb ? 1 : 0;
 };
 
+const toHours = value => value / 60;
 const round = value => Math.round(value * 100) / 100;
 
 const buildData = (series, key) =>
   Object.keys(series)
     .sort(byDate)
     .map(day => series[day][key])
+    .map(toHours)
     .map(round);
 
 const getColor = index => {
