@@ -9,6 +9,7 @@ namespace Dockson.Infrastructure
 			: string.Empty;
 
 		public void WriteFile(string path, string contents) => File.WriteAllText(path, contents);
+		public void AppendFile(string path, string line) => File.AppendAllLines(path, new[] { line });
 
 		public void CreateDirectory(string path) => Directory.CreateDirectory(path);
 	}

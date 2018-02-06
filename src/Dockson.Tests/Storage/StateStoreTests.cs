@@ -63,6 +63,14 @@ namespace Dockson.Tests.Storage
 				_files[path] = contents;
 			}
 
+			public void AppendFile(string path, string line)
+			{
+				if (_files.ContainsKey(path))
+					_files[path] = _files[path] + "\n" + line;
+				else
+					_files[path] = line;
+			}
+
 			public void CreateDirectory(string path)
 			{
 			}
