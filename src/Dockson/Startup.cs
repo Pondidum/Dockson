@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.SpaServices.Webpack;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 
 namespace Dockson
 {
@@ -29,7 +30,6 @@ namespace Dockson
 			var fs = new FileSystem();
 			fs.CreateDirectory(settings.StoragePath);
 
-			var notificationStore = new NotificationStore(fs, settings);
 			var viewStore = new ViewStore(fs, settings);
 			var stateStore = new StateStore(fs, settings);
 
@@ -50,8 +50,13 @@ namespace Dockson
 			dist.AddProjection(new DeploymentLeadTimeProjection(viewStore.UpdateDeploymentLeadTime));
 			dist.AddProjection(new DeploymentIntervalProjection(viewStore.UpdateDeploymentInterval));
 
+			var notificationStore = new NotificationStore(fs, settings);
+			var notificationWriter = new SequencedWriter<Notification>(notificationStore.Append);
+
+			services.AddSingleton<IHostedService>(notificationWriter);
+
 			services.AddSingleton<IViewStore>(viewStore);
-			services.AddSingleton<IProjector>(new PreProjector(new ValidationProjector(new NotificationWriter(notificationStore, dist))));
+			services.AddSingleton<IProjector>(new PreProjector(new ValidationProjector(new NotificationWriter(notificationWriter, dist))));
 
 			services
 				.AddMvcCore(c => c.Filters.Add<NotificationValidationFilter>())
