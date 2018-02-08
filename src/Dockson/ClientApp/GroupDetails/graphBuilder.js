@@ -55,8 +55,11 @@ export const buildAxes = (dataSource, what) => {
   const datasets = what.map(set =>
     set.keys.map(key => ({
       id: key,
-      type: "linear",
-      position: key == "median" ? "left" : "right"
+      type: "logarithmic",
+      position: key == "median" ? "left" : "right",
+      gridLines: {
+        display: false
+      }
     }))
   );
 

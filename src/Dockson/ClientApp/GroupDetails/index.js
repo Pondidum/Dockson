@@ -33,6 +33,7 @@ class GroupDetails extends Component {
           </div>
           <div className="panel-body">
             <Chart
+              height={200}
               data={buildDataset(group, what)}
               options={{
                 maintainAspectRatio: false,
@@ -56,22 +57,10 @@ class GroupDetails extends Component {
 
     return (
       <Row>
-        {this.compositeChart(group, "Commit Lead Time", 6, [
-          { name: "masterCommitLeadTime", keys: ["median", "deviation"] }
-        ])}
-        {this.compositeChart(group, "Commit Interval", 6, [
+        {this.compositeChart(group, "Master Throughput", 12, [
+          { name: "masterCommitLeadTime", keys: ["median", "deviation"] },
           { name: "masterCommitInterval", keys: ["median", "deviation"] }
         ])}
-        {this.compositeChart(group, "Master Throughput", 12, [
-          { name: "masterCommitLeadTime", keys: ["median" /*, "deviation"*/] },
-          { name: "masterCommitInterval", keys: ["median" /*, "deviation"*/] }
-        ])}
-        {/* {this.chart(group, "buildLeadTime")}
-        {this.chart(group, "buildInterval")}
-        {this.chart(group, "buildRecoveryTime")}
-        {this.chart(group, "buildFailureRate", ["rate"])}
-        {this.chart(group, "deploymentLeadTime")}
-        {this.chart(group, "deploymentInterval")} */}
       </Row>
     );
   }
