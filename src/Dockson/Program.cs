@@ -20,7 +20,7 @@ namespace Dockson
 		public static IWebHost BuildWebHost(string[] args) =>
 			WebHost.CreateDefaultBuilder(args)
 				.UseStartup<Startup>()
-				.ConfigureLogging(logging => logging.SetMinimumLevel(LogLevel.Information))
+				.ConfigureLogging(logging => logging.SetMinimumLevel(LogLevel.Error))
 				.Build();
 	}
 }
