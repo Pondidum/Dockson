@@ -37,7 +37,23 @@ namespace Dockson
 			viewStore.Load();
 			stateStore.Load();
 
+			var dist = BuildDistributor(stateStore, viewStore);
+			var projector = new SequencingProjector(new NotificationWriter(notificationStore, dist));
+
+			services.AddSingleton<IViewStore>(viewStore);
+			services.AddSingleton<IProjector>(new PreProjector(new ValidationProjector(projector)));
+			services.AddSingleton<IHostedService>(projector);
+
+			services
+				.AddMvcCore(c => c.Filters.Add<NotificationValidationFilter>())
+				.AddJsonFormatters()
+				.AddRazorViewEngine();
+		}
+
+		private static Distributor BuildDistributor(StateStore stateStore, ViewStore viewStore)
+		{
 			var dist = new Distributor(stateStore, viewStore);
+
 			dist.AddTransformer(new CommitsTransformer());
 			dist.AddTransformer(new BuildTransformer());
 			dist.AddTransformer(new DeploymentTransformer());
@@ -51,13 +67,7 @@ namespace Dockson
 			dist.AddProjection(new DeploymentLeadTimeProjection(viewStore.UpdateDeploymentLeadTime));
 			dist.AddProjection(new DeploymentIntervalProjection(viewStore.UpdateDeploymentInterval));
 
-			services.AddSingleton<IViewStore>(viewStore);
-			services.AddSingleton<IProjector>(new PreProjector(new ValidationProjector(new NotificationWriter(notificationStore, dist))));
-
-			services
-				.AddMvcCore(c => c.Filters.Add<NotificationValidationFilter>())
-				.AddJsonFormatters()
-				.AddRazorViewEngine();
+			return dist;
 		}
 
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
