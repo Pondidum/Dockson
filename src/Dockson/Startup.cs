@@ -30,8 +30,9 @@ namespace Dockson
 			var fs = new FileSystem();
 			fs.CreateDirectory(settings.StoragePath);
 
-			var viewStore = new SequencedViewStore(new ViewStore(fs, settings));
-			var stateStore = new SequencedStateStore(new StateStore(fs, settings));
+			var viewStore = new ViewStore(fs, settings);
+			var stateStore = new StateStore(fs, settings);
+			var notificationStore = new NotificationStore(fs, settings);
 
 			viewStore.Load();
 			stateStore.Load();
@@ -50,15 +51,8 @@ namespace Dockson
 			dist.AddProjection(new DeploymentLeadTimeProjection(viewStore.UpdateDeploymentLeadTime));
 			dist.AddProjection(new DeploymentIntervalProjection(viewStore.UpdateDeploymentInterval));
 
-			var notificationStore = new NotificationStore(fs, settings);
-			var notificationWriter = new SequencedWriter<Notification>(notificationStore.Append);
-
-			services.AddSingleton<IHostedService>(viewStore);
-			services.AddSingleton<IHostedService>(stateStore);
-			services.AddSingleton<IHostedService>(notificationWriter);
-
 			services.AddSingleton<IViewStore>(viewStore);
-			services.AddSingleton<IProjector>(new PreProjector(new ValidationProjector(new NotificationWriter(notificationWriter, dist))));
+			services.AddSingleton<IProjector>(new PreProjector(new ValidationProjector(new NotificationWriter(notificationStore, dist))));
 
 			services
 				.AddMvcCore(c => c.Filters.Add<NotificationValidationFilter>())

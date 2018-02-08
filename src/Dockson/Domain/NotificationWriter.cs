@@ -1,13 +1,14 @@
 ﻿using Dockson.Infrastructure;
+using Dockson.Storage;
 
 namespace Dockson.Domain
 {
 	public class NotificationWriter : IProjector
 	{
-		private readonly SequencedWriter<Notification> _notificationStore;
+		private readonly NotificationStore _notificationStore;
 		private readonly IProjector _inner;
 
-		public NotificationWriter(SequencedWriter<Notification> notificationStore, IProjector inner)
+		public NotificationWriter(NotificationStore notificationStore, IProjector inner)
 		{
 			_notificationStore = notificationStore;
 			_inner = inner;
@@ -15,7 +16,7 @@ namespace Dockson.Domain
 
 		public void Project(Notification notification)
 		{
-			_notificationStore.Write(notification);
+			_notificationStore.Append(notification);
 			_inner.Project(notification);
 		}
 	}
