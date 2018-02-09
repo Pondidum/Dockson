@@ -42,14 +42,16 @@ const sendToDockson = () => {
           timestamp: m.branchCommitDate,
           name: repo,
           branch: m.branchName,
-          commit: m.sha
+          commit: m.sha,
+          groups: ["core"]
         };
 
         const masterRequest = {
           timestamp: m.mergeDate,
           name: repo,
           branch: "master",
-          commit: m.sha
+          commit: m.sha,
+          groups: ["core"]
         };
 
         console.log(
