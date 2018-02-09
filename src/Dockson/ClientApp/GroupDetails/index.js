@@ -9,7 +9,8 @@ const mapStateToProps = (state, ownProps) => {
   const groupName = ownProps.match.params.group;
   return {
     groupName: groupName,
-    group: state.groups.details[groupName]
+    group: state.groups.details[groupName],
+    ...ownProps
   };
 };
 
@@ -24,6 +25,12 @@ class GroupDetails extends Component {
     this.props.fetchGroup(this.props.groupName);
   }
 
+  componentWillReceiveProps(nextProps) {
+    if (this.props.groupName !== nextProps.groupName) {
+      this.props.fetchGroup(nextProps.groupName);
+    }
+  }
+
   compositeChart(group, title, cols, what) {
     return (
       <Col sm={12} md={cols}>
@@ -33,7 +40,7 @@ class GroupDetails extends Component {
           </div>
           <div className="panel-body">
             <Chart
-              height={200}
+              height={400}
               data={buildDataset(group, what)}
               options={{
                 maintainAspectRatio: false,
