@@ -35,6 +35,24 @@ namespace Dockson.Tests.Domain
 			notification.Timestamp.ShouldBe(existing);
 		}
 
+		[Fact]
+		public void When_a_name_contains_periods()
+		{
+			var notification = new Notification { Name = "what.is.this" };
+			_projector.Project(notification);
+
+			notification.Name.ShouldBe("what-is-this");
+		}
+
+		[Fact]
+		public void When_a_group_contains_periods()
+		{
+			var notification = new Notification { Groups = { "one.with.periods", "one-without" } };
+			_projector.Project(notification);
+
+			notification.Groups.ShouldBe(new[] { "one-with-periods", "one-without" });
+		}
+
 		private class InnerProjector : IProjector
 		{
 			public void Project(Notification notification)

@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Dockson.Domain
 {
@@ -18,7 +20,14 @@ namespace Dockson.Domain
 			if (notification.Timestamp == DateTime.MinValue)
 				notification.Timestamp = _getDate();
 
+			notification.Name = Clean(notification.Name);
+			notification.Groups = new HashSet<string>(notification.Groups.Select(Clean), StringComparer.OrdinalIgnoreCase);
+
 			_internal.Project(notification);
 		}
+
+		private string Clean(string value) => string.IsNullOrWhiteSpace(value)
+			? string.Empty
+			: value.Replace('.', '-');
 	}
 }
